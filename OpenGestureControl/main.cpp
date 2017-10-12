@@ -1,22 +1,32 @@
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
+#include <functional>
 
-#include <QQmlContext>
+#include <QApplication>
+#include <QMenu>
+#include <QObject>
+#include <QSystemTrayIcon>
+#include <QTranslator>
 
-#include <QQmlPropertyMap>
+#include "piemenu.h"
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
+    app.setQuitOnLastWindowClosed(false);
 
-    QQmlApplicationEngine engine;
-    QQmlPropertyMap itemMap;
-    itemMap.insert("Back", "Back_222222_500px.png");
-    itemMap.insert("Refresh", "Refresh_222222_500px.png");
+    QTranslator translator;
+    translator.load(QLocale(), "", "i18n", ".qm");
+    app.installTranslator(&translator);
 
-    engine.rootContext()->setContextProperty("applicationPath", "file://" + qApp->applicationDirPath() + "/");
-    engine.rootContext()->setContextProperty("pieMenuItems", &itemMap);
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    PieMenu pieMenu(qApp->applicationDirPath());
+
+    QSystemTrayIcon tray(QIcon(qApp->applicationDirPath() + "/icons/app.png"), &app);
+
+    QMenu trayMenu;
+    trayMenu.addAction(QObject::tr("Open menu"), std::bind(&PieMenu::open, &pieMenu));
+    trayMenu.addAction(QObject::tr("&Quit"));
+
+    tray.setContextMenu(&trayMenu);
+    tray.show();
 
     return app.exec();
 }

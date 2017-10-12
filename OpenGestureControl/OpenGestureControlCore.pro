@@ -3,7 +3,8 @@ TEMPLATE = app
 QT += qml quick widgets
 CONFIG += c++11
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    piemenu.cpp
 
 RESOURCES += qml.qrc
 
@@ -35,4 +36,9 @@ DISTFILES += \
     icons/Back_222222_500px.png \
     icons/Close_222222_500px.png \
     icons/Refresh_222222_500px.png \
-    icons/Search_222222_500px.png
+    icons/Search_222222_500px.png \
+    icons/app.png
+
+HEADERS += \
+    piemenu.h \
+    piemenu.h

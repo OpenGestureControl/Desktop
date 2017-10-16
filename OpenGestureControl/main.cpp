@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 
     QMenu trayMenu;
     trayMenu.addAction(QObject::tr("Open menu"), std::bind(&PieMenu::open, &pieMenu));
-    trayMenu.addAction(QObject::tr("&Quit"));
+    trayMenu.addAction(QObject::tr("&Quit"), qApp, &QApplication::quit);
 
     tray.setContextMenu(&trayMenu);
     tray.show();

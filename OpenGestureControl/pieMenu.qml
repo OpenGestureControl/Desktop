@@ -15,15 +15,17 @@ Window {
 
     color: Qt.rgba(0, 0, 0, 0.2)
 
-    MouseArea {
-        anchors.fill: parent
-
-        onPressed: pieMenu.popup(Screen.desktopAvailableWidth / 2, Screen.desktopAvailableHeight / 2)
+    // FIXME: This timer is a hack, but doing pieMenu.popup() in pieMenu's
+    // Component.onCompleted simply does not work. So we do it with a
+    // 1 ms delay.
+    Timer {
+        id: pressAndHoldTimer
+        interval: 1
+        onTriggered: pieMenu.popup(root.width / 2, root.height / 2);
     }
 
     PieMenu {
         id: pieMenu
-        objectName: "pieMenu"
 
         width: Screen.desktopAvailableWidth / 1.5
         height: Screen.desktopAvailableHeight / 1.5
@@ -44,6 +46,7 @@ Window {
                 newItem.iconSource = applicationPath + "/icons/" + pieMenuItems[menuItem];
             }
             pieMenu.update();
+            pressAndHoldTimer.start();
         }
     }
 }

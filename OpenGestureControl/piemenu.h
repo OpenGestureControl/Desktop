@@ -10,7 +10,7 @@ class PieMenu : public QObject
 {
     Q_OBJECT
 public:
-    explicit PieMenu(const QString appPath, QObject *parent = 0);
+    explicit PieMenu(QObject *parent = 0);
     void open();
     void close();
 

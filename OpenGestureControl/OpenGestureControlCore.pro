@@ -33,14 +33,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 CONFIG += console
 
-DISTFILES += \
-    icons/app.png \
-    icons/Back_500px.png \
-    icons/Close_500px.png \
-    icons/Refresh_500px.png \
-    icons/Search_500px.png
 
 HEADERS += \
-    piemenu.h \
     piemenu.h \
     keyboardinput.h

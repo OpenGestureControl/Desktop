@@ -7,7 +7,9 @@
 #include <QTranslator>
 
 #include "piemenu.h"
-#include "keyboardinput.h"
+#ifdef Q_OS_WIN32
+    #include "keyboardinput.h"
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -29,7 +31,9 @@ int main(int argc, char *argv[])
     tray.setContextMenu(&trayMenu);
     tray.show();
 
+#ifdef Q_OS_WIN32
     KeyBoardInput keyboardinput(&pieMenu);
+#endif
 
     return app.exec();
 }

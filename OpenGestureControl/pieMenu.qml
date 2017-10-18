@@ -6,23 +6,23 @@ import QtQuick.Extras 1.4
 
 Window {
     id: root
-    visible: true
     width: Screen.desktopAvailableWidth
     height: Screen.desktopAvailableHeight
 
     title: qsTr("Input gesture")
 
-    flags: Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
+    flags: Qt.FramelessWindowHint | Qt.WA_TranslucentBackground | Qt.WindowStaysOnTopHint
 
     color: Qt.rgba(0, 0, 0, 0.2)
 
-    // FIXME: This timer is a hack, but doing pieMenu.popup() in pieMenu's
-    // Component.onCompleted simply does not work. So we do it with a
-    // 1 ms delay.
-    Timer {
-        id: pressAndHoldTimer
-        interval: 1
-        onTriggered: pieMenu.popup(root.width / 2, root.height / 2);
+    function showMenu(menuContent) {
+        pieMenu.menuItems = [];
+        pieMenu.popup(root.width / 2, root.height / 2); // Workaround for PieMenu bug
+        for (var key in menuContent) {
+            var newItem = pieMenu.addItem(key);
+            newItem.iconSource = "/icons/" + menuContent[key];
+        }
+        pieMenu.popup(root.width / 2, root.height / 2);
     }
 
     PieMenu {
@@ -31,23 +31,11 @@ Window {
         width: Screen.desktopAvailableWidth / 1.5
         height: Screen.desktopAvailableHeight / 1.5
 
-        triggerMode: TriggerMode.TriggerOnRelease
+        triggerMode: TriggerMode.TriggerOnPress
 
         style: PieMenuStyle {
             startAngle: 0
             endAngle: 360
-        }
-
-        Component.onCompleted: {
-            var itemKeys = pieMenuItems.keys();
-
-            for (var i = 0; i < itemKeys.length; i++) {
-                var menuItem = itemKeys[i];
-                var newItem = pieMenu.addItem(menuItem);
-                newItem.iconSource = "/icons/" + pieMenuItems[menuItem];
-            }
-            pieMenu.update();
-            pressAndHoldTimer.start();
         }
     }
 }

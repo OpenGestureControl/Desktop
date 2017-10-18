@@ -44,7 +44,7 @@ Window {
             for (var i = 0; i < itemKeys.length; i++) {
                 var menuItem = itemKeys[i];
                 var newItem = pieMenu.addItem(menuItem);
-                newItem.iconSource = applicationPath + "/icons/" + pieMenuItems[menuItem];
+                newItem.iconSource = "/icons/" + pieMenuItems[menuItem];
             }
             pieMenu.update();
             pressAndHoldTimer.start();

@@ -18,9 +18,9 @@ int main(int argc, char *argv[])
     translator.load(QLocale(), "", "i18n", ".qm");
     app.installTranslator(&translator);
 
-    PieMenu pieMenu(qApp->applicationDirPath());
+    PieMenu pieMenu(0);
 
-    QSystemTrayIcon tray(QIcon(qApp->applicationDirPath() + "/icons/app.png"), &app);
+    QSystemTrayIcon tray(QIcon(":/icons/app.png"), &app);
 
     QMenu trayMenu;
     trayMenu.addAction(QObject::tr("Open menu"), std::bind(&PieMenu::open, &pieMenu));

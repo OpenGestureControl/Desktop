@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     translator.load(QLocale(), "", "i18n", ".qm");
     app.installTranslator(&translator);
 
-    PieMenu pieMenu(0);
+    PieMenu pieMenu;
 
     QSystemTrayIcon tray(QIcon(":/icons/app.png"), &app);
 

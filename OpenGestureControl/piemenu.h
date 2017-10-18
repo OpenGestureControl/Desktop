@@ -10,7 +10,7 @@ class PieMenu : public QObject
 {
     Q_OBJECT
 public:
-    explicit PieMenu(QObject *parent = 0);
+    explicit PieMenu(QObject *parent = Q_NULLPTR);
     void open();
     void close();
 

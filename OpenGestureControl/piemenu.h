@@ -14,12 +14,11 @@ public:
     void open();
     void close();
 
-    bool isOpen;
+    bool isOpen();
 
 private:
     QString appPath;
     QQmlApplicationEngine engine;
-    QQmlPropertyMap itemMap;
 
 signals:
 

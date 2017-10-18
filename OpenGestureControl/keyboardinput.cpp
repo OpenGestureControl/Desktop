@@ -19,7 +19,7 @@ PieMenu * pieMenuPtr = NULL;
 
         if (wParam == WM_KEYDOWN)
         {
-            if(pieMenuPtr->isOpen) {
+            if(pieMenuPtr->isOpen()) {
                 pieMenuPtr->close();
             }
             else {

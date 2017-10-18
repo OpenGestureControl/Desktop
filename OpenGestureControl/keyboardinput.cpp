@@ -1,7 +1,5 @@
 #include "keyboardinput.h"
 
-#include <QTime>
-#include <QChar>
 #include <iostream>
 #include <windows.h>
 //#pragma comment(lib, "user32.lib")

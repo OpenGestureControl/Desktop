@@ -12,6 +12,9 @@ class PieMenu : public QObject
 public:
     explicit PieMenu(const QString appPath, QObject *parent = 0);
     void open();
+    void close();
+
+    bool isOpen;
 
 private:
     QString appPath;

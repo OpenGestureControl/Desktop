@@ -4,7 +4,8 @@ QT += qml quick widgets
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    piemenu.cpp
+    piemenu.cpp \
+    keyboardinput.cpp
 
 RESOURCES += qml.qrc
 
@@ -33,12 +34,13 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 CONFIG += console
 
 DISTFILES += \
-    icons/Back_222222_500px.png \
-    icons/Close_222222_500px.png \
-    icons/Refresh_222222_500px.png \
-    icons/Search_222222_500px.png \
-    icons/app.png
+    icons/app.png \
+    icons/Back_500px.png \
+    icons/Close_500px.png \
+    icons/Refresh_500px.png \
+    icons/Search_500px.png
 
 HEADERS += \
     piemenu.h \
-    piemenu.h
+    piemenu.h \
+    keyboardinput.h

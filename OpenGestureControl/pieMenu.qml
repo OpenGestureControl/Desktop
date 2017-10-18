@@ -9,6 +9,7 @@ Window {
     visible: true
     width: Screen.desktopAvailableWidth
     height: Screen.desktopAvailableHeight
+
     title: qsTr("Input gesture")
 
     flags: Qt.FramelessWindowHint | Qt.WA_TranslucentBackground

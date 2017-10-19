@@ -23,26 +23,34 @@
 #ifndef PIEMENU_H
 #define PIEMENU_H
 
+#include <functional>
+
 #include <QObject>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQmlPropertyMap>
+#include <QWindow>
+
+#include "callbackhandler.h"
 
 class PieMenu : public QObject
 {
     Q_OBJECT
 public:
     explicit PieMenu(QObject *parent = Q_NULLPTR);
-    void open();
+    void open(QVariantMap *itemMap, CallbackHandler *callbackHandler);
     void close();
 
     bool isOpen();
 
 private:
+    QObject *window;
     QString appPath;
     QQmlApplicationEngine engine;
+    QMetaObject::Connection activeCallbackConnection;
 
 signals:
+    void optionSelected(QString optionName);
 
 public slots:
 };

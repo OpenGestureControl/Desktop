@@ -37,12 +37,15 @@ Window {
 
     color: Qt.rgba(0, 0, 0, 0.2)
 
+    signal optionSelected(string optionName)
+
     function showMenu(menuContent) {
         pieMenu.menuItems = [];
         pieMenu.popup(root.width / 2, root.height / 2); // Workaround for PieMenu bug
         for (var key in menuContent) {
             var newItem = pieMenu.addItem(key);
             newItem.iconSource = "/icons/" + menuContent[key];
+            newItem.triggered.connect(function() { optionSelected(pieMenu.lastItem.text) });
         }
         pieMenu.popup(root.width / 2, root.height / 2);
     }
@@ -55,9 +58,23 @@ Window {
 
         triggerMode: TriggerMode.TriggerOnPress
 
+        property var lastItem: null
+
+        onCurrentItemChanged: {
+            if (pieMenu.currentItem != null) {
+                pieMenu.lastItem = pieMenu.currentItem;
+            }
+        }
+
         style: PieMenuStyle {
             startAngle: 0
             endAngle: 360
+        }
+
+        onVisibleChanged: {
+            if (!pieMenu.visible) {
+                root.visible = false;
+            }
         }
     }
 }

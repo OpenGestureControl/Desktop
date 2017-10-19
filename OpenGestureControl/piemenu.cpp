@@ -21,35 +21,35 @@
 */
 
 #include "piemenu.h"
-#include <QWindow>
 
 PieMenu::PieMenu(QObject *parent) : QObject(parent)
 {
     this->appPath = appPath;
     this->engine.rootContext()->setContextProperty("applicationPath", "file://" + this->appPath + "/");
     this->engine.load(QUrl(QStringLiteral("qrc:/pieMenu.qml")));
+    this->window = this->engine.rootObjects()[0];
 }
 
 bool PieMenu::isOpen()
 {
-    return this->engine.rootObjects()[0]->property("visible").toBool();
+    return this->window->property("visible").toBool();
 }
 
-void PieMenu::open()
+void PieMenu::open(QVariantMap *itemMap, CallbackHandler *callbackHandler)
 {
-    QVariantMap itemMap;
-    itemMap.insert("Back", "Back_500px.png");
-    itemMap.insert("Close", "Close_500px.png");
-    itemMap.insert("Refresh", "Refresh_500px.png");
+    if (this->activeCallbackConnection) {
+        disconnect(this->activeCallbackConnection);
+    }
+    this->activeCallbackConnection = connect(this->window, SIGNAL(optionSelected(QString)), callbackHandler, SLOT(handle(QString)));
 
-    this->engine.rootObjects()[0]->setProperty("visible", true);
-    ((QWindow*) this->engine.rootObjects()[0])->requestActivate();
-    QMetaObject::invokeMethod(this->engine.rootObjects()[0],
+    this->window->setProperty("visible", true);
+    ((QWindow*) this->window)->requestActivate();
+    QMetaObject::invokeMethod(window,
             "showMenu",
-            Q_ARG(QVariant, QVariant::fromValue(itemMap)));
+            Q_ARG(QVariant, QVariant::fromValue(*itemMap)));
 }
 
 void PieMenu::close()
 {
-    this->engine.rootObjects()[0]->setProperty("visible", false);
+    this->window->setProperty("visible", false);
 }

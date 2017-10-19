@@ -27,7 +27,8 @@ CONFIG += c++11
 
 SOURCES += main.cpp \
     piemenu.cpp \
-    keyboardinput.cpp
+    keyboardinput.cpp \
+    callbackhandler.cpp
 
 RESOURCES += qml.qrc
 
@@ -58,4 +59,5 @@ CONFIG += console
 
 HEADERS += \
     piemenu.h \
-    keyboardinput.h
+    keyboardinput.h \
+    callbackhandler.h

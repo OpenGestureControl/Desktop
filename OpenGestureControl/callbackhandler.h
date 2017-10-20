@@ -37,6 +37,10 @@ class CallbackHandler : public QObject
 public:
     explicit CallbackHandler(QObject *parent = 0);
 
+private:
+#ifdef Q_OS_WIN32
+    HWND lastProcess;
+#endif // Q_OS_WIN32
 signals:
 
 public slots:

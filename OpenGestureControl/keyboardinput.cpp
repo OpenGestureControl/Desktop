@@ -22,15 +22,7 @@
 
 #include "keyboardinput.h"
 
-#include <iostream>
-#ifdef Q_OS_WIN32
-    #include <windows.h>
-    //#pragma comment(lib, "user32.lib")
-#endif
-
 PieMenu *pieMenuPtr = NULL;
-QVariantMap *itemMapPtr = NULL;
-CallbackHandler *callbackPtr = NULL;
 
 #ifdef Q_OS_WIN32
     HHOOK hHook = NULL;
@@ -47,7 +39,7 @@ CallbackHandler *callbackPtr = NULL;
                 pieMenuPtr->close();
             }
             else {
-                pieMenuPtr->open(itemMapPtr, callbackPtr);
+                pieMenuPtr->open();
             }
         }
 
@@ -55,11 +47,9 @@ CallbackHandler *callbackPtr = NULL;
     }
 #endif // Q_OS_WIN32
 
-KeyBoardInput::KeyBoardInput(PieMenu *menu, QVariantMap *itemMap, CallbackHandler *callbackHandler)
+KeyBoardInput::KeyBoardInput(PieMenu *menu)
 {
     pieMenuPtr = menu;
-    itemMapPtr = itemMap;
-    callbackPtr = callbackHandler;
 
 #ifdef Q_OS_WIN32
     hHook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, NULL, 0);

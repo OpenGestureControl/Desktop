@@ -29,6 +29,12 @@ PieMenu::PieMenu(QObject *parent) : QObject(parent)
     this->engine.load(QUrl(QStringLiteral("qrc:/pieMenu.qml")));
     this->window = this->engine.rootObjects()[0];
     lastForegroundProcess = NULL;
+
+    // Temp
+    itemMap.insert("Back", "Back_500px.png");
+    itemMap.insert("Close", "Close_500px.png");
+    itemMap.insert("Refresh", "Refresh_500px.png");
+    // End temp
 }
 
 bool PieMenu::isOpen()
@@ -36,36 +42,23 @@ bool PieMenu::isOpen()
     return this->window->property("visible").toBool();
 }
 
-void PieMenu::open(QVariantMap *itemMap, CallbackHandler *callbackHandler)
+void PieMenu::open()
 {
-#ifdef Q_OS_WIN32
-    lastForegroundProcess = GetForegroundWindow();
-    std::cout << lastForegroundProcess << "\n";
-#endif // Q_OS_WIN32
+    CallbackHandler *callbackHandler = new CallbackHandler;
 
     if (this->activeCallbackConnection) {
         disconnect(this->activeCallbackConnection);
     }
-    //this->activeCallbackConnection = connect(this->window, SIGNAL(optionSelected(QString)), this->window, SLOT(handle(QString)));
     this->activeCallbackConnection = connect(this->window, SIGNAL(optionSelected(QString)), callbackHandler, SLOT(handle(QString)));
 
     this->window->setProperty("visible", true);
     ((QWindow*) this->window)->requestActivate();
     QMetaObject::invokeMethod(window,
             "showMenu",
-            Q_ARG(QVariant, QVariant::fromValue(*itemMap)));
+            Q_ARG(QVariant, QVariant::fromValue(itemMap)));
 }
 
 void PieMenu::close()
 {
     this->window->setProperty("visible", false);
-    std::cout << GetForegroundWindow() << "\n";
-    SetForegroundWindow(lastForegroundProcess); //0x205ec
-}
-
-void PieMenu::getWindowProcess()
-{
-#ifdef Q_OS_WIN32
-    lastForegroundProcess = GetForegroundWindow();
-#endif // Q_OS_WIN32
 }

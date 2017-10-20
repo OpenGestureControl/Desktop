@@ -23,12 +23,18 @@
 #ifndef KEYBOARDINPUT_H
 #define KEYBOARDINPUT_H
 
+#include <iostream>
+
+#ifdef Q_OS_WIN32
+    #include <windows.h>
+#endif // Q_OS_WIN32
+
 #include "piemenu.h"
 
 class KeyBoardInput
 {
     public:
-        KeyBoardInput(PieMenu *menu, QVariantMap *itemMap, CallbackHandler *callbackHandler);
+        KeyBoardInput(PieMenu *menu);
 };
 
 #endif // KEYBOARDINPUT_H

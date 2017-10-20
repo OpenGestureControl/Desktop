@@ -26,6 +26,7 @@
 #include <functional>
 
 #include <QObject>
+#include <QString>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQmlPropertyMap>
@@ -51,12 +52,11 @@ private:
     QMetaObject::Connection activeCallbackConnection;
     QVariantMap itemMap;
 
-    HWND lastForegroundProcess;
-
 signals:
     void optionSelected(QString optionName);
 
 public slots:
+    void close(QString _);
 };
 
 #endif // PIEMENU_H

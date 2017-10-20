@@ -45,9 +45,16 @@ void PieMenu::open(QVariantMap *itemMap, CallbackHandler *callbackHandler)
 
     this->window->setProperty("visible", true);
     ((QWindow*) this->window)->requestActivate();
-    QMetaObject::invokeMethod(window,
+    QMetaObject::invokeMethod(this->window,
             "showMenu",
             Q_ARG(QVariant, QVariant::fromValue(*itemMap)));
+}
+
+void PieMenu::setActive(int degrees)
+{
+    QMetaObject::invokeMethod(this->window,
+            "setActiveEntry",
+            Q_ARG(QVariant, degrees));
 }
 
 void PieMenu::close(QString _)

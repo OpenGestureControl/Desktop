@@ -40,6 +40,7 @@ class PieMenu : public QObject
 public:
     explicit PieMenu(QObject *parent = Q_NULLPTR);
     void open(QVariantMap *itemMap, CallbackHandler *callbackHandler);
+    void setActive(int degrees);
     void close();
 
     bool isOpen();

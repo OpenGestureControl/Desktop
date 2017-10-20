@@ -39,49 +39,55 @@ Window {
 
     signal optionSelected(string optionName)
 
-    function showMenu(menuContent) {
-        var menuKeys = Object.keys(menuContent);
-
-        var translator;
-        // FIXME: Make less ugly
-        switch(menuKeys.length) {
+    function _getTranslator(itemCount) {
+        switch(itemCount) {
         case 1:
-            translator = [1];
-            break;
+            return [1];
         case 2:
-            translator = [5, 3];
-            break;
+            return [5, 3];
         case 3:
-            translator = [1, 8, 6];
-            break;
+            return [1, 8, 6];
         case 4:
-            translator = [1, 5, 7, 3];
-            break;
+            return [1, 5, 7, 3];
         case 5:
-            translator = [1, 5, 8, 6, 3];
-            break;
+            return [1, 5, 8, 6, 3];
         case 6:
-            translator = [2, 5, 8, 6, 3, 0];
-            break;
+            return [2, 5, 8, 6, 3, 0];
         case 7:
-            translator = [1, 2, 5, 8, 6, 3, 0];
-            break;
+            return [1, 2, 5, 8, 6, 3, 0];
         case 8:
-            translator = [1, 2, 5, 8, 7, 6, 3, 0];
-            break;
+            return [1, 2, 5, 8, 7, 6, 3, 0];
         default:
             return;
         }
+    }
+
+    function showMenu(menuContent) {
+        var menuKeys = Object.keys(menuContent);
+        var translator = _getTranslator(menuKeys.length);
 
         for (var i = 0; i < menuKeys.length; i++) {
             var item = pieMenu.children[translator[i]];
+            item.identifierId = translator[i]
             item.identifierText = menuKeys[i];
             item.imageURL = "/icons/" + menuContent[menuKeys[i]];
         }
+
+        pieMenu.containCount = menuKeys.length
+    }
+
+    function setActiveEntry(degrees) {
+        var degreesPerEntry = 360 / pieMenu.containCount;
+        var section = parseInt((degrees + (0.5 * degreesPerEntry)) / degreesPerEntry) % pieMenu.containCount
+        pieMenu.activeButtonId = _getTranslator(pieMenu.containCount)[section];
     }
 
     GridLayout {
         id: pieMenu
+
+        property int activeButtonId: -1
+        property int containCount: 0
+
         width: root.width / 1.5
         height: root.height / 1.5
 
@@ -96,6 +102,7 @@ Window {
         Repeater {
             model: 9
             Button {
+                property int identifierId: -1
                 property string identifierText: ""
                 property string imageURL: ""
 
@@ -106,7 +113,7 @@ Window {
 
                 style: ButtonStyle {
                     background: Rectangle {
-                        color: control.hovered ? "white" : Qt.darker("white")
+                        color: control.identifierId == pieMenu.activeButtonId ? "white" : Qt.darker("white")
                         radius: 99999999
                     }
                 }

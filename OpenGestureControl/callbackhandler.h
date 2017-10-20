@@ -27,6 +27,10 @@
 #include <QObject>
 #include <QString>
 
+#ifdef Q_OS_WIN32
+    #include <windows.h>
+#endif
+
 class CallbackHandler : public QObject
 {
     Q_OBJECT

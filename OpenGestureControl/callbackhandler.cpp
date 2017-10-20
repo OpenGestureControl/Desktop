@@ -30,4 +30,7 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 void CallbackHandler::handle(QString optionName)
 {
     qWarning() << optionName;
+    HWND curr = (HWND)0x205ec;
+    ShowWindow(curr, 9);
+    SetForegroundWindow(curr); //0x205ec
 }

@@ -28,7 +28,7 @@ PieMenu::PieMenu(QObject *parent) : QObject(parent)
     this->engine.rootContext()->setContextProperty("applicationPath", "file://" + this->appPath + "/");
     this->engine.load(QUrl(QStringLiteral("qrc:/pieMenu.qml")));
     this->window = this->engine.rootObjects()[0];
-    lastForeGroundProcess = NULL;
+    lastForegroundProcess = NULL;
 }
 
 bool PieMenu::isOpen()
@@ -39,19 +39,14 @@ bool PieMenu::isOpen()
 void PieMenu::open(QVariantMap *itemMap, CallbackHandler *callbackHandler)
 {
 #ifdef Q_OS_WIN32
-    //SetForegroundWindow(lastForeGroundProcess);
-    //std::cout << lastForeGroundProcess << "\n";
-    lastForeGroundProcess = GetForegroundWindow();
-    std::cout << lastForeGroundProcess << "\n";
-    //DWORD proccesID = 0;
-    //GetWindowThreadProcessId(test, &proccesID);
-    //std::cout << proccesID << "\n";
-
+    lastForegroundProcess = GetForegroundWindow();
+    std::cout << lastForegroundProcess << "\n";
 #endif // Q_OS_WIN32
 
     if (this->activeCallbackConnection) {
         disconnect(this->activeCallbackConnection);
     }
+    //this->activeCallbackConnection = connect(this->window, SIGNAL(optionSelected(QString)), this->window, SLOT(handle(QString)));
     this->activeCallbackConnection = connect(this->window, SIGNAL(optionSelected(QString)), callbackHandler, SLOT(handle(QString)));
 
     this->window->setProperty("visible", true);
@@ -65,5 +60,12 @@ void PieMenu::close()
 {
     this->window->setProperty("visible", false);
     std::cout << GetForegroundWindow() << "\n";
-    SetForegroundWindow(lastForeGroundProcess); //0x205ec
+    SetForegroundWindow(lastForegroundProcess); //0x205ec
+}
+
+void PieMenu::getWindowProcess()
+{
+#ifdef Q_OS_WIN32
+    lastForegroundProcess = GetForegroundWindow();
+#endif // Q_OS_WIN32
 }

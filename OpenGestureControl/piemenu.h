@@ -53,11 +53,13 @@ private:
     QString appPath;
     QQmlApplicationEngine engine;
     QMetaObject::Connection activeCallbackConnection;
+    HWND lastForegroundProcess;
 
 signals:
     void optionSelected(QString optionName);
 
 public slots:
+    void getWindowProcess();
 };
 
 #endif // PIEMENU_H

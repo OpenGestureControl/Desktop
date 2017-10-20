@@ -27,12 +27,20 @@
 #include <QObject>
 #include <QString>
 
+#ifdef Q_OS_WIN32
+    #include <windows.h>
+#endif
+
 class CallbackHandler : public QObject
 {
     Q_OBJECT
 public:
     explicit CallbackHandler(QObject *parent = 0);
 
+private:
+#ifdef Q_OS_WIN32
+    HWND lastProcess;
+#endif // Q_OS_WIN32
 signals:
 
 public slots:

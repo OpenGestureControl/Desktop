@@ -22,13 +22,8 @@
 
 #include "keyboardinput.h"
 
-#include <iostream>
-#ifdef Q_OS_WIN32
-    #include <windows.h>
-    //#pragma comment(lib, "user32.lib")
-#endif
+PieMenu *pieMenuPtr = NULL;
 
-PieMenu * pieMenuPtr = NULL;
 #ifdef Q_OS_WIN32
     HHOOK hHook = NULL;
 
@@ -37,10 +32,9 @@ PieMenu * pieMenuPtr = NULL;
         //WPARAM is signal
         //LPARAM is signal information
 
-        std::cout << "Key Pressed!\n";
-
         if (wParam == WM_KEYDOWN)
         {
+            std::cout << "Key Pressed!\n";
             if(pieMenuPtr->isOpen()) {
                 pieMenuPtr->close();
             }
@@ -51,7 +45,7 @@ PieMenu * pieMenuPtr = NULL;
 
         return CallNextHookEx(hHook, nCode, wParam, lParam);
     }
-#endif
+#endif // Q_OS_WIN32
 
 KeyBoardInput::KeyBoardInput(PieMenu *menu)
 {
@@ -64,5 +58,5 @@ KeyBoardInput::KeyBoardInput(PieMenu *menu)
     {
         printf("Hook Failed\n");
     }
-#endif
+#endif // Q_OS_WIN32
 }

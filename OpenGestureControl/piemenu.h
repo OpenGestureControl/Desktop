@@ -31,6 +31,7 @@
 #include <QQmlContext>
 #include <QQmlPropertyMap>
 #include <QWindow>
+#include <iostream>
 
 #include "callbackhandler.h"
 
@@ -39,7 +40,7 @@ class PieMenu : public QObject
     Q_OBJECT
 public:
     explicit PieMenu(QObject *parent = Q_NULLPTR);
-    void open(QVariantMap *itemMap, CallbackHandler *callbackHandler);
+    void open();
     void setActive(int degrees);
     void close();
 
@@ -50,6 +51,7 @@ private:
     QString appPath;
     QQmlApplicationEngine engine;
     QMetaObject::Connection activeCallbackConnection;
+    QVariantMap itemMap;
 
 signals:
     void optionSelected(QString optionName);

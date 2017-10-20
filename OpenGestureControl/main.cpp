@@ -21,7 +21,6 @@
 */
 
 #include <functional>
-
 #include <QApplication>
 #include <QDebug>
 #include <QMenu>
@@ -29,8 +28,8 @@
 #include <QSystemTrayIcon>
 #include <QTranslator>
 
-#include "callbackhandler.h"
 #include "piemenu.h"
+
 #ifdef Q_OS_WIN32
     #include "keyboardinput.h"
 #endif
@@ -48,17 +47,8 @@ int main(int argc, char *argv[])
 
     QSystemTrayIcon tray(QIcon(":/icons/app.png"), &app);
 
-    // Temp
-    QVariantMap itemMap;
-    itemMap.insert("Back", "Back_500px.png");
-    itemMap.insert("Close", "Close_500px.png");
-    itemMap.insert("Refresh", "Refresh_500px.png");
-    // End temp
-
-    CallbackHandler callbackHandler;
-
     QMenu trayMenu;
-    trayMenu.addAction(QObject::tr("Open menu"), std::bind(&PieMenu::open, &pieMenu, &itemMap, &callbackHandler));
+    trayMenu.addAction(QObject::tr("Open menu"), std::bind(&PieMenu::open, &pieMenu));
     trayMenu.addAction(QObject::tr("&Quit"), qApp, &QApplication::quit);
 
     tray.setContextMenu(&trayMenu);
@@ -66,7 +56,7 @@ int main(int argc, char *argv[])
 
 #ifdef Q_OS_WIN32
     KeyBoardInput keyboardinput(&pieMenu);
-#endif
+#endif // Q_OS_WIN32
 
     return app.exec();
 }

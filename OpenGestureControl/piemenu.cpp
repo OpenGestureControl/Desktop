@@ -28,6 +28,7 @@ PieMenu::PieMenu(QObject *parent) : QObject(parent)
     this->engine.rootContext()->setContextProperty("applicationPath", "file://" + this->appPath + "/");
     this->engine.load(QUrl(QStringLiteral("qrc:/pieMenu.qml")));
     this->window = this->engine.rootObjects()[0];
+    connect(this->window, SIGNAL(optionSelected(QString)), this, SLOT(close(QString)));
 }
 
 bool PieMenu::isOpen()
@@ -49,7 +50,7 @@ void PieMenu::open(QVariantMap *itemMap, CallbackHandler *callbackHandler)
             Q_ARG(QVariant, QVariant::fromValue(*itemMap)));
 }
 
-void PieMenu::close()
+void PieMenu::close(QString _)
 {
     this->window->setProperty("visible", false);
 }

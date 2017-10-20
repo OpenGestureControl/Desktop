@@ -26,6 +26,7 @@
 #include <functional>
 
 #include <QObject>
+#include <QString>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQmlPropertyMap>
@@ -53,6 +54,7 @@ signals:
     void optionSelected(QString optionName);
 
 public slots:
+    void close(QString _);
 };
 
 #endif // PIEMENU_H

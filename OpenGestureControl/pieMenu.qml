@@ -24,7 +24,7 @@ import QtQuick 2.6
 import QtQuick.Window 2.2
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
-import QtQuick.Extras 1.4
+import QtQuick.Layouts 1.3
 
 Window {
     id: root
@@ -40,40 +40,92 @@ Window {
     signal optionSelected(string optionName)
 
     function showMenu(menuContent) {
-        pieMenu.menuItems = [];
-        pieMenu.popup(root.width / 2, root.height / 2); // Workaround for PieMenu bug
-        for (var key in menuContent) {
-            var newItem = pieMenu.addItem(key);
-            newItem.iconSource = "/icons/" + menuContent[key];
-            newItem.triggered.connect(function() { optionSelected(pieMenu.lastItem.text) });
+        var menuKeys = Object.keys(menuContent);
+
+        var translator;
+        // FIXME: Make less ugly
+        switch(menuKeys.length) {
+        case 1:
+            translator = [1];
+            break;
+        case 2:
+            translator = [5, 3];
+            break;
+        case 3:
+            translator = [1, 8, 6];
+            break;
+        case 4:
+            translator = [1, 5, 7, 3];
+            break;
+        case 5:
+            translator = [1, 5, 8, 6, 3];
+            break;
+        case 6:
+            translator = [2, 5, 8, 6, 3, 0];
+            break;
+        case 7:
+            translator = [1, 2, 5, 8, 6, 3, 0];
+            break;
+        case 8:
+            translator = [1, 2, 5, 8, 7, 6, 3, 0];
+            break;
+        default:
+            return;
         }
-        pieMenu.popup(root.width / 2, root.height / 2);
+
+        for (var i = 0; i < menuKeys.length; i++) {
+            var item = pieMenu.children[translator[i]];
+            item.identifierText = menuKeys[i];
+            item.imageURL = "/icons/" + menuContent[menuKeys[i]];
+        }
     }
 
-    PieMenu {
+    GridLayout {
         id: pieMenu
+        width: root.width / 1.5
+        height: root.height / 1.5
 
-        width: Screen.desktopAvailableWidth / 1.5
-        height: Screen.desktopAvailableHeight / 1.5
-
-        triggerMode: TriggerMode.TriggerOnPress
-
-        property var lastItem: null
-
-        onCurrentItemChanged: {
-            if (pieMenu.currentItem != null) {
-                pieMenu.lastItem = pieMenu.currentItem;
-            }
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            verticalCenter: parent.verticalCenter
         }
 
-        style: PieMenuStyle {
-            startAngle: 0
-            endAngle: 360
-        }
+        columns: 3
+        rows: 3
 
-        onVisibleChanged: {
-            if (!pieMenu.visible) {
-                root.visible = false;
+        Repeater {
+            model: 9
+            Button {
+                property string identifierText: ""
+                property string imageURL: ""
+
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+
+                width: this.height
+
+                style: ButtonStyle {
+                    background: Rectangle {
+                        color: control.hovered ? "white" : Qt.darker("white")
+                        radius: 99999999
+                    }
+                }
+
+                opacity: this.identifierText ? 0.8 : 0
+
+                onClicked: if (this.identifierText) { optionSelected(this.identifierText) }
+
+                Image {
+                    anchors {
+                        fill: parent
+                        leftMargin: 0.1 * parent.width
+                        rightMargin: 0.1 * parent.width
+                        topMargin: 0.1 * parent.height
+                        bottomMargin: 0.1 * parent.height
+                    }
+                    source: imageURL
+                    fillMode: Image.PreserveAspectFit
+                }
             }
         }
     }

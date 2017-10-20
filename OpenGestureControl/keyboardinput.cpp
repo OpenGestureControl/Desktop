@@ -28,7 +28,10 @@
     //#pragma comment(lib, "user32.lib")
 #endif
 
-PieMenu * pieMenuPtr = NULL;
+PieMenu *pieMenuPtr = NULL;
+QVariantMap *itemMapPtr = NULL;
+CallbackHandler *callbackPtr = NULL;
+
 #ifdef Q_OS_WIN32
     HHOOK hHook = NULL;
 
@@ -37,25 +40,26 @@ PieMenu * pieMenuPtr = NULL;
         //WPARAM is signal
         //LPARAM is signal information
 
-        std::cout << "Key Pressed!\n";
-
         if (wParam == WM_KEYDOWN)
         {
+            std::cout << "Key Pressed!\n";
             if(pieMenuPtr->isOpen()) {
                 pieMenuPtr->close();
             }
             else {
-                pieMenuPtr->open();
+                pieMenuPtr->open(itemMapPtr, callbackPtr);
             }
         }
 
         return CallNextHookEx(hHook, nCode, wParam, lParam);
     }
-#endif
+#endif // Q_OS_WIN32
 
-KeyBoardInput::KeyBoardInput(PieMenu *menu)
+KeyBoardInput::KeyBoardInput(PieMenu *menu, QVariantMap *itemMap, CallbackHandler *callbackHandler)
 {
     pieMenuPtr = menu;
+    itemMapPtr = itemMap;
+    callbackPtr = callbackHandler;
 
 #ifdef Q_OS_WIN32
     hHook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, NULL, 0);
@@ -64,5 +68,5 @@ KeyBoardInput::KeyBoardInput(PieMenu *menu)
     {
         printf("Hook Failed\n");
     }
-#endif
+#endif // Q_OS_WIN32
 }

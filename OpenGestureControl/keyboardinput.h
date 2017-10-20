@@ -28,7 +28,7 @@
 class KeyBoardInput
 {
     public:
-        KeyBoardInput(PieMenu *menu);
+        KeyBoardInput(PieMenu *menu, QVariantMap *itemMap, CallbackHandler *callbackHandler);
 };
 
 #endif // KEYBOARDINPUT_H

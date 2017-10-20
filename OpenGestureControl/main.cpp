@@ -21,7 +21,6 @@
 */
 
 #include <functional>
-
 #include <QApplication>
 #include <QDebug>
 #include <QMenu>
@@ -31,6 +30,7 @@
 
 #include "callbackhandler.h"
 #include "piemenu.h"
+
 #ifdef Q_OS_WIN32
     #include "keyboardinput.h"
 #endif
@@ -65,8 +65,8 @@ int main(int argc, char *argv[])
     tray.show();
 
 #ifdef Q_OS_WIN32
-    KeyBoardInput keyboardinput(&pieMenu);
-#endif
+    KeyBoardInput keyboardinput(&pieMenu, &itemMap, &callbackHandler);
+#endif // Q_OS_WIN32
 
     return app.exec();
 }

@@ -31,6 +31,11 @@
 #include <QQmlPropertyMap>
 #include <QWindow>
 
+#include <iostream>
+#ifdef Q_OS_WIN32
+    #include <windows.h>
+#endif
+
 #include "callbackhandler.h"
 
 class PieMenu : public QObject

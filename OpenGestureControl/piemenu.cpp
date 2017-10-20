@@ -28,6 +28,13 @@ PieMenu::PieMenu(QObject *parent) : QObject(parent)
     this->engine.rootContext()->setContextProperty("applicationPath", "file://" + this->appPath + "/");
     this->engine.load(QUrl(QStringLiteral("qrc:/pieMenu.qml")));
     this->window = this->engine.rootObjects()[0];
+
+    // Temp
+    itemMap.insert("Back", "Back_500px.png");
+    itemMap.insert("Close", "Close_500px.png");
+    itemMap.insert("Refresh", "Refresh_500px.png");
+    // End temp
+
     connect(this->window, SIGNAL(optionSelected(QString)), this, SLOT(close(QString)));
 }
 
@@ -36,8 +43,10 @@ bool PieMenu::isOpen()
     return this->window->property("visible").toBool();
 }
 
-void PieMenu::open(QVariantMap *itemMap, CallbackHandler *callbackHandler)
+void PieMenu::open()
 {
+    CallbackHandler *callbackHandler = new CallbackHandler;
+
     if (this->activeCallbackConnection) {
         disconnect(this->activeCallbackConnection);
     }
@@ -47,7 +56,7 @@ void PieMenu::open(QVariantMap *itemMap, CallbackHandler *callbackHandler)
     ((QWindow*) this->window)->requestActivate();
     QMetaObject::invokeMethod(window,
             "showMenu",
-            Q_ARG(QVariant, QVariant::fromValue(*itemMap)));
+            Q_ARG(QVariant, QVariant::fromValue(itemMap)));
 }
 
 void PieMenu::close(QString _)

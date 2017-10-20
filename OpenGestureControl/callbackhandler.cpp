@@ -24,10 +24,18 @@
 
 CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 {
-
+#ifdef Q_OS_WIN32
+    this->lastProcess = GetForegroundWindow();
+#endif // Q_OS_WIN32
 }
 
 void CallbackHandler::handle(QString optionName)
 {
     qWarning() << optionName;
+#ifdef Q_OS_WIN32
+    // if minimized
+    ShowWindow(this->lastProcess, 9);
+    // if not minimized
+    SetForegroundWindow(this->lastProcess);
+#endif // Q_OS_WIN32
 }

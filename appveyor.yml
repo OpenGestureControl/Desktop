@@ -4,3 +4,8 @@ install:
 build_script:
   - qmake OpenGestureControl/OpenGestureControlCore.pro
   - mingw32-make
+
+notifications:
+  - provider: Slack
+    incoming_webhook:
+      secure: fPwOVlKwrA1/lM4+77G3P/Ptagrbja0At1OGElHm/k1entDjSZSpPCBIOQPJDxCT0ixihy6+JkyAeIt6MD1Wt5nS2IdJghge484KzTnEDTE=

@@ -36,7 +36,7 @@ PieMenu *pieMenuPtr = NULL;
         {
             std::cout << "Key Pressed!\n";
             if(pieMenuPtr->isOpen()) {
-                pieMenuPtr->close();
+                pieMenuPtr->close("");
             }
             else {
                 pieMenuPtr->open();

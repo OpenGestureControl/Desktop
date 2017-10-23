@@ -35,7 +35,7 @@ PieMenu::PieMenu(QObject *parent) : QObject(parent)
     itemMap.insert("Refresh", "Refresh_500px.png");
     // End temp
 
-    connect(this->window, SIGNAL(optionSelected(QString)), this, SLOT(close(QString)));
+    connect(this->window, SIGNAL(closeRequest()), this, SLOT(close()));
 }
 
 bool PieMenu::isOpen()
@@ -66,7 +66,7 @@ void PieMenu::setActive(int degrees)
             Q_ARG(QVariant, degrees));
 }
 
-void PieMenu::close(QString _)
+void PieMenu::close()
 {
     this->window->setProperty("visible", false);
 }

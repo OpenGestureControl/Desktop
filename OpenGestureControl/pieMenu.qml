@@ -38,6 +38,9 @@ Window {
     color: Qt.rgba(0, 0, 0, 0.2)
 
     signal optionSelected(string optionName)
+    signal closeRequest()
+
+    onOptionSelected: closeRequest()
 
     function _getTranslator(itemCount) {
         switch(itemCount) {
@@ -120,7 +123,11 @@ Window {
 
                 opacity: this.identifierText ? 0.8 : 0
 
-                onClicked: if (this.identifierText) { optionSelected(this.identifierText) }
+                onClicked: if (this.identifierText) {
+                               optionSelected(this.identifierText)
+                           } else {
+                               closeRequest()
+                           }
 
                 Image {
                     anchors {

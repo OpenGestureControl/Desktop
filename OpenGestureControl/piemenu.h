@@ -42,7 +42,6 @@ public:
     explicit PieMenu(QObject *parent = Q_NULLPTR);
     void open();
     void setActive(int degrees);
-    void close();
 
     bool isOpen();
 
@@ -57,7 +56,7 @@ signals:
     void optionSelected(QString optionName);
 
 public slots:
-    void close(QString _);
+    void close();
 };
 
 #endif // PIEMENU_H

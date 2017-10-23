@@ -34,6 +34,8 @@
     #include "keyboardinput.h"
 #endif
 
+#include <QQmlApplicationEngine>
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -57,6 +59,10 @@ int main(int argc, char *argv[])
 #ifdef Q_OS_WIN32
     KeyBoardInput keyboardinput(&pieMenu);
 #endif // Q_OS_WIN32
+
+    QQmlApplicationEngine engine;
+    engine.load(QUrl(QStringLiteral("qrc:/bluetoothManager.qml")));
+
 
     return app.exec();
 }

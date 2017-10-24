@@ -34,7 +34,7 @@
 class KeyBoardInput
 {
     public:
-        KeyBoardInput(PieMenu *menu);
+        explicit KeyBoardInput(PieMenu *menu);
 };
 
 #endif // KEYBOARDINPUT_H

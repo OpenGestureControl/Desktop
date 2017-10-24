@@ -1,0 +1,28 @@
+language: cpp
+compiler:
+  - clang
+  - gcc
+dist: trusty
+os:
+  - linux
+  - osx
+install:
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+      brew update;
+      brew ls | grep -wq qt5 || brew install qt5;
+      export PATH=$PATH:/usr/local/opt/qt5/bin;
+    fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+      sudo add-apt-repository ppa:beineri/opt-qt571-trusty -y;
+      sudo apt-get update;
+      sudo apt-get install qt57base qt57declarative qt57quickcontrols qt57quickcontrols2 -y;
+    fi
+before_script:
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then source /opt/qt57/bin/qt57-env.sh; fi
+script:
+  - cd OpenGestureControl
+  - qmake OpenGestureControlCore.pro
+  - make
+notifications:
+  slack:
+    secure: jB9HvVu16xUfR0uSNkJ6N0kPaRgqC7M6iTCsQS6zXvb2wLZum86Ipj6DRy9UzeV3VVVAcxRoMrtNIusEFWDGWkpo7/wkIjz0nrTWVx/KDuc8agN9pw/AS+o3Cf19FLNGy9/F7Az9abAYc93eFWiYpXJIyre43s7l9gxDNZluJtLXe/DKlt3JzaXV1NZ7MwH+FTpD2dpcSRti5CuVhNejwuE3j3EY7yV5fRXHcs3F5woIShA5wKixKciVue5IQe5vMoH1DGuz7fdSSv8JbGINwNRJQQmDG2OGHjWnNvJbOFm/yJIpVb9LmWy15v4V4kxZBpuIYQ1QhbD4nFUzyA8dybdnrnrrc8ZIGeOjWH/KB86gCutGRfZxd0YNZI6hF1VHw385XHbXE8Aj4e2gEiXhXQpBwCx7uGEw0IrrC6h3QKqGVC/nLXBq/6fgR575fDm/3tDUBl8rnkLoA3G1v6bTRN63e/biHyfoovz+/U0uySTTvvu2ijvFfbIk4Erpt0Koqe2ABM7wIqYi0cGTk+0Isihha2pFo8JuiH5lj7x0qHq09Krt716Wwo09SzEvDBjSyl1AcHB5ksyN4rDg8pLhApZsG+m+ih+lgjZGh7tC/pPqo5FNj1PYMH6skJ572umShYhF2N4BSwKokSzv2lyeW45MNwNw6Ijy4uEz5adVdMM=

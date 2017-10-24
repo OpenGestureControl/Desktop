@@ -20,49 +20,42 @@
    SOFTWARE.
 */
 
-#include <functional>
-#include <QApplication>
-#include <QDebug>
-#include <QMenu>
-#include <QObject>
-#include <QSystemTrayIcon>
-#include <QTranslator>
+#ifndef BLUETOOTHDEVICELIST_H
+#define BLUETOOTHDEVICELIST_H
 
-#include "bluetoothmanager.h"
-#include "piemenu.h"
+#include <QAbstractListModel>
 
-#ifdef Q_OS_WIN32
-    #include "keyboardinput.h"
-#endif
+#include "bluetoothdevice.h"
 
-#include <QQmlApplicationEngine>
-
-int main(int argc, char *argv[])
+class BluetoothDeviceListModel : public QAbstractListModel
 {
-    QApplication app(argc, argv);
-    app.setQuitOnLastWindowClosed(false);
+    Q_OBJECT
+    Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
 
-    QTranslator translator;
-    translator.load(QLocale(), "", "i18n", ".qm");
-    app.installTranslator(&translator);
+public:
+    enum BluetoothDeviceRoles {
+        NameRole = Qt::UserRole + 1,
+        DeviceIdRole
+    };
 
-    PieMenu pieMenu;
+    explicit BluetoothDeviceListModel(QObject *parent = 0);
 
-    QSystemTrayIcon tray(QIcon(":/icons/app.png"), &app);
+    int rowCount(const QModelIndex & = QModelIndex()) const override { return m_data.count(); }
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-    QMenu trayMenu;
-    trayMenu.addAction(QObject::tr("Open menu"), std::bind(&PieMenu::open, &pieMenu));
-    trayMenu.addAction(QObject::tr("&Quit"), qApp, &QApplication::quit);
+    Q_INVOKABLE BluetoothDevice* get(int index) const { return m_data.at(index); }
 
-    tray.setContextMenu(&trayMenu);
-    tray.show();
+    bool addDevice(BluetoothDevice* device);
+    void clear();
 
-#ifdef Q_OS_WIN32
-    KeyBoardInput keyboardinput(&pieMenu);
-#endif // Q_OS_WIN32
+signals:
+    void countChanged(int c);
 
-    BluetoothManager bluetoothManager;
-    bluetoothManager.openUI();
+protected:
+    QHash<int, QByteArray> roleNames() const;
 
-    return app.exec();
-}
+private:
+    QList<BluetoothDevice*> m_data;
+};
+
+#endif // BLUETOOTHDEVICELIST_H

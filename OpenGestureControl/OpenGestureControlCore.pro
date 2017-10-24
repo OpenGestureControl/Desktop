@@ -28,7 +28,10 @@ CONFIG += c++11
 SOURCES += main.cpp \
     piemenu.cpp \
     keyboardinput.cpp \
-    callbackhandler.cpp
+    callbackhandler.cpp \
+    bluetoothmanager.cpp \
+    bluetoothdevice.cpp \
+    bluetoothdevicelistmodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -60,4 +63,7 @@ CONFIG += console
 HEADERS += \
     piemenu.h \
     keyboardinput.h \
-    callbackhandler.h
+    callbackhandler.h \
+    bluetoothmanager.h \
+    bluetoothdevice.h \
+    bluetoothdevicelistmodel.h

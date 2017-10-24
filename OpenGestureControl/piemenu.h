@@ -53,7 +53,6 @@ private:
     QVariantMap itemMap;
 
 signals:
-    void optionSelected(QString optionName);
 
 public slots:
     void close();

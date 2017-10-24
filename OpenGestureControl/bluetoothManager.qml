@@ -1,3 +1,25 @@
+/*
+   Copyright (c) 2017 ICT Group
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in all
+   copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+*/
+
 import QtQuick 2.0
 import QtQuick.Window 2.2
 import QtQuick.Controls 1.4
@@ -10,7 +32,11 @@ Window {
 
     title: qsTr("OpenGestureControl - Bluetooth Manager")
 
-    visible: true
+    signal scanRequest()
+    signal connectRequest(string deviceId)
+    signal forgetRequest(string deviceId)
+
+    property string status: "IDLE"
 
     SystemPalette { id: palette; colorGroup: SystemPalette.Active }
 
@@ -20,7 +46,7 @@ Window {
         BusyIndicator {
             id: busyIndicator
 
-            visible: false
+            visible: root.status == "SCANNING"
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
         }
@@ -47,7 +73,18 @@ Window {
             ListView {
                 id: deviceList
 
-                model: 10
+                model: bluetoothDevices
+
+
+                add: Transition {
+                    NumberAnimation { property: "opacity"; to: 1; duration: 1000 }
+                }
+                displaced: Transition {
+                    NumberAnimation { properties: "x,y"; duration: 1000 }
+                }
+                remove: Transition {
+                    NumberAnimation { property: "opacity"; to: 0; duration: 1000 }
+                }
 
                 delegate: Component {
                     Item {
@@ -59,7 +96,7 @@ Window {
                         Row {
                             Text {
                                 id: text
-                                text: "Prosthetic %1 (00000000-0000-1000-8000-00805F9B34FB)".arg(model.index)
+                                text: "%1 (%2)".arg(model.name).arg(model.deviceId)
                                 height: connectButton.height
                                 width: deviceList.width - connectButton.width - forgetButton.width
                                 elide: Text.ElideRight
@@ -71,6 +108,8 @@ Window {
                                 visible: wrapper.ListView.isCurrentItem
 
                                 text: qsTr("Connect")
+
+                                onClicked: connectRequest(model.deviceId)
                             }
                             Button {
                                 id: forgetButton
@@ -78,6 +117,8 @@ Window {
                                 visible: wrapper.ListView.isCurrentItem
 
                                 text: qsTr("Forget")
+
+                                onClicked: forgetRequest(model.deviceId)
                             }
                         }
                         MouseArea {
@@ -99,30 +140,11 @@ Window {
             id: newDeviceButton
             Layout.fillWidth: true
 
-            text: qsTr("Search for devices")
+            text: root.status == "IDLE" ? qsTr("Search for devices") : qsTr("Searching...")
 
             onClicked: {
-                text = qsTr("Searching...")
-                // FIXME: Obviously, this is example code
-                deviceList.model = 0
-                busyIndicator.visible = true
-                timer.start()
-            }
-        }
-    }
-
-    // FIXME: This timer is just an example
-    Timer {
-        id: timer
-        interval: 200
-        repeat: true
-        onTriggered: {
-            if (deviceList.count < 5) {
-                deviceList.model = deviceList.count + 1
-            } else {
-                busyIndicator.visible = false
-                newDeviceButton.text = qsTr("Search for devices")
-                timer.stop()
+                root.status = "SCANNING";
+                scanRequest();
             }
         }
     }

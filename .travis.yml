@@ -11,16 +11,19 @@ install:
       brew update;
       brew ls | grep -wq qt5 || brew install qt5;
       export PATH=$PATH:/usr/local/opt/qt5/bin;
+      brew install cppcheck;
     fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       sudo add-apt-repository ppa:beineri/opt-qt571-trusty -y;
       sudo apt-get update;
       sudo apt-get install qt57base qt57declarative qt57quickcontrols qt57quickcontrols2 -y;
+      sudo apt-get install cppcheck;
     fi
 before_script:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then source /opt/qt57/bin/qt57-env.sh; fi
 script:
   - cd OpenGestureControl
+  - cppcheck --enable=all --error-exitcode=1 --quiet .
   - qmake OpenGestureControlCore.pro
   - make
 notifications:

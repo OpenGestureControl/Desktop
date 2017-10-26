@@ -42,7 +42,6 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
     HANDLE hProcess = OpenProcess( PROCESS_QUERY_INFORMATION |
                                        PROCESS_VM_READ,
                                        FALSE, processID );
-    int bufsize = GetWindowTextLength(this->lastProcess) + 1;
     LPTSTR tTitle = new WCHAR[512];
     GetModuleBaseName(hProcess, NULL, szProcessName,
                       sizeof(szProcessName)/sizeof(TCHAR));

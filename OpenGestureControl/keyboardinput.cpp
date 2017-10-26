@@ -62,12 +62,6 @@
             dwMsg += cKey.scanCode << 16;
             dwMsg += cKey.flags << 24;
 
-            int i = GetKeyNameText(dwMsg, (LPTSTR)lpszName, 255);
-
-            //Try to convert the key information
-            int result = ToUnicodeEx(cKey.vkCode, cKey.scanCode, keyboard_state, buffer, 4, 0, keyboard_layout);
-            buffer[4] = L'\0';
-
             //std::cout << "Key: " << cKey.vkCode << " " << QString::fromUtf16((ushort*)buffer).toStdString() << " " << QString::fromUtf16((ushort*)lpszName).toStdString();
             std::cout << "Key Pressed!\n";
             if(cKey.vkCode == 160) {

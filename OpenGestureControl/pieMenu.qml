@@ -66,6 +66,14 @@ Window {
     }
 
     function showMenu(menuContent) {
+        // Clear all entries
+        for (var i = 0; i < 9; i++)
+        {
+            pieMenu.children[i].identifierId = -1
+            pieMenu.children[i].identifierText = ""
+            pieMenu.children[i].imageURL = ""
+        }
+
         var menuKeys = Object.keys(menuContent);
         var translator = _getTranslator(menuKeys.length);
 

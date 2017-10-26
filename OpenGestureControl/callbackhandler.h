@@ -36,8 +36,11 @@ class CallbackHandler : public QObject
     Q_OBJECT
 public:
     explicit CallbackHandler(QObject *parent = 0);
+    QVariantMap getOptions();
 
 private:
+    QString exeTitle;
+    QVariantMap itemMap;
 #ifdef Q_OS_WIN32
     HWND lastProcess;
 #endif // Q_OS_WIN32

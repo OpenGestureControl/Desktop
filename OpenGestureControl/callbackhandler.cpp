@@ -66,17 +66,17 @@ void CallbackHandler::handle(QString optionName)
 
     if(this->exeTitle == "Spotify.exe") {
         if(optionName == "NextSong") {
-
+            keybd_event(VK_MEDIA_NEXT_TRACK, 0, 0, 0);
         } else if(optionName == "PrevSong") {
-
+            keybd_event(VK_MEDIA_PREV_TRACK, 0, 0, 0);
         } else if(optionName == "PlaySong") {
-
+            keybd_event(VK_MEDIA_PLAY_PAUSE, 0, 0, 0);
         } else if(optionName == "StopSong") {
-
+            keybd_event(VK_MEDIA_STOP, 0, 0, 0);
         } else if(optionName == "VolumeUp") {
-
+            keybd_event(VK_VOLUME_UP, 0, 0, 0);
         } else if(optionName == "VolumeDown") {
-
+            keybd_event(VK_VOLUME_DOWN, 0, 0, 0);
         }
     } else {
         if(optionName == "Back") {

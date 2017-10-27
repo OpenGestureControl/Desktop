@@ -19,14 +19,7 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 */
-#include <QUrl>
-#include <QDesktopServices>
-#include <iostream>
 #include "callbackhandler.h"
-
-#include <stdio.h>
-#include <tchar.h>
-#include <psapi.h>
 
 CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 {
@@ -46,7 +39,7 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
     GetModuleBaseName(hProcess, NULL, szProcessName,
                       sizeof(szProcessName)/sizeof(TCHAR));
     this->exeTitle = QString::fromWCharArray(szProcessName);
-    //std::cout << this->exeTitle << std::endl;
+    qWarning() << this->exeTitle;
 
 #endif // Q_OS_WIN32
 }

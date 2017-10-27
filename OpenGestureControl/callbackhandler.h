@@ -23,13 +23,18 @@
 #ifndef CALLBACKHANDLER_H
 #define CALLBACKHANDLER_H
 
+#ifdef Q_OS_WIN32
+    #include <windows.h>
+    #include <stdio.h>
+    #include <tchar.h>
+    #include <psapi.h>
+#endif
+
 #include <QDebug>
 #include <QObject>
 #include <QString>
-
-#ifdef Q_OS_WIN32
-    #include <windows.h>
-#endif
+#include <QUrl>
+#include <QDesktopServices>
 
 class CallbackHandler : public QObject
 {

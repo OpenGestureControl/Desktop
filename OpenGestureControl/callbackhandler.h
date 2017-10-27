@@ -23,11 +23,12 @@
 #ifndef CALLBACKHANDLER_H
 #define CALLBACKHANDLER_H
 
+#include <QtGlobal>
+
 #ifdef Q_OS_WIN32
-    #include <windows.h>
-    #include <stdio.h>
-    #include <tchar.h>
-    #include <psapi.h>
+#include <windows.h>
+#include <tchar.h>
+#include <psapi.h>
 #endif
 
 #include <QDebug>

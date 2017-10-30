@@ -74,17 +74,16 @@ Window {
             pieMenu.children[i].imageURL = ""
         }
 
-        var menuKeys = Object.keys(menuContent);
-        var translator = _getTranslator(menuKeys.length);
+        var translator = _getTranslator(menuContent.length / 2);
 
-        for (var i = 0; i < menuKeys.length; i++) {
-            var item = pieMenu.children[translator[i]];
-            item.identifierId = translator[i]
-            item.identifierText = menuKeys[i];
-            item.imageURL = "/icons/" + menuContent[menuKeys[i]];
+        for (var j = 0; j < menuContent.length; j+=2) {
+            var item = pieMenu.children[translator[j / 2]];
+            item.identifierId = translator[j / 2]
+            item.identifierText = menuContent[j];
+            item.imageURL = "/icons/" + menuContent[j+1];
         }
 
-        pieMenu.containCount = menuKeys.length
+        pieMenu.containCount = menuContent.length
     }
 
     function setActiveEntry(degrees) {

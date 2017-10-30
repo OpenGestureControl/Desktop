@@ -96,22 +96,42 @@ void CallbackHandler::handle(QString optionName)
     }
 #endif // Q_OS_WIN32
 }
-QVariantMap CallbackHandler::getOptions() {
+QList<QString> CallbackHandler::getOptions() {
 
     this->itemMap.clear();
     if(this->exeTitle == "Spotify.exe") {
-        this->itemMap.insert("NextSong", "Forward_500px.png");
-        this->itemMap.insert("PrevSong", "Back_500px.png");
-        this->itemMap.insert("PlaySong", "Play_500px.png");
-        this->itemMap.insert("StopSong", "Stop_500px.png");
-        this->itemMap.insert("VolumeUp", "VolumeUp_500px.png");
-        this->itemMap.insert("VolumeDown", "VolumeDown_500px.png");
+        this->itemMap.append("NextSong");
+        this->itemMap.append("Forward_500px.png");
+
+        this->itemMap.append("PrevSong");
+        this->itemMap.append("Back_500px.png");
+
+        this->itemMap.append("PlaySong");
+        this->itemMap.append("Play_500px.png");
+
+        this->itemMap.append("StopSong");
+        this->itemMap.append("Stop_500px.png");
+
+        this->itemMap.append("VolumeUp");
+        this->itemMap.append("VolumeUp_500px.png");
+
+        this->itemMap.append("VolumeDown");
+        this->itemMap.append("VolumeDown_500px.png");
     } else {
-        this->itemMap.insert("Open", "OSwindow_500px.png");
-        this->itemMap.insert("Forward", "Forward_500px.png");
-        this->itemMap.insert("Close", "Close_500px.png");
-        this->itemMap.insert("Refresh", "Refresh_500px.png");
-        this->itemMap.insert("Back", "Back_500px.png");
+        this->itemMap.append("Open");
+        this->itemMap.append("OSwindow_500px.png");
+
+        this->itemMap.append("Forward");
+        this->itemMap.append("Forward_500px.png");
+
+        this->itemMap.append("Close");
+        this->itemMap.append("Close_500px.png");
+
+        this->itemMap.append("Refresh");
+        this->itemMap.append("Refresh_500px.png");
+
+        this->itemMap.append("Back");
+        this->itemMap.append("Back_500px.png");
     }
 
     return this->itemMap;

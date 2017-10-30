@@ -99,8 +99,9 @@ Window {
         property int activeButtonId: -1
         property int containCount: 0
 
-        width: root.width / 1.5
-        height: root.height / 1.5
+        //width: root.width / 1.5
+        height: root.height / 1.2
+        width: height
 
         anchors {
             horizontalCenter: parent.horizontalCenter

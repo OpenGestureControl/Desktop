@@ -32,12 +32,9 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 
     TCHAR szProcessName[MAX_PATH] = TEXT("<unknown>");
 
-    HANDLE hProcess = OpenProcess( PROCESS_QUERY_INFORMATION |
-                                       PROCESS_VM_READ,
-                                       FALSE, processID );
-    LPTSTR tTitle = new WCHAR[512];
-    GetModuleBaseName(hProcess, NULL, szProcessName,
-                      sizeof(szProcessName)/sizeof(TCHAR));
+    HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID);
+
+    GetModuleBaseName(hProcess, NULL, szProcessName, sizeof(szProcessName)/sizeof(TCHAR));
     this->exeTitle = QString::fromWCharArray(szProcessName);
     qWarning() << this->exeTitle;
 

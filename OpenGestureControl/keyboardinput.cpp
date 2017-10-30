@@ -42,8 +42,6 @@
             //Get the key information
             KBDLLHOOKSTRUCT cKey = *((KBDLLHOOKSTRUCT*)lParam);
 
-            wchar_t buffer[5];
-
             //Get the keyboard state
             BYTE keyboard_state[256];
             GetKeyboardState(keyboard_state);
@@ -52,18 +50,14 @@
             UpdateKeyState(keyboard_state, VK_CONTROL);
             UpdateKeyState(keyboard_state, VK_MENU);
 
-            //Get keyboard layout
-            HKL keyboard_layout = GetKeyboardLayout(0);
-
-            //Get the name
-            char lpszName[0X100] = {0};
 
             DWORD dwMsg = 1;
             dwMsg += cKey.scanCode << 16;
             dwMsg += cKey.flags << 24;
 
-            //std::cout << "Key: " << cKey.vkCode << " " << QString::fromUtf16((ushort*)buffer).toStdString() << " " << QString::fromUtf16((ushort*)lpszName).toStdString();
             std::cout << "Key Pressed!\n";
+
+            // Check if pressed key is LShift
             if(cKey.vkCode == 160) {
                 if(pieMenuPtr->isOpen()) {
                     pieMenuPtr->close();

@@ -20,49 +20,36 @@
    SOFTWARE.
 */
 
-#include <functional>
-#include <QApplication>
-#include <QDebug>
-#include <QMenu>
-#include <QObject>
-#include <QSystemTrayIcon>
-#include <QTranslator>
+#include "bluetoothdevice.h"
 
-#include "bluetoothmanager.h"
-#include "piemenu.h"
-
-#ifdef Q_OS_WIN32
-    #include "keyboardinput.h"
-#endif
-
-#include <QQmlApplicationEngine>
-
-int main(int argc, char *argv[])
+BluetoothDevice::BluetoothDevice(const QString &name, const QString &deviceId, QObject *parent)
+    : QObject(parent), m_name(name), m_deviceId(deviceId)
 {
-    QApplication app(argc, argv);
-    app.setQuitOnLastWindowClosed(false);
 
-    QTranslator translator;
-    translator.load(QLocale(), "", "i18n", ".qm");
-    app.installTranslator(&translator);
+}
 
-    PieMenu pieMenu;
+QString BluetoothDevice::name() const
+{
+    return this->m_name;
+}
 
-    QSystemTrayIcon tray(QIcon(":/icons/app.png"), &app);
+QString BluetoothDevice::deviceId() const
+{
+    return this->m_deviceId;
+}
 
-    QMenu trayMenu;
-    trayMenu.addAction(QObject::tr("Open menu"), std::bind(&PieMenu::open, &pieMenu));
-    trayMenu.addAction(QObject::tr("&Quit"), qApp, &QApplication::quit);
+void BluetoothDevice::setName(const QString name)
+{
+    if (name != this->m_name) {
+        this->m_name = name;
+        emit nameChanged();
+    }
+}
 
-    tray.setContextMenu(&trayMenu);
-    tray.show();
-
-#ifdef Q_OS_WIN32
-    KeyBoardInput keyboardinput(&pieMenu);
-#endif // Q_OS_WIN32
-
-    BluetoothManager bluetoothManager;
-    bluetoothManager.openUI();
-
-    return app.exec();
+void BluetoothDevice::setDeviceId(const QString deviceId)
+{
+    if (deviceId != this->m_deviceId) {
+        this->m_deviceId = deviceId;
+        emit deviceIdChanged();
+    }
 }

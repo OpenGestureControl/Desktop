@@ -20,49 +20,37 @@
    SOFTWARE.
 */
 
-#include <functional>
-#include <QApplication>
-#include <QDebug>
-#include <QMenu>
+#ifndef BLUETOOTHDEVICE_H
+#define BLUETOOTHDEVICE_H
+
 #include <QObject>
-#include <QSystemTrayIcon>
-#include <QTranslator>
+#include <QString>
 
-#include "bluetoothmanager.h"
-#include "piemenu.h"
-
-#ifdef Q_OS_WIN32
-    #include "keyboardinput.h"
-#endif
-
-#include <QQmlApplicationEngine>
-
-int main(int argc, char *argv[])
+class BluetoothDevice : public QObject
 {
-    QApplication app(argc, argv);
-    app.setQuitOnLastWindowClosed(false);
+    Q_OBJECT
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QString deviceId READ deviceId WRITE setDeviceId NOTIFY deviceIdChanged)
 
-    QTranslator translator;
-    translator.load(QLocale(), "", "i18n", ".qm");
-    app.installTranslator(&translator);
+public:
+    explicit BluetoothDevice(QObject *parent = 0);
+    explicit BluetoothDevice(const QString &name, const QString &deviceId, QObject *parent = 0);
 
-    PieMenu pieMenu;
+    QString name() const;
+    void setName(const QString name);
 
-    QSystemTrayIcon tray(QIcon(":/icons/app.png"), &app);
+    QString deviceId() const;
+    void setDeviceId(const QString deviceId);
 
-    QMenu trayMenu;
-    trayMenu.addAction(QObject::tr("Open menu"), std::bind(&PieMenu::open, &pieMenu));
-    trayMenu.addAction(QObject::tr("&Quit"), qApp, &QApplication::quit);
+private:
+    QString m_name;
+    QString m_deviceId;
 
-    tray.setContextMenu(&trayMenu);
-    tray.show();
+signals:
+    void nameChanged();
+    void deviceIdChanged();
 
-#ifdef Q_OS_WIN32
-    KeyBoardInput keyboardinput(&pieMenu);
-#endif // Q_OS_WIN32
+public slots:
+};
 
-    BluetoothManager bluetoothManager;
-    bluetoothManager.openUI();
-
-    return app.exec();
-}
+#endif // BLUETOOTHDEVICE_H

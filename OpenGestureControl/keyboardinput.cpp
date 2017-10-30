@@ -22,10 +22,15 @@
 
 #include "keyboardinput.h"
 
-PieMenu *pieMenuPtr = NULL;
+    PieMenu *pieMenuPtr = NULL;
 
 #ifdef Q_OS_WIN32
     HHOOK hHook = NULL;
+
+    void UpdateKeyState(BYTE *keystate, int keycode)
+    {
+        keystate[keycode] = GetKeyState(keycode);
+    }
 
     LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
     {
@@ -34,12 +39,32 @@ PieMenu *pieMenuPtr = NULL;
 
         if (wParam == WM_KEYDOWN)
         {
+            //Get the key information
+            KBDLLHOOKSTRUCT cKey = *((KBDLLHOOKSTRUCT*)lParam);
+
+            //Get the keyboard state
+            BYTE keyboard_state[256];
+            GetKeyboardState(keyboard_state);
+            UpdateKeyState(keyboard_state, VK_SHIFT);
+            UpdateKeyState(keyboard_state, VK_CAPITAL);
+            UpdateKeyState(keyboard_state, VK_CONTROL);
+            UpdateKeyState(keyboard_state, VK_MENU);
+
+
+            DWORD dwMsg = 1;
+            dwMsg += cKey.scanCode << 16;
+            dwMsg += cKey.flags << 24;
+
             std::cout << "Key Pressed!\n";
-            if(pieMenuPtr->isOpen()) {
-                pieMenuPtr->close();
-            }
-            else {
-                pieMenuPtr->open();
+
+            // Check if pressed key is LShift
+            if(cKey.vkCode == 160) {
+                if(pieMenuPtr->isOpen()) {
+                    pieMenuPtr->close();
+                }
+                else {
+                    pieMenuPtr->open();
+                }
             }
         }
 

@@ -66,6 +66,14 @@ Window {
     }
 
     function showMenu(menuContent) {
+        // Clear all entries
+        for (var i = 0; i < 9; i++)
+        {
+            pieMenu.children[i].identifierId = -1
+            pieMenu.children[i].identifierText = ""
+            pieMenu.children[i].imageURL = ""
+        }
+
         var menuKeys = Object.keys(menuContent);
         var translator = _getTranslator(menuKeys.length);
 
@@ -91,8 +99,9 @@ Window {
         property int activeButtonId: -1
         property int containCount: 0
 
-        width: root.width / 1.5
-        height: root.height / 1.5
+        //width: root.width / 1.5
+        height: root.height / 1.2
+        width: height
 
         anchors {
             horizontalCenter: parent.horizontalCenter

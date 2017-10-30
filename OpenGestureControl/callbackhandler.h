@@ -23,21 +23,31 @@
 #ifndef CALLBACKHANDLER_H
 #define CALLBACKHANDLER_H
 
-#include <QDebug>
-#include <QObject>
-#include <QString>
+#include <QtGlobal>
 
 #ifdef Q_OS_WIN32
-    #include <windows.h>
+#include <windows.h>
+#include <tchar.h>
+#include <psapi.h>
 #endif
+
+#include <QDebug>
+#include <QList>
+#include <QObject>
+#include <QString>
+#include <QUrl>
+#include <QDesktopServices>
 
 class CallbackHandler : public QObject
 {
     Q_OBJECT
 public:
     explicit CallbackHandler(QObject *parent = 0);
+    QList<QString> getOptions();
 
 private:
+    QString exeTitle;
+    QList<QString> itemMap;
 #ifdef Q_OS_WIN32
     HWND lastProcess;
 #endif // Q_OS_WIN32

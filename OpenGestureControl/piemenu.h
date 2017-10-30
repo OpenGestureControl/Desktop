@@ -50,7 +50,7 @@ private:
     QString appPath;
     QQmlApplicationEngine engine;
     QMetaObject::Connection activeCallbackConnection;
-    QVariantMap itemMap;
+    CallbackHandler *callbackHandler;
 
 signals:
 

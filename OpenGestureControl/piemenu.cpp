@@ -29,13 +29,8 @@ PieMenu::PieMenu(QObject *parent) : QObject(parent)
     this->engine.load(QUrl(QStringLiteral("qrc:/pieMenu.qml")));
     this->window = this->engine.rootObjects()[0];
 
-    // Temp
-    itemMap.insert("Back", "Back_500px.png");
-    itemMap.insert("Close", "Close_500px.png");
-    itemMap.insert("Refresh", "Refresh_500px.png");
-    // End temp
-
     connect(this->window, SIGNAL(closeRequest()), this, SLOT(close()));
+    callbackHandler = NULL;
 }
 
 bool PieMenu::isOpen()
@@ -45,7 +40,10 @@ bool PieMenu::isOpen()
 
 void PieMenu::open()
 {
-    CallbackHandler *callbackHandler = new CallbackHandler;
+    if(callbackHandler) {
+        delete callbackHandler;
+    }
+    callbackHandler = new CallbackHandler;
 
     if (this->activeCallbackConnection) {
         disconnect(this->activeCallbackConnection);
@@ -56,7 +54,7 @@ void PieMenu::open()
     ((QWindow*) this->window)->requestActivate();
     QMetaObject::invokeMethod(this->window,
             "showMenu",
-            Q_ARG(QVariant, QVariant::fromValue(itemMap)));
+            Q_ARG(QVariant, QVariant::fromValue(callbackHandler->getOptions())));
 }
 
 void PieMenu::setActive(int degrees)

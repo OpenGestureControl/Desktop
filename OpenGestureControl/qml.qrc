@@ -7,5 +7,11 @@
         <file>icons/Refresh_500px.png</file>
         <file>icons/Search_500px.png</file>
         <file>bluetoothManager.qml</file>
+        <file>icons/OSwindow_500px.png</file>
+        <file>icons/Forward_500px.png</file>
+        <file>icons/Play_500px.png</file>
+        <file>icons/Stop_500px.png</file>
+        <file>icons/VolumeUp_500px.png</file>
+        <file>icons/VolumeDown_500px.png</file>
     </qresource>
 </RCC>

@@ -19,13 +19,25 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 */
-
 #include "callbackhandler.h"
 
 CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 {
 #ifdef Q_OS_WIN32
     this->lastProcess = GetForegroundWindow();
+    //qWarning() << this->lastProcess;
+
+    DWORD processID;
+    GetWindowThreadProcessId(this->lastProcess, &processID);
+
+    TCHAR szProcessName[MAX_PATH] = TEXT("<unknown>");
+
+    HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID);
+
+    GetModuleBaseName(hProcess, NULL, szProcessName, sizeof(szProcessName)/sizeof(TCHAR));
+    this->exeTitle = QString::fromWCharArray(szProcessName);
+    qWarning() << this->exeTitle;
+
 #endif // Q_OS_WIN32
 }
 
@@ -34,8 +46,93 @@ void CallbackHandler::handle(QString optionName)
     qWarning() << optionName;
 #ifdef Q_OS_WIN32
     // if minimized
-    ShowWindow(this->lastProcess, 9);
-    // if not minimized
-    SetForegroundWindow(this->lastProcess);
+    if(IsIconic(this->lastProcess)) {
+        ShowWindow(this->lastProcess, 9);
+    } // else window is in background
+    else {
+        SetForegroundWindow(this->lastProcess);
+    }
+
+    if(this->exeTitle == "Spotify.exe") {
+        if(optionName == "NextSong") {
+            keybd_event(VK_MEDIA_NEXT_TRACK, 0, 0, 0);
+        } else if(optionName == "PrevSong") {
+            keybd_event(VK_MEDIA_PREV_TRACK, 0, 0, 0);
+        } else if(optionName == "PlaySong") {
+            keybd_event(VK_MEDIA_PLAY_PAUSE, 0, 0, 0);
+        } else if(optionName == "StopSong") {
+            keybd_event(VK_MEDIA_STOP, 0, 0, 0);
+        } else if(optionName == "VolumeUp") {
+            keybd_event(VK_VOLUME_UP, 0, 0, 0);
+        } else if(optionName == "VolumeDown") {
+            keybd_event(VK_VOLUME_DOWN, 0, 0, 0);
+        }
+    } else {
+        if(optionName == "Back") {
+            keybd_event(VK_BROWSER_BACK, 0, 0, 0);
+        }
+        else if (optionName == "Forward") {
+            keybd_event(VK_BROWSER_FORWARD, 0, 0, 0);
+        }
+        else if (optionName == "Open") {
+            // Simulate a key press
+            keybd_event( VK_LCONTROL, 0, 0, 0);
+            keybd_event( 0x54, 0, 0, 0);
+            // Simulate a key release
+            keybd_event( 0x54, 0, KEYEVENTF_KEYUP, 0);
+            keybd_event( VK_LCONTROL, 0, KEYEVENTF_KEYUP, 0);
+        }
+        else if (optionName == "Close") {
+            // Simulate a key press
+            keybd_event( VK_LCONTROL, 0, 0, 0);
+            keybd_event( 0x57, 0, 0, 0);
+            // Simulate a key release
+            keybd_event( 0x57, 0, KEYEVENTF_KEYUP, 0);
+            keybd_event( VK_LCONTROL, 0, KEYEVENTF_KEYUP, 0);
+        }
+        else if (optionName == "Refresh") {
+            keybd_event(VK_BROWSER_REFRESH, 0, 0, 0);
+        }
+    }
 #endif // Q_OS_WIN32
+}
+QList<QString> CallbackHandler::getOptions() {
+
+    this->itemMap.clear();
+    if(this->exeTitle == "Spotify.exe") {
+        this->itemMap.append("NextSong");
+        this->itemMap.append("Forward_500px.png");
+
+        this->itemMap.append("PrevSong");
+        this->itemMap.append("Back_500px.png");
+
+        this->itemMap.append("PlaySong");
+        this->itemMap.append("Play_500px.png");
+
+        this->itemMap.append("StopSong");
+        this->itemMap.append("Stop_500px.png");
+
+        this->itemMap.append("VolumeUp");
+        this->itemMap.append("VolumeUp_500px.png");
+
+        this->itemMap.append("VolumeDown");
+        this->itemMap.append("VolumeDown_500px.png");
+    } else {
+        this->itemMap.append("Open");
+        this->itemMap.append("OSwindow_500px.png");
+
+        this->itemMap.append("Forward");
+        this->itemMap.append("Forward_500px.png");
+
+        this->itemMap.append("Close");
+        this->itemMap.append("Close_500px.png");
+
+        this->itemMap.append("Refresh");
+        this->itemMap.append("Refresh_500px.png");
+
+        this->itemMap.append("Back");
+        this->itemMap.append("Back_500px.png");
+    }
+
+    return this->itemMap;
 }

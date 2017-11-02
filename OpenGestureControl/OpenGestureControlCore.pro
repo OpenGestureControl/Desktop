@@ -74,4 +74,4 @@ HEADERS += \
     bluetoothdevicelistmodel.h
 
 DISTFILES += \
-    script.lua
+    browser.lua

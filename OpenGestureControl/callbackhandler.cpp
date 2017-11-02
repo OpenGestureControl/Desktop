@@ -21,12 +21,8 @@
 */
 #include "callbackhandler.h"
 
-extern "C" {
-    #include <stdio.h>
-    #include <lua.h>
-    #include <lualib.h>
-    #include <lauxlib.h>
-}
+#include <stdio.h>
+#include <lua.hpp>
 
 CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 {
@@ -103,8 +99,13 @@ void CallbackHandler::handle(QString optionName)
     }
 #endif // Q_OS_WIN32
 }
+
 QList<QString> CallbackHandler::getOptions()
 {
+    // Clear the list of items
+    this->itemMap.clear();
+
+    // Start initializing the Lua (to be moved to constructor
     int status;
     int i;
     int result;
@@ -113,35 +114,50 @@ QList<QString> CallbackHandler::getOptions()
     L = luaL_newstate();
     luaL_openlibs(L);
 
-    status = luaL_loadfilex(L, "script.lua", NULL);
+    status = luaL_dofile(L, "browser.lua");
     if (status) {
         fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
         exit(1);
     }
 
-    lua_newtable(L);
-    for (i = 1; i <= 5; i++) {
-        lua_pushnumber(L, i);   /* Push the table index */
-        lua_pushnumber(L, i*2); /* Push the cell value */
-        lua_rawset(L, -3);      /* Stores the pair in the table */
-    }
-    lua_setglobal(L, "foo");
+    // Set return_options on stack to call
+    lua_getglobal(L, "return_options"); /* function to be called */
 
-    /* Ask Lua to run our little script */
-    result = lua_pcall(L, 0, LUA_MULTRET, 0);
+    // Call return_options
+    result = lua_pcall(L, 0, 1, 0);
     if (result) {
         fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
         exit(1);
     }
 
-    sum = lua_tonumber(L, -1);
+    // Get the resulting table of entries
+    lua_pushvalue(L, -1);
+    lua_pushnil(L);
 
-    printf("Script returned: %.0f\n", sum);
+    // For each entry in the table
+    while (lua_next(L, -2)) {
+        // Get the index
+        const char* index = lua_tostring(L, -2);
+
+        if(lua_istable(L, -1)) {
+            lua_pushnil(L);
+
+            while (lua_next(L, -2)) {
+                const char* key = lua_tostring(L, -2);
+                const char* value = lua_tostring(L, -1);
+
+                printf("[%s] %s => %s\n", index, key, value);
+
+                lua_pop(L, 1);
+            }
+        }
+
+        lua_pop(L, 1);
+    }
 
     lua_pop(L, 1);  /* Take the returned value out of the stack */
-    lua_close(L);   /* Cya, Lua */
+    lua_close(L);   /* Close Lua */
 
-    this->itemMap.clear();
     if(this->exeTitle == "Spotify.exe") {
         this->itemMap.append("NextSong");
         this->itemMap.append("Forward_500px.png");

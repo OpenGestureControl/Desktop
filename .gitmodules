@@ -1,0 +1,4 @@
+[submodule "OpenGestureControl/libs/LuaJIT"]
+	path = OpenGestureControl/libs/LuaJIT
+	url = https://github.com/LuaJIT/LuaJIT/
+	branch = v2.0

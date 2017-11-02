@@ -21,6 +21,10 @@
 */
 #include "callbackhandler.h"
 
+#include "LuaJIT/src/lua.hpp"
+#include "LuaJIT/src/lualib.h"
+#include "LuaJIT/src/lauxlib.h"
+
 CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 {
 #ifdef Q_OS_WIN32
@@ -96,7 +100,43 @@ void CallbackHandler::handle(QString optionName)
     }
 #endif // Q_OS_WIN32
 }
-QList<QString> CallbackHandler::getOptions() {
+QList<QString> CallbackHandler::getOptions()
+{
+    int status;
+    int i;
+    int result;
+    double sum;
+    lua_State *L;
+    L = luaL_newstate();
+    luaL_openlibs(L);
+
+    status = luaL_loadfilex(L, "script.lua", NULL);
+    if (status) {
+        fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
+        exit(1);
+    }
+
+    lua_newtable(L);
+    for (i = 1; i <= 5; i++) {
+        lua_pushnumber(L, i);   /* Push the table index */
+        lua_pushnumber(L, i*2); /* Push the cell value */
+        lua_rawset(L, -3);      /* Stores the pair in the table */
+    }
+    lua_setglobal(L, "foo");
+
+    /* Ask Lua to run our little script */
+    result = lua_pcall(L, 0, LUA_MULTRET, 0);
+    if (result) {
+        fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
+        exit(1);
+    }
+
+    sum = lua_tonumber(L, -1);
+
+    printf("Script returned: %.0f\n", sum);
+
+    lua_pop(L, 1);  /* Take the returned value out of the stack */
+    lua_close(L);   /* Cya, Lua */
 
     this->itemMap.clear();
     if(this->exeTitle == "Spotify.exe") {

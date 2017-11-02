@@ -21,9 +21,12 @@
 */
 #include "callbackhandler.h"
 
-#include "LuaJIT/src/lua.hpp"
-#include "LuaJIT/src/lualib.h"
-#include "LuaJIT/src/lauxlib.h"
+extern "C" {
+    #include <stdio.h>
+    #include <lua.h>
+    #include <lualib.h>
+    #include <lauxlib.h>
+}
 
 CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 {

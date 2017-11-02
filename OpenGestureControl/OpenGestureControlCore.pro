@@ -72,3 +72,6 @@ HEADERS += \
     bluetoothmanager.h \
     bluetoothdevice.h \
     bluetoothdevicelistmodel.h
+
+DISTFILES += \
+    script.lua

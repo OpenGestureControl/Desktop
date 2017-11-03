@@ -42,12 +42,15 @@
 
 #include <functional>
 
+#include "moduleoptionsmodel.h"
+#include "moduleoption.h"
+
 class CallbackHandler : public QObject
 {
     Q_OBJECT
 public:
     explicit CallbackHandler(QObject *parent = 0);
-    QList<QString> getOptions();
+    ModuleOptionsModel* getOptions();
     void close();
 
 private:
@@ -55,7 +58,7 @@ private:
     static int ModuleHelperReleaseKeyboardKey(lua_State* L);
 
     QString exeTitle;
-    QList<QString> itemMap;
+    ModuleOptionsModel *moduleOptions;
     lua_State *L;
 #ifdef Q_OS_WIN32
     HWND lastProcess;

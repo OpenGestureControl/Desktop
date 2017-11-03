@@ -20,8 +20,8 @@
    SOFTWARE.
 */
 
-#ifndef BLUETOOTHDEVICELIST_H
-#define BLUETOOTHDEVICELIST_H
+#ifndef BLUETOOTHDEVICELISTMODEL_H
+#define BLUETOOTHDEVICELISTMODEL_H
 
 #include <QAbstractListModel>
 
@@ -58,4 +58,4 @@ private:
     QList<BluetoothDevice*> m_data;
 };
 
-#endif // BLUETOOTHDEVICELIST_H
+#endif // BLUETOOTHDEVICELISTMODEL_H

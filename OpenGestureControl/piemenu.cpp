@@ -50,11 +50,10 @@ void PieMenu::open()
     }
     this->activeCallbackConnection = connect(this->window, SIGNAL(optionSelected(QString)), callbackHandler, SLOT(handle(QString)));
 
+    this->engine.rootContext()->setContextProperty("moduleOptions", callbackHandler->getOptions());
+
     this->window->setProperty("visible", true);
     ((QWindow*) this->window)->requestActivate();
-    QMetaObject::invokeMethod(this->window,
-            "showMenu",
-            Q_ARG(QVariant, QVariant::fromValue(callbackHandler->getOptions())));
 }
 
 void PieMenu::setActive(int degrees)

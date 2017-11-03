@@ -19,16 +19,16 @@ function handle(selection)
         ModuleHelperReleaseKeyboardKey(0x54)
         ModuleHelperReleaseKeyboardKey("VK_LCONTROL")
     elseif selection == "Forward" then
-        ModuleHelperPressKeyboardKey("VK_BROWSER_FORWARD")
+        ModuleHelperPushKeyboardKey("VK_BROWSER_FORWARD")
     elseif selection == "Close" then
         ModuleHelperPushKeyboardKey("VK_LCONTROL")
         ModuleHelperPushKeyboardKey(0x57)
         ModuleHelperReleaseKeyboardKey(0x57)
         ModuleHelperReleaseKeyboardKey("VK_LCONTROL")
     elseif selection == "Refresh" then
-        ModuleHelperPressKeyboardKey("VK_BROWSER_REFRESH")
+        ModuleHelperPushKeyboardKey("VK_BROWSER_REFRESH")
     elseif selection == "Back" then
-        ModuleHelperPressKeyboardKey("VK_BROWSER_BACK")
+        ModuleHelperPushKeyboardKey("VK_BROWSER_BACK")
     else
         io.write("Unknown selection made\n")
     end

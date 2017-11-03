@@ -41,6 +41,8 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
     qWarning() << this->exeTitle;
 
 #endif // Q_OS_WIN32
+    this->moduleOptions = new ModuleOptionsModel();
+
     // Start initializing the Lua
     int status;
     L = luaL_newstate();
@@ -93,15 +95,6 @@ void CallbackHandler::handle(QString optionName)
     lua_getglobal(L, "handle"); /* function to be called */
     lua_pushstring(L, optionNameChar);
 
-    // Call return_options
-    int result = lua_pcall(L, 1, 0, 0);
-    if (result) {
-        fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
-        exit(1);
-    }
-
-    close();
-
 #ifdef Q_OS_WIN32
     // if minimized
     if(IsIconic(this->lastProcess)) {
@@ -110,55 +103,22 @@ void CallbackHandler::handle(QString optionName)
     else {
         SetForegroundWindow(this->lastProcess);
     }
-
-    if(this->exeTitle == "Spotify.exe") {
-        if(optionName == "NextSong") {
-            keybd_event(VK_MEDIA_NEXT_TRACK, 0, 0, 0);
-        } else if(optionName == "PrevSong") {
-            keybd_event(VK_MEDIA_PREV_TRACK, 0, 0, 0);
-        } else if(optionName == "PlaySong") {
-            keybd_event(VK_MEDIA_PLAY_PAUSE, 0, 0, 0);
-        } else if(optionName == "StopSong") {
-            keybd_event(VK_MEDIA_STOP, 0, 0, 0);
-        } else if(optionName == "VolumeUp") {
-            keybd_event(VK_VOLUME_UP, 0, 0, 0);
-        } else if(optionName == "VolumeDown") {
-            keybd_event(VK_VOLUME_DOWN, 0, 0, 0);
-        }
-    } else {
-        if(optionName == "Back") {
-            keybd_event(VK_BROWSER_BACK, 0, 0, 0);
-        }
-        else if (optionName == "Forward") {
-            keybd_event(VK_BROWSER_FORWARD, 0, 0, 0);
-        }
-        else if (optionName == "Open") {
-            // Simulate a key press
-            keybd_event( VK_LCONTROL, 0, 0, 0);
-            keybd_event( 0x54, 0, 0, 0);
-            // Simulate a key release
-            keybd_event( 0x54, 0, KEYEVENTF_KEYUP, 0);
-            keybd_event( VK_LCONTROL, 0, KEYEVENTF_KEYUP, 0);
-        }
-        else if (optionName == "Close") {
-            // Simulate a key press
-            keybd_event( VK_LCONTROL, 0, 0, 0);
-            keybd_event( 0x57, 0, 0, 0);
-            // Simulate a key release
-            keybd_event( 0x57, 0, KEYEVENTF_KEYUP, 0);
-            keybd_event( VK_LCONTROL, 0, KEYEVENTF_KEYUP, 0);
-        }
-        else if (optionName == "Refresh") {
-            keybd_event(VK_BROWSER_REFRESH, 0, 0, 0);
-        }
-    }
 #endif // Q_OS_WIN32
+
+    // Call return_options
+    int result = lua_pcall(L, 1, 0, 0);
+    if (result) {
+        fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
+        exit(1);
+    }
+
+    close();
 }
 
-QList<QString> CallbackHandler::getOptions()
+ModuleOptionsModel *CallbackHandler::getOptions()
 {
     // Clear the list of items
-    this->itemMap.clear();
+    this->moduleOptions->clear();
 
     // Set return_options on stack to call
     lua_getglobal(L, "return_options"); /* function to be called */
@@ -172,9 +132,9 @@ QList<QString> CallbackHandler::getOptions()
 
     // Prepare table vars
     const char* luatypename;
-    double index;
     const char* key;
     const char* value;
+    ModuleOption* moduleOption;
 
     // Get the resulting table of entries
     lua_pushvalue(L, -1);
@@ -186,7 +146,8 @@ QList<QString> CallbackHandler::getOptions()
         luatypename = lua_typename(L, lua_type(L, -2));
 
         if (strcmp(luatypename, "number") == 0) {
-            index = lua_tonumber(L, -2);
+            moduleOption = new ModuleOption();
+            moduleOption->setIndex(lua_tonumber(L, -2));
         } else {
             qWarning() << "Index was not a valid type (expected number, got " << luatypename << ")";
         }
@@ -205,62 +166,27 @@ QList<QString> CallbackHandler::getOptions()
                 luatypename = lua_typename(L, lua_type(L, -1));
                 if (strcmp(luatypename, "string") == 0) {
                     value = lua_tostring(L, -1);
+                    if (strcmp(key, "name") == 0) {
+                        moduleOption->setName(QString(value));
+                    } else if (strcmp(key, "icon") == 0) {
+                        moduleOption->setIcon(QString(value));
+                    }
                 } else {
                     qWarning() << "Value was not a valid type (expected string, got " << luatypename << ")";
-                }
-
-                qWarning() << "[" << index << "] " << key << " => " << value;
-
-                if (key && value) {
-//                    this->itemMap.append(key);
-                    this->itemMap.append(value);
                 }
 
                 lua_pop(L, 1);
             }
         }
 
+        this->moduleOptions->addOption(moduleOption);
+
         lua_pop(L, 1);
     }
 
     lua_pop(L, 1);  /* Take the returned value out of the stack */
 
-//    if(this->exeTitle == "Spotify.exe") {
-//        this->itemMap.append("NextSong");
-//        this->itemMap.append("Forward_500px.png");
-//
-//        this->itemMap.append("PrevSong");
-//        this->itemMap.append("Back_500px.png");
-//
-//        this->itemMap.append("PlaySong");
-//        this->itemMap.append("Play_500px.png");
-//
-//        this->itemMap.append("StopSong");
-//        this->itemMap.append("Stop_500px.png");
-//
-//        this->itemMap.append("VolumeUp");
-//        this->itemMap.append("VolumeUp_500px.png");
-//
-//        this->itemMap.append("VolumeDown");
-//        this->itemMap.append("VolumeDown_500px.png");
-//    } else {
-//        this->itemMap.append("Open");
-//        this->itemMap.append("OSwindow_500px.png");
-//
-//        this->itemMap.append("Forward");
-//        this->itemMap.append("Forward_500px.png");
-//
-//        this->itemMap.append("Close");
-//        this->itemMap.append("Close_500px.png");
-//
-//        this->itemMap.append("Refresh");
-//        this->itemMap.append("Refresh_500px.png");
-//
-//        this->itemMap.append("Back");
-//        this->itemMap.append("Back_500px.png");
-//    }
-
-    return this->itemMap;
+    return this->moduleOptions;
 }
 
 void CallbackHandler::close() {

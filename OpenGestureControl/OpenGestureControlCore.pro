@@ -31,7 +31,9 @@ SOURCES += main.cpp \
     callbackhandler.cpp \
     bluetoothmanager.cpp \
     bluetoothdevice.cpp \
-    bluetoothdevicelistmodel.cpp
+    bluetoothdevicelistmodel.cpp \
+    moduleoptionsmodel.cpp \
+    moduleoption.cpp
 
 RESOURCES += qml.qrc
 
@@ -71,7 +73,9 @@ HEADERS += \
     callbackhandler.h \
     bluetoothmanager.h \
     bluetoothdevice.h \
-    bluetoothdevicelistmodel.h
+    bluetoothdevicelistmodel.h \
+    moduleoptionsmodel.h \
+    moduleoption.h
 
 DISTFILES += \
     browser.lua

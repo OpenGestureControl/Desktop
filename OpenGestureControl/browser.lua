@@ -5,12 +5,33 @@ function return_options()
     local entries = {};
     table.insert(entries, {name = "Open", icon = "OSwindow_500px.png"})
     table.insert(entries, {name = "Forward", icon = "Forward_500px.png"})
+    table.insert(entries, {name = "Close", icon = "Close_500px.png"})
+    table.insert(entries, {name = "Refresh", icon = "Refresh_500px.png"})
+    table.insert(entries, {name = "Back", icon = "Back_500px.png"})
     return entries;
 end
 
 function handle(selection)
-    io.write("We're asked to handle something. Going to handle it.\n");
-    io.write(string.format("We were asked to handle %s, but this isn't implemented yet.\n", selection))
+    io.write(string.format("We were asked to handle %s.\n", selection))
+    if selection == "Open" then
+        ModuleHelperPushKeyboardKey("VK_LCONTROL")
+        ModuleHelperPushKeyboardKey(0x54)
+        ModuleHelperReleaseKeyboardKey(0x54)
+        ModuleHelperReleaseKeyboardKey("VK_LCONTROL")
+    elseif selection == "Forward" then
+        ModuleHelperPressKeyboardKey("VK_BROWSER_FORWARD")
+    elseif selection == "Close" then
+        ModuleHelperPushKeyboardKey("VK_LCONTROL")
+        ModuleHelperPushKeyboardKey(0x57)
+        ModuleHelperReleaseKeyboardKey(0x57)
+        ModuleHelperReleaseKeyboardKey("VK_LCONTROL")
+    elseif selection == "Refresh" then
+        ModuleHelperPressKeyboardKey("VK_BROWSER_REFRESH")
+    elseif selection == "Back" then
+        ModuleHelperPressKeyboardKey("VK_BROWSER_BACK")
+    else
+        io.write("Unknown selection made\n")
+    end
 end
 
-io.write("We're not in the function right now\n");
+io.write("Init part\n");

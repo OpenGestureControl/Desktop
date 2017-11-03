@@ -40,6 +40,8 @@
 
 #include <lua.hpp>
 
+#include <functional>
+
 class CallbackHandler : public QObject
 {
     Q_OBJECT
@@ -49,6 +51,9 @@ public:
     void close();
 
 private:
+    static int ModuleHelperPushKeyboardKey(lua_State* L);
+    static int ModuleHelperReleaseKeyboardKey(lua_State* L);
+
     QString exeTitle;
     QList<QString> itemMap;
     lua_State *L;

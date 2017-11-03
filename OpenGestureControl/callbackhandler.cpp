@@ -41,16 +41,43 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
     qWarning() << this->exeTitle;
 
 #endif // Q_OS_WIN32
-    // Start initializing the Lua (to be moved to constructor
+    // Start initializing the Lua
     int status;
     L = luaL_newstate();
     luaL_openlibs(L);
+
+    lua_register(L, "ModuleHelperPushKeyboardKey", ModuleHelperPushKeyboardKey);
+    lua_register(L, "ModuleHelperReleaseKeyboardKey", ModuleHelperReleaseKeyboardKey);
 
     status = luaL_dofile(L, "browser.lua");
     if (status) {
         fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
         exit(1);
     }
+}
+
+extern "C" int CallbackHandler::ModuleHelperPushKeyboardKey(lua_State* L)
+{
+  const char *hotkey = lua_tostring(L, 1); // First argument
+#ifdef Q_OS_WIN32
+  keybd_event(hotkey, 0, 0, 0);
+#else
+  qWarning() << "Sending a keyboard push event is not supported on this platform";
+#endif // Q_OS_WIN32
+
+  return 0; // Count of returned values
+}
+
+extern "C" int CallbackHandler::ModuleHelperReleaseKeyboardKey(lua_State* L)
+{
+  const char *hotkey = lua_tostring(L, 1); // First argument
+#ifdef Q_OS_WIN32
+  keybd_event(hotkey, 0, KEYEVENTF_KEYUP, 0);
+#else
+  qWarning() << "Sending a keyboard release event is not supported on this platform";
+#endif // Q_OS_WIN32
+
+  return 0; // Count of returned values
 }
 
 void CallbackHandler::handle(QString optionName)

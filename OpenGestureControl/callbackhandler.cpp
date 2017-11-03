@@ -22,7 +22,6 @@
 #include "callbackhandler.h"
 
 #include <stdio.h>
-#include <lua.hpp>
 
 CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 {
@@ -42,6 +41,16 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
     qWarning() << this->exeTitle;
 
 #endif // Q_OS_WIN32
+    // Start initializing the Lua (to be moved to constructor
+    int status;
+    L = luaL_newstate();
+    luaL_openlibs(L);
+
+    status = luaL_dofile(L, "browser.lua");
+    if (status) {
+        fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
+        exit(1);
+    }
 }
 
 void CallbackHandler::handle(QString optionName)
@@ -105,26 +114,11 @@ QList<QString> CallbackHandler::getOptions()
     // Clear the list of items
     this->itemMap.clear();
 
-    // Start initializing the Lua (to be moved to constructor
-    int status;
-    int i;
-    int result;
-    double sum;
-    lua_State *L;
-    L = luaL_newstate();
-    luaL_openlibs(L);
-
-    status = luaL_dofile(L, "browser.lua");
-    if (status) {
-        fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
-        exit(1);
-    }
-
     // Set return_options on stack to call
     lua_getglobal(L, "return_options"); /* function to be called */
 
     // Call return_options
-    result = lua_pcall(L, 0, 1, 0);
+    int result = lua_pcall(L, 0, 1, 0);
     if (result) {
         fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
         exit(1);
@@ -184,7 +178,6 @@ QList<QString> CallbackHandler::getOptions()
     }
 
     lua_pop(L, 1);  /* Take the returned value out of the stack */
-    lua_close(L);   /* Close Lua */
 
 //    if(this->exeTitle == "Spotify.exe") {
 //        this->itemMap.append("NextSong");
@@ -222,4 +215,8 @@ QList<QString> CallbackHandler::getOptions()
 //    }
 
     return this->itemMap;
+}
+
+void CallbackHandler::close() {
+    lua_close(L);   /* Close Lua */
 }

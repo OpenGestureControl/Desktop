@@ -38,16 +38,20 @@
 #include <QUrl>
 #include <QDesktopServices>
 
+#include <lua.hpp>
+
 class CallbackHandler : public QObject
 {
     Q_OBJECT
 public:
     explicit CallbackHandler(QObject *parent = 0);
     QList<QString> getOptions();
+    void close();
 
 private:
     QString exeTitle;
     QList<QString> itemMap;
+    lua_State *L;
 #ifdef Q_OS_WIN32
     HWND lastProcess;
 #endif // Q_OS_WIN32

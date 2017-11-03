@@ -67,4 +67,5 @@ void PieMenu::setActive(int degrees)
 void PieMenu::close()
 {
     this->window->setProperty("visible", false);
+    callbackHandler->close();
 }

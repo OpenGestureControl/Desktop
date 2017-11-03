@@ -155,6 +155,7 @@ QList<QString> CallbackHandler::getOptions()
             lua_pushnil(L);
 
             while (lua_next(L, -2)) {
+                key = value = ""; // Reset key and value
                 luatypename = lua_typename(L, lua_type(L, -2));
                 if (strcmp(luatypename, "string") == 0) {
                     key = lua_tostring(L, -2);
@@ -170,6 +171,11 @@ QList<QString> CallbackHandler::getOptions()
 
                 qWarning() << "[" << index << "] " << key << " => " << value;
 
+                if (key && value) {
+//                    this->itemMap.append(key);
+                    this->itemMap.append(value);
+                }
+
                 lua_pop(L, 1);
             }
         }
@@ -180,40 +186,40 @@ QList<QString> CallbackHandler::getOptions()
     lua_pop(L, 1);  /* Take the returned value out of the stack */
     lua_close(L);   /* Close Lua */
 
-    if(this->exeTitle == "Spotify.exe") {
-        this->itemMap.append("NextSong");
-        this->itemMap.append("Forward_500px.png");
-
-        this->itemMap.append("PrevSong");
-        this->itemMap.append("Back_500px.png");
-
-        this->itemMap.append("PlaySong");
-        this->itemMap.append("Play_500px.png");
-
-        this->itemMap.append("StopSong");
-        this->itemMap.append("Stop_500px.png");
-
-        this->itemMap.append("VolumeUp");
-        this->itemMap.append("VolumeUp_500px.png");
-
-        this->itemMap.append("VolumeDown");
-        this->itemMap.append("VolumeDown_500px.png");
-    } else {
-        this->itemMap.append("Open");
-        this->itemMap.append("OSwindow_500px.png");
-
-        this->itemMap.append("Forward");
-        this->itemMap.append("Forward_500px.png");
-
-        this->itemMap.append("Close");
-        this->itemMap.append("Close_500px.png");
-
-        this->itemMap.append("Refresh");
-        this->itemMap.append("Refresh_500px.png");
-
-        this->itemMap.append("Back");
-        this->itemMap.append("Back_500px.png");
-    }
+//    if(this->exeTitle == "Spotify.exe") {
+//        this->itemMap.append("NextSong");
+//        this->itemMap.append("Forward_500px.png");
+//
+//        this->itemMap.append("PrevSong");
+//        this->itemMap.append("Back_500px.png");
+//
+//        this->itemMap.append("PlaySong");
+//        this->itemMap.append("Play_500px.png");
+//
+//        this->itemMap.append("StopSong");
+//        this->itemMap.append("Stop_500px.png");
+//
+//        this->itemMap.append("VolumeUp");
+//        this->itemMap.append("VolumeUp_500px.png");
+//
+//        this->itemMap.append("VolumeDown");
+//        this->itemMap.append("VolumeDown_500px.png");
+//    } else {
+//        this->itemMap.append("Open");
+//        this->itemMap.append("OSwindow_500px.png");
+//
+//        this->itemMap.append("Forward");
+//        this->itemMap.append("Forward_500px.png");
+//
+//        this->itemMap.append("Close");
+//        this->itemMap.append("Close_500px.png");
+//
+//        this->itemMap.append("Refresh");
+//        this->itemMap.append("Refresh_500px.png");
+//
+//        this->itemMap.append("Back");
+//        this->itemMap.append("Back_500px.png");
+//    }
 
     return this->itemMap;
 }

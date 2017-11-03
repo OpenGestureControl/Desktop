@@ -56,6 +56,25 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 void CallbackHandler::handle(QString optionName)
 {
     qWarning() << optionName;
+
+    // This MUST be saved into a QByteArray first, or it'll crash
+    // See https://wiki.qt.io/Technical_FAQ#How_can_I_convert_a_QString_to_char.2A_and_vice_versa.3F
+    QByteArray optionNameByteArray = optionName.toLocal8Bit();
+    const char *optionNameChar = optionNameByteArray.data();
+
+    // Set return_options on stack to call
+    lua_getglobal(L, "handle"); /* function to be called */
+    lua_pushstring(L, optionNameChar);
+
+    // Call return_options
+    int result = lua_pcall(L, 1, 0, 0);
+    if (result) {
+        fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
+        exit(1);
+    }
+
+    close();
+
 #ifdef Q_OS_WIN32
     // if minimized
     if(IsIconic(this->lastProcess)) {

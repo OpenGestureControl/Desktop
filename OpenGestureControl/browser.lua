@@ -7,4 +7,10 @@ function return_options()
     table.insert(entries, {name = "Forward", icon = "Forward_500px.png"})
     return entries;
 end
+
+function handle(selection)
+    io.write("We're asked to handle something. Going to handle it.\n");
+    io.write(string.format("We were asked to handle %s, but this isn't implemented yet.\n", selection))
+end
+
 io.write("We're not in the function right now\n");

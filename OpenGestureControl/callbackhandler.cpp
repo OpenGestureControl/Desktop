@@ -130,6 +130,12 @@ QList<QString> CallbackHandler::getOptions()
         exit(1);
     }
 
+    // Prepare table vars
+    const char* luatypename;
+    double index;
+    const char* key;
+    const char* value;
+
     // Get the resulting table of entries
     lua_pushvalue(L, -1);
     lua_pushnil(L);
@@ -137,16 +143,32 @@ QList<QString> CallbackHandler::getOptions()
     // For each entry in the table
     while (lua_next(L, -2)) {
         // Get the index
-        const char* index = lua_tostring(L, -2);
+        luatypename = lua_typename(L, lua_type(L, -2));
+
+        if (strcmp(luatypename, "number") == 0) {
+            index = lua_tonumber(L, -2);
+        } else {
+            qWarning() << "Index was not a valid type (expected number, got " << luatypename << ")";
+        }
 
         if(lua_istable(L, -1)) {
             lua_pushnil(L);
 
             while (lua_next(L, -2)) {
-                const char* key = lua_tostring(L, -2);
-                const char* value = lua_tostring(L, -1);
+                luatypename = lua_typename(L, lua_type(L, -2));
+                if (strcmp(luatypename, "string") == 0) {
+                    key = lua_tostring(L, -2);
+                } else {
+                    qWarning() << "Key was not a valid type (expected string, got " << luatypename << ")";
+                }
+                luatypename = lua_typename(L, lua_type(L, -1));
+                if (strcmp(luatypename, "string") == 0) {
+                    value = lua_tostring(L, -1);
+                } else {
+                    qWarning() << "Value was not a valid type (expected string, got " << luatypename << ")";
+                }
 
-                printf("[%s] %s => %s\n", index, key, value);
+                qWarning() << "[" << index << "] " << key << " => " << value;
 
                 lua_pop(L, 1);
             }

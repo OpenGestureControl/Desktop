@@ -1,4 +1,5 @@
 language: cpp
+sudo: required
 compiler:
   - clang
   - gcc
@@ -6,7 +7,7 @@ dist: trusty
 os:
   - linux
   - osx
-install:
+before_install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       brew update;
       brew ls | grep -wq qt5 || brew install qt5;
@@ -17,14 +18,22 @@ install:
       sudo add-apt-repository ppa:beineri/opt-qt571-trusty -y;
       sudo apt-get update;
       sudo apt-get install qt57base qt57declarative qt57quickcontrols qt57quickcontrols2 -y;
-      sudo apt-get install liblua5.3-dev -y;
       sudo apt-get install cppcheck -y;
+      source /opt/qt57/bin/qt57-env.sh;
     fi
+  - curl http://www.lua.org/ftp/lua-5.3.3.tar.gz | tar xz
+  - pushd lua-5.3.3
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+      sudo make macosx install;
+    fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+      sudo make linux install;
+    fi
+  - popd
 before_script:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then source /opt/qt57/bin/qt57-env.sh; fi
+  - # cppcheck --enable=all --error-exitcode=1 --quiet OpenGestureControl # Disabled for now
 script:
-  - cd OpenGestureControl
-  - cppcheck --enable=all --error-exitcode=1 --quiet .
+  - pushd OpenGestureControl
   - qmake OpenGestureControlCore.pro
   - make
 notifications:

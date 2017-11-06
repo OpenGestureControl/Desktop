@@ -14,21 +14,15 @@ end
 function handle(selection)
     io.write(string.format("We were asked to handle %s.\n", selection))
     if selection == "Open" then
-        ModuleHelperPushKeyboardKey("VK_LCONTROL")
-        ModuleHelperPushKeyboardKey(0x54)
-        ModuleHelperReleaseKeyboardKey(0x54)
-        ModuleHelperReleaseKeyboardKey("VK_LCONTROL")
+        ModuleHelperSendKeyboardKey("Ctrl+T")
     elseif selection == "Forward" then
-        ModuleHelperPushKeyboardKey("VK_BROWSER_FORWARD")
+        ModuleHelperSendKeyboardKey("Alt+Right")
     elseif selection == "Close" then
-        ModuleHelperPushKeyboardKey("VK_LCONTROL")
-        ModuleHelperPushKeyboardKey(0x57)
-        ModuleHelperReleaseKeyboardKey(0x57)
-        ModuleHelperReleaseKeyboardKey("VK_LCONTROL")
+        ModuleHelperSendKeyboardKey("Ctrl+W")
     elseif selection == "Refresh" then
-        ModuleHelperPushKeyboardKey("VK_BROWSER_REFRESH")
+        ModuleHelperSendKeyboardKey("F5")
     elseif selection == "Back" then
-        ModuleHelperPushKeyboardKey("VK_BROWSER_BACK")
+        ModuleHelperSendKeyboardKey("Alt+Left")
     else
         io.write("Unknown selection made\n")
     end

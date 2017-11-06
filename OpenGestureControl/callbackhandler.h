@@ -41,6 +41,7 @@
 #include <lua.hpp>
 
 #include <functional>
+#include <sstream>
 
 #include "moduleoptionsmodel.h"
 #include "moduleoption.h"
@@ -54,8 +55,11 @@ public:
     void close();
 
 private:
-    static int ModuleHelperPushKeyboardKey(lua_State* L);
-    static int ModuleHelperReleaseKeyboardKey(lua_State* L);
+    static void parseKey(QStringList hotkey);
+    static int ModuleHelperSendKeyboardKey(lua_State* L);
+#ifdef Q_OS_WIN32
+    static WORD lookupKey(QString keyname);
+#endif
 
     QString exeTitle;
     ModuleOptionsModel *moduleOptions;

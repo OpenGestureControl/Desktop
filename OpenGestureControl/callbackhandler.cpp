@@ -48,8 +48,7 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
     L = luaL_newstate();
     luaL_openlibs(L);
 
-    lua_register(L, "ModuleHelperPushKeyboardKey", ModuleHelperPushKeyboardKey);
-    lua_register(L, "ModuleHelperReleaseKeyboardKey", ModuleHelperReleaseKeyboardKey);
+    lua_register(L, "ModuleHelperSendKeyboardKey", ModuleHelperSendKeyboardKey);
 
     status = luaL_dofile(L, "browser.lua");
     if (status) {
@@ -58,28 +57,159 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
     }
 }
 
-extern "C" int CallbackHandler::ModuleHelperPushKeyboardKey(lua_State* L)
-{
-  const char *hotkey = lua_tostring(L, 1); // First argument
 #ifdef Q_OS_WIN32
-  BYTE key = static_cast<BYTE>(*hotkey);
-  keybd_event(key, 0, 0, 0);
-#else
-  qWarning() << "Sending a keyboard push event is not supported on this platform";
+WORD CallbackHandler::lookupKey(QString keyname) {
+    QMap<QString, WORD> lookupMap;
+    lookupMap["0"] = 0x30;
+    lookupMap["1"] = 0x31;
+    lookupMap["2"] = 0x32;
+    lookupMap["3"] = 0x33;
+    lookupMap["4"] = 0x34;
+    lookupMap["5"] = 0x35;
+    lookupMap["6"] = 0x36;
+    lookupMap["7"] = 0x37;
+    lookupMap["8"] = 0x38;
+    lookupMap["9"] = 0x39;
+
+    lookupMap["a"] = 0x41;
+    lookupMap["b"] = 0x42;
+    lookupMap["c"] = 0x43;
+    lookupMap["d"] = 0x44;
+    lookupMap["e"] = 0x45;
+    lookupMap["f"] = 0x46;
+    lookupMap["g"] = 0x47;
+    lookupMap["h"] = 0x48;
+    lookupMap["i"] = 0x49;
+    lookupMap["j"] = 0x4a;
+    lookupMap["k"] = 0x4b;
+    lookupMap["l"] = 0x4c;
+    lookupMap["m"] = 0x4d;
+    lookupMap["n"] = 0x4e;
+    lookupMap["o"] = 0x4f;
+    lookupMap["p"] = 0x50;
+    lookupMap["q"] = 0x51;
+    lookupMap["r"] = 0x52;
+    lookupMap["s"] = 0x53;
+    lookupMap["t"] = 0x54;
+    lookupMap["u"] = 0x55;
+    lookupMap["v"] = 0x56;
+    lookupMap["w"] = 0x57;
+    lookupMap["x"] = 0x58;
+    lookupMap["y"] = 0x59;
+    lookupMap["z"] = 0x5a;
+
+    lookupMap["f1"] = VK_F1;
+    lookupMap["f2"] = VK_F2;
+    lookupMap["f3"] = VK_F3;
+    lookupMap["f4"] = VK_F4;
+    lookupMap["f5"] = VK_F5;
+    lookupMap["f6"] = VK_F6;
+    lookupMap["f7"] = VK_F7;
+    lookupMap["f8"] = VK_F8;
+    lookupMap["f9"] = VK_F9;
+    lookupMap["f10"] = VK_F10;
+    lookupMap["f11"] = VK_F11;
+    lookupMap["f12"] = VK_F12;
+    lookupMap["f13"] = VK_F13;
+    lookupMap["f14"] = VK_F14;
+    lookupMap["f15"] = VK_F15;
+    lookupMap["f16"] = VK_F16;
+    lookupMap["f17"] = VK_F17;
+    lookupMap["f18"] = VK_F18;
+    lookupMap["f19"] = VK_F19;
+    lookupMap["f20"] = VK_F20;
+    lookupMap["f21"] = VK_F21;
+    lookupMap["f22"] = VK_F22;
+    lookupMap["f23"] = VK_F23;
+    lookupMap["f24"] = VK_F24;
+
+    lookupMap["backspace"] = VK_BACK;
+
+    lookupMap["enter"] = VK_RETURN;
+    lookupMap["return"] = VK_RETURN;
+
+    lookupMap["tab"] = VK_TAB;
+    lookupMap["left"] = VK_LEFT;
+    lookupMap["right"] = VK_RIGHT;
+    lookupMap["up"] = VK_UP;
+    lookupMap["down"] = VK_DOWN;
+
+    return lookupMap[keyname.toLower()];
+}
+#endif
+
+void CallbackHandler::parseKey(QStringList hotkey)
+{
+    if (hotkey.isEmpty())
+        return;
+
+#ifndef Q_OS_WIN32
+    qWarning() << "Sending a keyboard push event is not supported on this platform";
 #endif // Q_OS_WIN32
 
-  return 0; // Count of returned values
+    QString tempkey = hotkey[0];
+    hotkey.pop_front();
+    if (QString::compare(tempkey, "ctrl", Qt::CaseInsensitive) == 0) {
+        qWarning() << "Control pressed";
+#ifdef Q_OS_WIN32
+        keybd_event(VK_LCONTROL, 0, 0, 0);
+#endif // Q_OS_WIN32
+        CallbackHandler::parseKey(hotkey);
+        hotkey.pop_front();
+#ifdef Q_OS_WIN32
+        keybd_event(VK_LCONTROL, 0, KEYEVENTF_KEYUP, 0);
+#endif // Q_OS_WIN32
+    } else if (QString::compare(tempkey, "alt", Qt::CaseInsensitive) == 0) {
+        qWarning() << "Alt pressed";
+#ifdef Q_OS_WIN32
+        keybd_event(VK_LMENU, 0, 0, 0);
+#endif // Q_OS_WIN32
+        CallbackHandler::parseKey(hotkey);
+        hotkey.pop_front();
+#ifdef Q_OS_WIN32
+        keybd_event(VK_LMENU, 0, KEYEVENTF_KEYUP, 0);
+#endif // Q_OS_WIN32
+    } else if (QString::compare(tempkey, "shift", Qt::CaseInsensitive) == 0) {
+        qWarning() << "Shift pressed";
+#ifdef Q_OS_WIN32
+        keybd_event(VK_LSHIFT, 0, 0, 0);
+#endif // Q_OS_WIN32
+        CallbackHandler::parseKey(hotkey);
+        hotkey.pop_front();
+#ifdef Q_OS_WIN32
+        keybd_event(VK_LSHIFT, 0, KEYEVENTF_KEYUP, 0);
+#endif // Q_OS_WIN32
+    } else {
+        qWarning() << "Other key pressed: " << tempkey;
+#ifdef Q_OS_WIN32
+        WORD key = CallbackHandler::lookupKey(tempkey);
+        if (key != 0x00) {
+            keybd_event(key, 0, 0, 0);
+        } else {
+            qWarning() << "Invalid key pressed";
+        }
+#endif // Q_OS_WIN32
+    }
+
+    CallbackHandler::parseKey(hotkey);
 }
 
-extern "C" int CallbackHandler::ModuleHelperReleaseKeyboardKey(lua_State* L)
+extern "C" int CallbackHandler::ModuleHelperSendKeyboardKey(lua_State* L)
 {
   const char *hotkey = lua_tostring(L, 1); // First argument
-#ifdef Q_OS_WIN32
-  BYTE key = static_cast<BYTE>(*hotkey);
-  keybd_event(key, 0, KEYEVENTF_KEYUP, 0);
-#else
-  qWarning() << "Sending a keyboard release event is not supported on this platform";
-#endif // Q_OS_WIN32
+  std::string hotkeystring(hotkey);
+
+  std::replace(hotkeystring.begin(), hotkeystring.end(), '+', ' ');
+  std::string temp;
+  std::stringstream ss(hotkeystring);
+
+  QStringList stringList;
+
+  while (ss >> temp) {
+      stringList.append(QString(temp.c_str()));
+  }
+
+  CallbackHandler::parseKey(stringList);
 
   return 0; // Count of returned values
 }

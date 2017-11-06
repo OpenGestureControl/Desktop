@@ -62,7 +62,8 @@ extern "C" int CallbackHandler::ModuleHelperPushKeyboardKey(lua_State* L)
 {
   const char *hotkey = lua_tostring(L, 1); // First argument
 #ifdef Q_OS_WIN32
-  keybd_event(hotkey, 0, 0, 0);
+  BYTE key = static_cast<BYTE>(*hotkey);
+  keybd_event(key, 0, 0, 0);
 #else
   qWarning() << "Sending a keyboard push event is not supported on this platform";
 #endif // Q_OS_WIN32
@@ -74,7 +75,8 @@ extern "C" int CallbackHandler::ModuleHelperReleaseKeyboardKey(lua_State* L)
 {
   const char *hotkey = lua_tostring(L, 1); // First argument
 #ifdef Q_OS_WIN32
-  keybd_event(hotkey, 0, KEYEVENTF_KEYUP, 0);
+  BYTE key = static_cast<BYTE>(*hotkey);
+  keybd_event(key, 0, KEYEVENTF_KEYUP, 0);
 #else
   qWarning() << "Sending a keyboard release event is not supported on this platform";
 #endif // Q_OS_WIN32

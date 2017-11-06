@@ -37,10 +37,11 @@ SOURCES += main.cpp \
 
 RESOURCES += qml.qrc
 
-win32:INCLUDEPATH += libs libs\include
+win32:INCLUDEPATH += $$PWD/libs $$PWD/libs/include
+win32:DEPENDPATH += $$PWD/libs
 
 unix:LIBS += -llua -lm -ldl
-win32:LIBS += -lpsapi -llua53
+win32:LIBS += -lpsapi -L$$PWD/libs/ -llua53
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =

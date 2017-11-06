@@ -47,14 +47,11 @@ Window {
 
         delegate: Component {
             Item {
-                x: model.index * 100
-                y: model.index * 100
-                width: 100
-                height: 100
-
                 Button {
-                    height: parent.height
-                    width: parent.width
+                    x: ((Math.min(root.width, root.height) / 3) * Math.sin((360 / moduleOptions.count * (model.index - 1)) * (Math.PI / 180))) + ((root.width / 2) - (this.width / 2))
+                    y: (root.height - this.height) - (((Math.min(root.width, root.height) / 3) * Math.cos((360 / moduleOptions.count * (model.index - 1)) * (Math.PI / 180))) + ((root.height / 2) - (this.height / 2)))
+                    height: 200
+                    width: 200
                     style: ButtonStyle {
                         background: Rectangle {
                             radius: 99999999

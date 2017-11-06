@@ -79,4 +79,5 @@ HEADERS += \
     moduleoption.h
 
 DISTFILES += \
-    browser.lua
+    browser.lua \
+    music.lua

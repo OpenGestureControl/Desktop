@@ -25,6 +25,7 @@
 
 CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 {
+    std::string filename = "browser.lua";
 #ifdef Q_OS_WIN32
     this->lastProcess = GetForegroundWindow();
     //qWarning() << this->lastProcess;
@@ -40,6 +41,10 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
     this->exeTitle = QString::fromWCharArray(szProcessName);
     qWarning() << this->exeTitle;
 
+    if (this->exeTitle == "Spotify.exe") {
+        filename = "music.lua";
+    }
+
 #endif // Q_OS_WIN32
     this->moduleOptions = new ModuleOptionsModel();
 
@@ -50,7 +55,7 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 
     lua_register(L, "ModuleHelperSendKeyboardKey", ModuleHelperSendKeyboardKey);
 
-    status = luaL_dofile(L, "browser.lua");
+    status = luaL_dofile(L, filename.c_str());
     if (status) {
         fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
         exit(1);
@@ -133,6 +138,14 @@ WORD CallbackHandler::lookupKey(QString keyname) {
     lookupMap["right"] = VK_RIGHT;
     lookupMap["up"] = VK_UP;
     lookupMap["down"] = VK_DOWN;
+
+    lookupMap["medianext"] = VK_MEDIA_NEXT_TRACK;
+    lookupMap["mediaprev"] = VK_MEDIA_PREV_TRACK;
+    lookupMap["mediaplaypause"] = VK_MEDIA_PLAY_PAUSE;
+    lookupMap["mediastop"] = VK_MEDIA_STOP;
+    lookupMap["volumeup"] = VK_VOLUME_UP;
+    lookupMap["volumedown"] = VK_VOLUME_DOWN;
+    lookupMap["volumemute"] = VK_VOLUME_MUTE;
 
     return lookupMap[keyname.toLower()];
 }

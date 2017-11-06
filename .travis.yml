@@ -25,6 +25,9 @@ before_install:
   - pushd lua-5.3.3
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       sudo make macosx install;
+      export C_INCLUDE_PATH=/usr/local/include:$C_INCLUDE_PATH;
+      export CPLUS_INCLUDE_PATH=/usr/local/include:$CPLUS_INCLUDE_PATH;
+      export LIBRARY_PATH=/usr/local/lib:$LIBRARY_PATH;
     fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       sudo make linux install;

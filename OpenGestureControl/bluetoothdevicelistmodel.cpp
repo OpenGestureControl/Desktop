@@ -25,9 +25,6 @@
 BluetoothDeviceListModel::BluetoothDeviceListModel(QObject *parent) :
     QAbstractListModel(parent)
 {
-    addDevice(new BluetoothDevice("Example device", "00000000-0000-1000-8000-00805F9B34FB"));
-    addDevice(new BluetoothDevice("Example device", "00000000-0000-1000-8000-00805F9B34FB"));
-    addDevice(new BluetoothDevice("Example device", "00000000-0000-1000-8000-00805F9B34FB"));
 }
 
 QHash<int, QByteArray> BluetoothDeviceListModel::roleNames() const {

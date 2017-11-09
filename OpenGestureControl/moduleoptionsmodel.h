@@ -20,32 +20,33 @@
    SOFTWARE.
 */
 
-#ifndef BLUETOOTHDEVICELISTMODEL_H
-#define BLUETOOTHDEVICELISTMODEL_H
+#ifndef MODULEOPTIONSMODEL_H
+#define MODULEOPTIONSMODEL_H
 
 #include <QAbstractListModel>
 
-#include "bluetoothdevice.h"
+#include "moduleoption.h"
 
-class BluetoothDeviceListModel : public QAbstractListModel
+class ModuleOptionsModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
 
 public:
-    enum BluetoothDeviceRoles {
+    enum ModuleOptionRoles {
         NameRole = Qt::UserRole + 1,
-        DeviceIdRole
+        IconRole,
+        IndexRole
     };
 
-    explicit BluetoothDeviceListModel(QObject *parent = 0);
+    explicit ModuleOptionsModel(QObject *parent = 0);
 
     int rowCount(const QModelIndex & = QModelIndex()) const override { return m_data.count(); }
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-    Q_INVOKABLE BluetoothDevice* get(int index) const { return m_data.at(index); }
+    Q_INVOKABLE ModuleOption* get(int index) const { return m_data.at(index); }
 
-    bool addDevice(BluetoothDevice* device);
+    bool addOption(ModuleOption* option);
     void clear();
 
 signals:
@@ -55,7 +56,7 @@ protected:
     QHash<int, QByteArray> roleNames() const;
 
 private:
-    QList<BluetoothDevice*> m_data;
+    QList<ModuleOption*> m_data;
 };
 
-#endif // BLUETOOTHDEVICELISTMODEL_H
+#endif // MODULEOPTIONSMODEL_H

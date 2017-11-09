@@ -61,8 +61,5 @@ int main(int argc, char *argv[])
     KeyBoardInput keyboardinput(&pieMenu);
 #endif // Q_OS_WIN32
 
-    BluetoothManager bluetoothManager;
-    bluetoothManager.openUI();
-
     return app.exec();
 }

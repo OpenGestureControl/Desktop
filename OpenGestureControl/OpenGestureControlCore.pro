@@ -31,11 +31,17 @@ SOURCES += main.cpp \
     callbackhandler.cpp \
     bluetoothmanager.cpp \
     bluetoothdevice.cpp \
-    bluetoothdevicelistmodel.cpp
+    bluetoothdevicelistmodel.cpp \
+    moduleoptionsmodel.cpp \
+    moduleoption.cpp
 
 RESOURCES += qml.qrc
 
-win32:LIBS += -lpsapi
+win32:INCLUDEPATH += $$PWD/libs $$PWD/libs/include
+win32:DEPENDPATH += $$PWD/libs
+
+unix:LIBS += -llua -lm -ldl
+win32:LIBS += -lpsapi -L$$PWD/libs/ -llua53
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -68,4 +74,10 @@ HEADERS += \
     callbackhandler.h \
     bluetoothmanager.h \
     bluetoothdevice.h \
-    bluetoothdevicelistmodel.h
+    bluetoothdevicelistmodel.h \
+    moduleoptionsmodel.h \
+    moduleoption.h
+
+DISTFILES += \
+    browser.lua \
+    music.lua

@@ -38,16 +38,32 @@
 #include <QUrl>
 #include <QDesktopServices>
 
+#include <lua.hpp>
+
+#include <functional>
+#include <sstream>
+
+#include "moduleoptionsmodel.h"
+#include "moduleoption.h"
+
 class CallbackHandler : public QObject
 {
     Q_OBJECT
 public:
     explicit CallbackHandler(QObject *parent = 0);
-    QList<QString> getOptions();
+    ModuleOptionsModel* getOptions();
+    void close();
 
 private:
+    static void parseKey(QStringList hotkey);
+    static int ModuleHelperSendKeyboardKey(lua_State* L);
+#ifdef Q_OS_WIN32
+    static WORD lookupKey(QString keyname);
+#endif
+
     QString exeTitle;
-    QList<QString> itemMap;
+    ModuleOptionsModel *moduleOptions;
+    lua_State *L;
 #ifdef Q_OS_WIN32
     HWND lastProcess;
 #endif // Q_OS_WIN32

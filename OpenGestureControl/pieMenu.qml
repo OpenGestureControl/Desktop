@@ -42,111 +42,35 @@ Window {
 
     onOptionSelected: closeRequest()
 
-    function _getTranslator(itemCount) {
-        switch(itemCount) {
-        case 1:
-            return [1];
-        case 2:
-            return [5, 3];
-        case 3:
-            return [1, 8, 6];
-        case 4:
-            return [1, 5, 7, 3];
-        case 5:
-            return [1, 5, 8, 6, 3];
-        case 6:
-            return [2, 5, 8, 6, 3, 0];
-        case 7:
-            return [1, 2, 5, 8, 6, 3, 0];
-        case 8:
-            return [1, 2, 5, 8, 7, 6, 3, 0];
-        default:
-            return;
-        }
-    }
+    ListView {
+        model: moduleOptions
 
-    function showMenu(menuContent) {
-        // Clear all entries
-        for (var i = 0; i < 9; i++)
-        {
-            pieMenu.children[i].identifierId = -1
-            pieMenu.children[i].identifierText = ""
-            pieMenu.children[i].imageURL = ""
-        }
-
-        var translator = _getTranslator(menuContent.length / 2);
-
-        for (var j = 0; j < menuContent.length; j+=2) {
-            var item = pieMenu.children[translator[j / 2]];
-            item.identifierId = translator[j / 2]
-            item.identifierText = menuContent[j];
-            item.imageURL = "/icons/" + menuContent[j+1];
-        }
-
-        pieMenu.containCount = menuContent.length
-    }
-
-    function setActiveEntry(degrees) {
-        var degreesPerEntry = 360 / pieMenu.containCount;
-        var section = parseInt((degrees + (0.5 * degreesPerEntry)) / degreesPerEntry) % pieMenu.containCount
-        pieMenu.activeButtonId = _getTranslator(pieMenu.containCount)[section];
-    }
-
-    GridLayout {
-        id: pieMenu
-
-        property int activeButtonId: -1
-        property int containCount: 0
-
-        //width: root.width / 1.5
-        height: root.height / 1.2
-        width: height
-
-        anchors {
-            horizontalCenter: parent.horizontalCenter
-            verticalCenter: parent.verticalCenter
-        }
-
-        columns: 3
-        rows: 3
-
-        Repeater {
-            model: 9
-            Button {
-                property int identifierId: -1
-                property string identifierText: ""
-                property string imageURL: ""
-
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-
-                width: this.height
-
-                style: ButtonStyle {
-                    background: Rectangle {
-                        color: control.identifierId == pieMenu.activeButtonId ? "white" : Qt.darker("white")
-                        radius: 99999999
+        delegate: Component {
+            Item {
+                Button {
+                    x: ((Math.min(root.width, root.height) / 3) * Math.sin((360 / moduleOptions.count * (model.index - 1)) * (Math.PI / 180))) + ((root.width / 2) - (this.width / 2))
+                    y: (root.height - this.height) - (((Math.min(root.width, root.height) / 3) * Math.cos((360 / moduleOptions.count * (model.index - 1)) * (Math.PI / 180))) + ((root.height / 2) - (this.height / 2)))
+                    height: 200
+                    width: 200
+                    style: ButtonStyle {
+                        background: Rectangle {
+                            radius: 99999999
+                        }
                     }
-                }
 
-                opacity: this.identifierText ? 0.8 : 0
+                    onClicked: optionSelected(model.name)
 
-                onClicked: if (this.identifierText) {
-                               optionSelected(this.identifierText)
-                           } else {
-                               closeRequest()
-                           }
-
-                Image {
-                    anchors {
-                        fill: parent
-                        leftMargin: 0.1 * parent.width
-                        rightMargin: 0.1 * parent.width
-                        topMargin: 0.1 * parent.height
-                        bottomMargin: 0.1 * parent.height
+                    Image {
+                        anchors {
+                            fill: parent
+                            leftMargin: 0.1 * parent.width
+                            rightMargin: 0.1 * parent.width
+                            topMargin: 0.1 * parent.height
+                            bottomMargin: 0.1 * parent.height
+                        }
+                        source: "/icons/" + model.icon
+                        fillMode: Image.PreserveAspectFit
                     }
-                    source: imageURL
-                    fillMode: Image.PreserveAspectFit
                 }
             }
         }

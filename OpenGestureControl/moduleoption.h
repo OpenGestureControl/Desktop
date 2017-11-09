@@ -20,42 +20,43 @@
    SOFTWARE.
 */
 
-#ifndef BLUETOOTHDEVICELISTMODEL_H
-#define BLUETOOTHDEVICELISTMODEL_H
+#ifndef MODULEOPTION_H
+#define MODULEOPTION_H
 
-#include <QAbstractListModel>
+#include <QObject>
+#include <QString>
 
-#include "bluetoothdevice.h"
-
-class BluetoothDeviceListModel : public QAbstractListModel
+class ModuleOption : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QString icon READ icon WRITE setIcon NOTIFY iconChanged)
+    Q_PROPERTY(int index READ index WRITE setIndex NOTIFY indexChanged)
 
 public:
-    enum BluetoothDeviceRoles {
-        NameRole = Qt::UserRole + 1,
-        DeviceIdRole
-    };
+    explicit ModuleOption(QObject *parent = 0);
+    explicit ModuleOption(const QString &name, const QString &icon, const int &index, QObject *parent = 0);
 
-    explicit BluetoothDeviceListModel(QObject *parent = 0);
+    QString name() const;
+    void setName(const QString name);
 
-    int rowCount(const QModelIndex & = QModelIndex()) const override { return m_data.count(); }
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QString icon() const;
+    void setIcon(const QString icon);
 
-    Q_INVOKABLE BluetoothDevice* get(int index) const { return m_data.at(index); }
-
-    bool addDevice(BluetoothDevice* device);
-    void clear();
-
-signals:
-    void countChanged(int c);
-
-protected:
-    QHash<int, QByteArray> roleNames() const;
+    int index() const;
+    void setIndex(const int index);
 
 private:
-    QList<BluetoothDevice*> m_data;
+    QString m_name;
+    QString m_icon;
+    int m_index;
+
+signals:
+    void nameChanged();
+    void iconChanged();
+    void indexChanged();
+
+public slots:
 };
 
-#endif // BLUETOOTHDEVICELISTMODEL_H
+#endif // BLUETOOTHDEVICE_H

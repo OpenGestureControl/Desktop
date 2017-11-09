@@ -20,42 +20,54 @@
    SOFTWARE.
 */
 
-#ifndef BLUETOOTHDEVICELISTMODEL_H
-#define BLUETOOTHDEVICELISTMODEL_H
+#include "moduleoption.h"
 
-#include <QAbstractListModel>
-
-#include "bluetoothdevice.h"
-
-class BluetoothDeviceListModel : public QAbstractListModel
+ModuleOption::ModuleOption(QObject *parent) : QObject(parent)
 {
-    Q_OBJECT
-    Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
 
-public:
-    enum BluetoothDeviceRoles {
-        NameRole = Qt::UserRole + 1,
-        DeviceIdRole
-    };
+}
 
-    explicit BluetoothDeviceListModel(QObject *parent = 0);
+ModuleOption::ModuleOption(const QString &name, const QString &icon, const int &index, QObject *parent)
+    : QObject(parent), m_name(name), m_icon(icon), m_index(index)
+{
 
-    int rowCount(const QModelIndex & = QModelIndex()) const override { return m_data.count(); }
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+}
 
-    Q_INVOKABLE BluetoothDevice* get(int index) const { return m_data.at(index); }
+QString ModuleOption::name() const
+{
+    return this->m_name;
+}
 
-    bool addDevice(BluetoothDevice* device);
-    void clear();
+QString ModuleOption::icon() const
+{
+    return this->m_icon;
+}
 
-signals:
-    void countChanged(int c);
+int ModuleOption::index() const
+{
+    return this->m_index;
+}
 
-protected:
-    QHash<int, QByteArray> roleNames() const;
+void ModuleOption::setName(const QString name)
+{
+    if (name != this->m_name) {
+        this->m_name = name;
+        emit nameChanged();
+    }
+}
 
-private:
-    QList<BluetoothDevice*> m_data;
-};
+void ModuleOption::setIcon(const QString icon)
+{
+    if (icon != this->m_icon) {
+        this->m_icon = icon;
+        emit iconChanged();
+    }
+}
 
-#endif // BLUETOOTHDEVICELISTMODEL_H
+void ModuleOption::setIndex(const int index)
+{
+    if (index != this->m_index) {
+        this->m_index = index;
+        emit indexChanged();
+    }
+}

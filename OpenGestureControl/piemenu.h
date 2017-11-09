@@ -34,6 +34,7 @@
 #include <iostream>
 
 #include "callbackhandler.h"
+#include "moduleoptionsmodel.h"
 
 class PieMenu : public QObject
 {

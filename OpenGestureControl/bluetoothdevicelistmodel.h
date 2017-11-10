@@ -24,7 +24,6 @@
 #define BLUETOOTHDEVICELISTMODEL_H
 
 #include <QAbstractListModel>
-#include <QtTest>
 
 #include "bluetoothdevice.h"
 

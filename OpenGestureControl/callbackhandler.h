@@ -37,7 +37,6 @@
 #include <QString>
 #include <QUrl>
 #include <QDesktopServices>
-#include <QtTest>
 
 #include <lua.hpp>
 

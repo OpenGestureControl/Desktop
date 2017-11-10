@@ -28,7 +28,6 @@
 #include <QString>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include <QtTest>
 
 #include "bluetoothdevicelistmodel.h"
 

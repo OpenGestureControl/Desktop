@@ -24,6 +24,7 @@
 #define KEYBOARDINPUT_H
 
 #include <iostream>
+#include <QtTest>
 
 #ifdef Q_OS_WIN32
     #include <windows.h>

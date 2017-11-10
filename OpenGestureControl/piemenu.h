@@ -31,6 +31,7 @@
 #include <QQmlContext>
 #include <QQmlPropertyMap>
 #include <QWindow>
+#include <QtTest>
 #include <iostream>
 
 #include "callbackhandler.h"

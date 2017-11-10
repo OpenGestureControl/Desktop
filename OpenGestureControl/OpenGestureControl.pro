@@ -22,8 +22,8 @@
 
 TEMPLATE = app
 
-QT += qml quick widgets
-CONFIG += c++11
+QT += qml quick widgets testlib
+CONFIG += c++11 qt
 
 SOURCES += main.cpp \
     piemenu.cpp \

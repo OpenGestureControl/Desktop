@@ -24,6 +24,7 @@
 #define MODULEOPTIONSMODEL_H
 
 #include <QAbstractListModel>
+#include <QtTest>
 
 #include "moduleoption.h"
 

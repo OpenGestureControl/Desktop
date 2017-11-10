@@ -25,6 +25,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QtTest>
 
 class BluetoothDevice : public QObject
 {

@@ -1,4 +1,4 @@
-[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/tnpmuci01r65v5bi?svg=true)](https://ci.appveyor.com/project/TheLastProject/desktop) [![Travis build status](https://travis-ci.org/OpenGestureControl/Desktop.svg?branch=master)](https://travis-ci.org/OpenGestureControl)
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/tnpmuci01r65v5bi?svg=true)](https://ci.appveyor.com/project/TheLastProject/desktop) [![Travis build status](https://travis-ci.org/OpenGestureControl/Desktop.svg?branch=master)](https://travis-ci.org/OpenGestureControl) [![codecov](https://codecov.io/gh/OpenGestureControl/Desktop/branch/master/graph/badge.svg)](https://codecov.io/gh/OpenGestureControl/Desktop)
 
 The OpenGestureControl project is made possible by [ICT Group](https://ict.eu/).
 

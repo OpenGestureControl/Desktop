@@ -1,6 +1,7 @@
 install:
   - set QTDIR=C:\Qt\5.9.1\mingw53_32
   - set PATH=%PATH%;%QTDIR%\bin;C:\MinGW\bin
+
 build_script:
   - cd OpenGestureControl
   - qmake OpenGestureControl.pro
@@ -11,7 +12,14 @@ build_script:
   - mingw32-make
   - cd release
   - copy C:\Qt\5.9.1\mingw53_32\bin\*.dll .
-  - tests
+  - cd ..
+  - release\tests.exe
+  - move release\*.gcno .
+  - move release\*.gcda .
+  - ps: |
+      $env:PATH = 'C:\MinGW\bin;' + 'C:\msys64\usr\bin;' + $env:PATH
+      Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
+      bash codecov.sh
 
 notifications:
   - provider: Slack

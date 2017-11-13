@@ -2,8 +2,16 @@ install:
   - set QTDIR=C:\Qt\5.9.1\mingw53_32
   - set PATH=%PATH%;%QTDIR%\bin;C:\MinGW\bin
 build_script:
-  - qmake OpenGestureControl/OpenGestureControlCore.pro
+  - cd OpenGestureControl
+  - qmake OpenGestureControl.pro
   - mingw32-make
+  - cd ..
+  - cd tests
+  - qmake tests.pro
+  - mingw32-make
+  - cd release
+  - copy C:\Qt\5.9.1\mingw53_32\bin\*.dll .
+  - tests
 
 notifications:
   - provider: Slack

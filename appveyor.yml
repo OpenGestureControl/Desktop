@@ -11,7 +11,8 @@ build_script:
   - qmake tests.pro
   - mingw32-make
   - cd release
-  - copy C:\Qt\5.9.1\mingw53_32\bin\*.dll .
+  - C:\Qt\5.9.1\mingw53_32\bin\windeployqt --qmldir ..\..\OpenGestureControl tests.exe
+  - copy ..\..\OpenGestureControl\libs\*.dll .
   - cd ..
   - release\tests.exe
   - move release\*.gcno .
@@ -19,7 +20,7 @@ build_script:
   - ps: |
       $env:PATH = 'C:\MinGW\bin;' + 'C:\msys64\usr\bin;' + $env:PATH
       Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
-      bash codecov.sh
+      bash codecov.sh -g "*tests/test*"
 
 notifications:
   - provider: Slack

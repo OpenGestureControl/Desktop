@@ -60,7 +60,8 @@ script:
     done
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - curl https://codecov.io/bash -o codecov.sh
+  - bash codecov.sh -g "*tests/test*"
 
 notifications:
   slack:

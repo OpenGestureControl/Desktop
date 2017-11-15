@@ -20,7 +20,7 @@ build_script:
   - ps: |
       $env:PATH = 'C:\MinGW\bin;' + 'C:\msys64\usr\bin;' + $env:PATH
       Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
-      bash codecov.sh -g "*tests/test*"
+      bash codecov.sh -g "*tests/*test*" -g "*tests/main.*"
 
 notifications:
   - provider: Slack

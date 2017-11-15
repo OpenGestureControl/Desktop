@@ -1,15 +1,4 @@
-#include <QtTest/QtTest>
-
-#include "../OpenGestureControl/bluetoothdevicelistmodel.h"
-
-class TestBluetoothDeviceListModel : public QObject
-{
-    Q_OBJECT
-private slots:
-    void storingAndRetrievingBluetoothDevice();
-    void getCorrectBluetoothDeviceCount();
-    void correctlyClearBluetoothDeviceCount();
-};
+#include "testbluetoothdevicelistmodel.h"
 
 void TestBluetoothDeviceListModel::storingAndRetrievingBluetoothDevice()
 {
@@ -80,6 +69,3 @@ void TestBluetoothDeviceListModel::correctlyClearBluetoothDeviceCount()
     // Assert
     QVERIFY(bluetoothDeviceListModel->rowCount() == 0);
 }
-
-QTEST_MAIN(TestBluetoothDeviceListModel)
-#include "testbluetoothdevicelistmodel.moc"

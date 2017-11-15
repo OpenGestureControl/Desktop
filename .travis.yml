@@ -61,7 +61,7 @@ script:
 
 after_success:
   - curl https://codecov.io/bash -o codecov.sh
-  - bash codecov.sh -g "*tests/test*"
+  - bash codecov.sh -g "*tests/*test*" -g "*tests/main.*"
 
 notifications:
   slack:

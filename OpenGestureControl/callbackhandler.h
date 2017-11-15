@@ -46,6 +46,13 @@
 #include "moduleoptionsmodel.h"
 #include "moduleoption.h"
 
+/*! \brief A class which handles callbacks from the piemenu.
+ *
+ *  This class is created in the piemenu class and is attached to the current active Lua module.
+ *
+ *  Note: This class is currently only usable in Windows. It will compile in other OSes but will not register keypresses.
+ */
+
 class CallbackHandler : public QObject
 {
     Q_OBJECT

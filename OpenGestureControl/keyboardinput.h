@@ -31,10 +31,24 @@
 
 #include "piemenu.h"
 
+/*! \brief A class which handles keyboard input.
+ *
+ *  This class sets up a Low Level hook for Windows to catch a leftshift key from being pressed.
+ *  After a leftshift keypress is detected the callback class is called and the piemenu pointer is asked to open the piemenu.
+ *
+ *  Note: This class is currently only usable in Windows. It will compile in other OSes but will not work accordingly.
+ */
+
 class KeyBoardInput
 {
     public:
-        explicit KeyBoardInput(PieMenu *menu);
+        /*! \brief The constructor.
+         *
+         *  It requires a pointer to the Piemenu in order to be able to open the piemenu from a keyboard call.
+         *  The hook for keyboardinput is set up directly in this constructor.
+         *  After a key is pressed it will call a callback function to determine if the pressed key is a left shift key.
+         */
+        explicit KeyBoardInput(PieMenu *menu /*!< [in] parameter, a QObject pointer to a piemenu class. */);
 };
 
 #endif // KEYBOARDINPUT_H

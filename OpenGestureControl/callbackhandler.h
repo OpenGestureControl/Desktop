@@ -70,7 +70,7 @@ private:
 signals:
 
 public slots:
-    void handle(QString optionName);
+    bool handle(QString optionName);
 };
 
 #endif // CALLBACKHANDLER_H

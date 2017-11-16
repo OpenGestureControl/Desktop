@@ -63,7 +63,8 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 }
 
 #ifdef Q_OS_WIN32
-WORD CallbackHandler::lookupKey(QString keyname) {
+WORD CallbackHandler::lookupKey(QString keyname)
+{
     QMap<QString, WORD> lookupMap;
     lookupMap["0"] = 0x30;
     lookupMap["1"] = 0x31;
@@ -227,7 +228,7 @@ extern "C" int CallbackHandler::ModuleHelperSendKeyboardKey(lua_State* L)
   return 0; // Count of returned values
 }
 
-void CallbackHandler::handle(QString optionName)
+bool CallbackHandler::handle(QString optionName)
 {
     qWarning() << optionName;
 
@@ -254,10 +255,11 @@ void CallbackHandler::handle(QString optionName)
     int result = lua_pcall(L, 1, 0, 0);
     if (result) {
         fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
-        exit(1);
+        return false;
     }
 
     close();
+    return true;
 }
 
 ModuleOptionsModel *CallbackHandler::getOptions()
@@ -334,6 +336,7 @@ ModuleOptionsModel *CallbackHandler::getOptions()
     return this->moduleOptions;
 }
 
-void CallbackHandler::close() {
+void CallbackHandler::close()
+{
     lua_close(L);   /* Close Lua */
 }

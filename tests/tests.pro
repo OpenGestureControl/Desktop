@@ -38,7 +38,8 @@ HEADERS += ../OpenGestureControl/piemenu.h \
     ../OpenGestureControl/moduleoptionsmodel.h \
     ../OpenGestureControl/moduleoption.h \ # End of main project headers
     testbluetoothdevicelistmodel.h \
-    testmoduleoptionsmodel.h
+    testmoduleoptionsmodel.h \
+    testcallbackhandler.h
 
 
 SOURCES += ../OpenGestureControl/piemenu.cpp \
@@ -51,6 +52,7 @@ SOURCES += ../OpenGestureControl/piemenu.cpp \
     ../OpenGestureControl/moduleoption.cpp \ # End of main project sources
     testbluetoothdevicelistmodel.cpp \
     testmoduleoptionsmodel.cpp \
+    testcallbackhandler.cpp \
     main.cpp
 
 # Lua

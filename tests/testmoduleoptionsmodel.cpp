@@ -18,6 +18,26 @@ void TestModuleOptionsModel::storingAndRetrievingOptions()
     QVERIFY(retrievedModuleOption->icon() == icon);
 }
 
+void TestModuleOptionsModel::storingAndRetrievingDuplicateOptions()
+{
+    // Arrange
+    bool result;
+    QString name = "Example option";
+    QString icon = "test.png";
+
+    ModuleOptionsModel *moduleOptionsModel = new ModuleOptionsModel();
+    ModuleOption *moduleOption = new ModuleOption(name, icon, 1);
+
+    moduleOptionsModel->addOption(moduleOption);
+
+    // Act
+    result = moduleOptionsModel->addOption(moduleOption);
+
+    // Assert
+    QVERIFY(result == false);
+    QVERIFY(moduleOptionsModel->rowCount() == 1);
+}
+
 void TestModuleOptionsModel::getCorrectOptionsCount()
 {
     // Arrange
@@ -68,4 +88,24 @@ void TestModuleOptionsModel::correctlyClearOptionsCount()
 
     // Assert
     QVERIFY(moduleOptionsModel->rowCount() == 0);
+}
+
+void TestModuleOptionsModel::retrieveIncorrectRoleData()
+{
+    // Arrange
+    QVariant qvar;
+    const QModelIndex qindex;
+    QString name = "Example option";
+    QString icon = "test.png";
+
+    ModuleOptionsModel *moduleOptionsModel = new ModuleOptionsModel();
+    ModuleOption *moduleOption = new ModuleOption(name, icon, 1);
+
+    moduleOptionsModel->addOption(moduleOption);
+
+    // Act
+    qvar = moduleOptionsModel->data(qindex, 0);
+
+    // Assert
+    QVERIFY(qvar.isValid() == false);
 }

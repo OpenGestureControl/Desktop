@@ -14,6 +14,7 @@ build_script:
   - C:\Qt\5.9.1\mingw53_32\bin\windeployqt --qmldir ..\..\OpenGestureControl tests.exe
   - copy ..\..\OpenGestureControl\libs\*.dll .
   - cd ..
+  - copy ..\OpenGestureControl\browser.lua .
   - release\tests.exe
   - move release\*.gcno .
   - move release\*.gcda .

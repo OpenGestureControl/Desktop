@@ -38,7 +38,7 @@ class ModuleOption : public QObject
 public:
     /*! \brief The constructor.
      *
-     *  This constructor instantiates this object.
+     *  This constructor instantiates this class.
      */
     explicit ModuleOption(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
 
@@ -67,9 +67,9 @@ public:
     void setIndex(const int index);
 
 private:
-    QString m_name;
-    QString m_icon;
-    int m_index;
+    QString m_name; /*!< A QString reference to the name of the option. */
+    QString m_icon; /*!< A QString reference to the icon of the option. */
+    int m_index; /*!< An integer reference to the index of the option. */
 
 signals:
     /*! \brief This signal fires when the m_name variable is changed via setName.*/

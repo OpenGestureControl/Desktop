@@ -36,7 +36,7 @@
  *  This class sets up a Low Level hook for Windows to catch a leftshift key from being pressed.
  *  After a leftshift keypress is detected the callback class is called and the piemenu pointer is asked to open the piemenu.
  *
- *  Note: This class is currently only usable in Windows. It will compile in other OSes but will not register keypresses.
+ *  Note: This class is currently only usable in Windows. It will compile in other OSes but will not work accordingly.
  */
 
 class KeyBoardInput

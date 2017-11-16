@@ -1,4 +1,3 @@
--- browser.lua
 -- Controls any browser with basic hotkeys
 function return_options()
     io.write("We're asked for the options. Going to return them.\n");

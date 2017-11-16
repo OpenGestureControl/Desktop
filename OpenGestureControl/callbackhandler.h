@@ -32,6 +32,7 @@
 #endif
 
 #include <QDebug>
+#include <QDir>
 #include <QList>
 #include <QObject>
 #include <QString>

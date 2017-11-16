@@ -20,51 +20,28 @@
    SOFTWARE.
 */
 
-#include <functional>
-#include <QApplication>
-#include <QDebug>
-#include <QMenu>
-#include <QObject>
-#include <QSystemTrayIcon>
-#include <QTranslator>
+#include "module.h"
 
-#include "bluetoothmanager.h"
-#include "mainwindow.h"
-#include "piemenu.h"
-
-#ifdef Q_OS_WIN32
-    #include "keyboardinput.h"
-#endif
-
-#include <QQmlApplicationEngine>
-
-int main(int argc, char *argv[])
+Module::Module(QObject *parent) : QObject(parent)
 {
-    QApplication app(argc, argv);
-    app.setQuitOnLastWindowClosed(false);
 
-    QTranslator translator;
-    translator.load(QLocale(), "", "i18n", ".qm");
-    app.installTranslator(&translator);
+}
 
-    MainWindow mainWindow;
-    PieMenu pieMenu;
+Module::Module(const QString &name, QObject *parent)
+    : QObject(parent), m_name(name)
+{
 
-    QSystemTrayIcon *tray = new QSystemTrayIcon(QIcon(":/icons/app.png"), &app);
-    QObject::connect(tray, &QSystemTrayIcon::activated, [&] () {
-        mainWindow.toggle();
-    });
+}
 
-    QMenu trayMenu;
-    trayMenu.addAction(QObject::tr("Open menu"), std::bind(&PieMenu::open, &pieMenu));
-    trayMenu.addAction(QObject::tr("&Quit"), qApp, &QApplication::quit);
+QString Module::name() const
+{
+    return this->m_name;
+}
 
-    tray->setContextMenu(&trayMenu);
-    tray->show();
-
-#ifdef Q_OS_WIN32
-    KeyBoardInput keyboardinput(&pieMenu);
-#endif // Q_OS_WIN32
-
-    return app.exec();
+void Module::setName(const QString name)
+{
+    if (name != this->m_name) {
+        this->m_name = name;
+        emit nameChanged();
+    }
 }

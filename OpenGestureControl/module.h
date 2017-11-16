@@ -20,35 +20,31 @@
    SOFTWARE.
 */
 
-#ifndef MODULEOPTION_H
-#define MODULEOPTION_H
+#ifndef MODULE_H
+#define MODULE_H
 
 #include <QObject>
 #include <QString>
 
-/*! \brief A class which represents an option within the piemenu.*/
+/*! \brief A class which represents a single module.*/
 
-class ModuleOption : public QObject
+class Module : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QString icon READ icon WRITE setIcon NOTIFY iconChanged)
-    Q_PROPERTY(int index READ index WRITE setIndex NOTIFY indexChanged)
 
 public:
     /*! \brief The constructor.
      *
      *  This constructor instantiates this class.
      */
-    explicit ModuleOption(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
+    explicit Module(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
 
     /*! \brief The constructor.
      *
      *  This constructor instantiates this object with all the variables given to it.
      */
-    explicit ModuleOption(const QString &name, /*!< [in] parameter, a dereferenced QString pointer to the name of this option.*/
-                          const QString &icon, /*!< [in] parameter, a dereferenced Qstring pointer to the icon of this option.*/
-                          const int &index, /*!< [in] parameter, a dereferenced integer pointer to the index of this option.*/
+    explicit Module(const QString &name, /*!< [in] parameter, a dereferenced QString pointer to the name of this option.*/
                           QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
 
     /*! \brief A getter function for m_name.*/
@@ -56,30 +52,14 @@ public:
     /*! \brief A setter function for m_name.*/
     void setName(const QString name);
 
-    /*! \brief A getter function for m_icon.*/
-    QString icon() const;
-    /*! \brief A setter function for m_icon.*/
-    void setIcon(const QString icon);
-
-    /*! \brief A getter function for m_index.*/
-    int index() const;
-    /*! \brief A setter function for m_index.*/
-    void setIndex(const int index);
-
 private:
     QString m_name; /*!< A QString reference to the name of the option. */
-    QString m_icon; /*!< A QString reference to the icon of the option. */
-    int m_index; /*!< An integer reference to the index of the option. */
 
 signals:
     /*! \brief This signal fires when the m_name variable is changed via setName.*/
     void nameChanged();
-    /*! \brief This signal fires when the m_icon variable is changed via setIcon.*/
-    void iconChanged();
-    /*! \brief This signal fires when the m_index variable is changed via setIndex.*/
-    void indexChanged();
 
 public slots:
 };
 
-#endif // MODULEOPTION_H
+#endif // MODULE_H

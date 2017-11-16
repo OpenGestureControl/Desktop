@@ -1,4 +1,3 @@
--- music.lua
 -- Controls any music player basic hotkeys
 function return_options()
     io.write("We're asked for the options. Going to return them.\n");

@@ -33,7 +33,10 @@ SOURCES += main.cpp \
     bluetoothdevice.cpp \
     bluetoothdevicelistmodel.cpp \
     moduleoptionsmodel.cpp \
-    moduleoption.cpp
+    moduleoption.cpp \
+    mainwindow.cpp \
+    modulelistmodel.cpp \
+    module.cpp
 
 RESOURCES += qml.qrc
 
@@ -76,7 +79,10 @@ HEADERS += \
     bluetoothdevice.h \
     bluetoothdevicelistmodel.h \
     moduleoptionsmodel.h \
-    moduleoption.h
+    moduleoption.h \
+    mainwindow.h \
+    modulelistmodel.h \
+    module.h
 
 DISTFILES += \
     browser.lua \

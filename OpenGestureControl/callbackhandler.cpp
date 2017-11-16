@@ -25,7 +25,7 @@
 
 CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 {
-    std::string filename = "browser.lua";
+    QString modulename = "browser";
 #ifdef Q_OS_WIN32
     this->lastProcess = GetForegroundWindow();
     //qWarning() << this->lastProcess;
@@ -42,7 +42,7 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
     qWarning() << this->exeTitle;
 
     if (this->exeTitle == "Spotify.exe") {
-        filename = "music.lua";
+        modulename = "music";
     }
 
 #endif // Q_OS_WIN32
@@ -55,7 +55,7 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 
     lua_register(L, "ModuleHelperSendKeyboardKey", ModuleHelperSendKeyboardKey);
 
-    status = luaL_dofile(L, filename.c_str());
+    status = luaL_dofile(L, QDir("modules/" + modulename + "/main.lua").path().toStdString().c_str());
     if (status) {
         fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
         exit(1);

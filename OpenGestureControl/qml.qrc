@@ -13,5 +13,6 @@
         <file>icons/Stop_500px.png</file>
         <file>icons/VolumeUp_500px.png</file>
         <file>icons/VolumeDown_500px.png</file>
+        <file>main.qml</file>
     </qresource>
 </RCC>

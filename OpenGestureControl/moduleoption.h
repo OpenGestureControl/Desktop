@@ -26,6 +26,8 @@
 #include <QObject>
 #include <QString>
 
+/*! \brief A class which represents an option within the piemenu.*/
+
 class ModuleOption : public QObject
 {
     Q_OBJECT
@@ -34,26 +36,47 @@ class ModuleOption : public QObject
     Q_PROPERTY(int index READ index WRITE setIndex NOTIFY indexChanged)
 
 public:
-    explicit ModuleOption(QObject *parent = 0);
-    explicit ModuleOption(const QString &name, const QString &icon, const int &index, QObject *parent = 0);
+    /*! \brief The constructor.
+     *
+     *  This constructor instantiates this class.
+     */
+    explicit ModuleOption(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
 
+    /*! \brief The constructor.
+     *
+     *  This constructor instantiates this object with all the variables given to it.
+     */
+    explicit ModuleOption(const QString &name, /*!< [in] parameter, a dereferenced QString pointer to the name of this option.*/
+                          const QString &icon, /*!< [in] parameter, a dereferenced Qstring pointer to the icon of this option.*/
+                          const int &index, /*!< [in] parameter, a dereferenced integer pointer to the index of this option.*/
+                          QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
+
+    /*! \brief A getter function for m_name.*/
     QString name() const;
+    /*! \brief A setter function for m_name.*/
     void setName(const QString name);
 
+    /*! \brief A getter function for m_icon.*/
     QString icon() const;
+    /*! \brief A setter function for m_icon.*/
     void setIcon(const QString icon);
 
+    /*! \brief A getter function for m_index.*/
     int index() const;
+    /*! \brief A setter function for m_index.*/
     void setIndex(const int index);
 
 private:
-    QString m_name;
-    QString m_icon;
-    int m_index;
+    QString m_name; /*!< A QString reference to the name of the option. */
+    QString m_icon; /*!< A QString reference to the icon of the option. */
+    int m_index; /*!< An integer reference to the index of the option. */
 
 signals:
+    /*! \brief This signal fires when the m_name variable is changed via setName.*/
     void nameChanged();
+    /*! \brief This signal fires when the m_icon variable is changed via setIcon.*/
     void iconChanged();
+    /*! \brief This signal fires when the m_index variable is changed via setIndex.*/
     void indexChanged();
 
 public slots:

@@ -31,6 +31,11 @@
 
 #include "bluetoothdevicelistmodel.h"
 
+/*! \brief A class which manages all known Bluetooth devices.
+ *
+ *  Doesn't do much yet.
+ */
+//This class retains a list of previously connected Bluetooth devices for easy managing.
 class BluetoothManager : public QObject
 {
     Q_OBJECT

@@ -24,7 +24,7 @@ function handle(selection)
     elseif selection == "Back" then
         ModuleHelperSendKeyboardKey("Alt+Left")
     else
-        io.write("Unknown selection made\n")
+        error("Unknown selection made")
     end
 end
 

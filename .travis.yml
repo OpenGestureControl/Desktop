@@ -46,6 +46,7 @@ script:
   - pushd tests
   - qmake tests.pro
   - make
+  - cp ../OpenGestureControl/browser.lua .
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       export DISPLAY=:99.0;
       sh -e /etc/init.d/xvfb start;
@@ -61,7 +62,7 @@ script:
 
 after_success:
   - curl https://codecov.io/bash -o codecov.sh
-  - bash codecov.sh -g "*tests/test*"
+  - bash codecov.sh -g "*tests/*test*" -g "*tests/main.*"
 
 notifications:
   slack:

@@ -29,7 +29,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-# Main project
 HEADERS += ../OpenGestureControl/piemenu.h \
     ../OpenGestureControl/keyboardinput.h \
     ../OpenGestureControl/callbackhandler.h \
@@ -37,7 +36,11 @@ HEADERS += ../OpenGestureControl/piemenu.h \
     ../OpenGestureControl/bluetoothdevice.h \
     ../OpenGestureControl/bluetoothdevicelistmodel.h \
     ../OpenGestureControl/moduleoptionsmodel.h \
-    ../OpenGestureControl/moduleoption.h
+    ../OpenGestureControl/moduleoption.h \ # End of main project headers
+    testbluetoothdevicelistmodel.h \
+    testmoduleoptionsmodel.h \
+    testcallbackhandler.h
+
 
 SOURCES += ../OpenGestureControl/piemenu.cpp \
     ../OpenGestureControl/keyboardinput.cpp \
@@ -46,10 +49,11 @@ SOURCES += ../OpenGestureControl/piemenu.cpp \
     ../OpenGestureControl/bluetoothdevice.cpp \
     ../OpenGestureControl/bluetoothdevicelistmodel.cpp \
     ../OpenGestureControl/moduleoptionsmodel.cpp \
-    ../OpenGestureControl/moduleoption.cpp
-
-# Input
-SOURCES += testbluetoothdevicelistmodel.cpp
+    ../OpenGestureControl/moduleoption.cpp \ # End of main project sources
+    testbluetoothdevicelistmodel.cpp \
+    testmoduleoptionsmodel.cpp \
+    testcallbackhandler.cpp \
+    main.cpp
 
 # Lua
 win32:INCLUDEPATH += $$PWD/../OpenGestureControl/libs $$PWD/../OpenGestureControl/libs/include

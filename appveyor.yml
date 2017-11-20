@@ -14,13 +14,14 @@ build_script:
   - C:\Qt\5.9.1\mingw53_32\bin\windeployqt --qmldir ..\..\OpenGestureControl tests.exe
   - copy ..\..\OpenGestureControl\libs\*.dll .
   - cd ..
+  - copy ..\OpenGestureControl\browser.lua .
   - release\tests.exe
   - move release\*.gcno .
   - move release\*.gcda .
   - ps: |
       $env:PATH = 'C:\MinGW\bin;' + 'C:\msys64\usr\bin;' + $env:PATH
       Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
-      bash codecov.sh -g "*tests/test*"
+      bash codecov.sh -g "*tests/*test*" -g "*tests/main.*"
 
 notifications:
   - provider: Slack

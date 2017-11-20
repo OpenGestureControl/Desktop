@@ -104,8 +104,9 @@ public slots:
      *  This function is called when an option in the piemenu is selected.
      *  It retrieves the action to execute from the Lua module with the given option name.
      *  It retrieves the last application on the foreground, brings it to back to the foreground and executes the action on it.
+     *  It return true when successful.
      */
-    void handle(QString optionName /*!< [in] parameter, a QString reference to the optio to be executed.*/);
+    bool handle(QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/);
 };
 
 #endif // CALLBACKHANDLER_H

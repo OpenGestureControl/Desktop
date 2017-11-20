@@ -3,12 +3,12 @@
 function return_options()
     io.write("We're asked for the options. Going to return them.\n");
     local entries = {};
-    table.insert(entries, {name = "Next", icon = "Forward_500px.png"})
-    table.insert(entries, {name = "Previous", icon = "Back_500px.png"})
     table.insert(entries, {name = "Play", icon = "Play_500px.png"})
-    table.insert(entries, {name = "Stop", icon = "Stop_500px.png"})
+    table.insert(entries, {name = "Next", icon = "Forward_500px.png"})
     table.insert(entries, {name = "VolumeUp", icon = "VolumeUp_500px.png"})
+    table.insert(entries, {name = "Stop", icon = "Stop_500px.png"})
     table.insert(entries, {name = "VolumeDown", icon = "VolumeDown_500px.png"})
+    table.insert(entries, {name = "Previous", icon = "Back_500px.png"})
     return entries;
 end
 

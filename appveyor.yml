@@ -1,5 +1,5 @@
 install:
-  - set QTDIR=C:\Qt\5.9.1\mingw53_32
+  - set QTDIR=C:\Qt\5.9\mingw53_32
   - set PATH=%PATH%;%QTDIR%\bin;C:\MinGW\bin
 
 build_script:
@@ -11,7 +11,7 @@ build_script:
   - qmake tests.pro
   - mingw32-make
   - cd release
-  - C:\Qt\5.9.1\mingw53_32\bin\windeployqt --qmldir ..\..\OpenGestureControl tests.exe
+  - C:\Qt\5.9\mingw53_32\bin\windeployqt --qmldir ..\..\OpenGestureControl tests.exe
   - copy ..\..\OpenGestureControl\libs\*.dll .
   - cd ..
   - copy ..\OpenGestureControl\browser.lua .

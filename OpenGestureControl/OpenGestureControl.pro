@@ -22,7 +22,7 @@
 
 TEMPLATE = app
 
-QT += qml quick widgets testlib
+QT += qml quick widgets testlib bluetooth
 CONFIG += c++11 qt
 
 SOURCES += main.cpp \

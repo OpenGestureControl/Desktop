@@ -30,7 +30,7 @@ BluetoothDeviceListModel::BluetoothDeviceListModel(QObject *parent) :
 QHash<int, QByteArray> BluetoothDeviceListModel::roleNames() const {
     QHash<int, QByteArray> roles;
     roles[NameRole] = "name";
-    roles[DeviceIdRole] = "deviceId";
+    roles[DeviceAddressRole] = "deviceAddress";
     return roles;
 }
 
@@ -43,13 +43,13 @@ QVariant BluetoothDeviceListModel::data(const QModelIndex &index, int role) cons
 
     switch (role) {
     case Qt::DisplayRole:
-        return QString("%1 (%2)").arg(val->name(), val->deviceId());
+        return QString("%1 (%2)").arg(val->name(), val->deviceAddress());
         break;
     case NameRole:
         return val->name();
         break;
-    case DeviceIdRole:
-        return val->deviceId();
+    case DeviceAddressRole:
+        return val->deviceAddress();
         break;
     default:
         return QVariant();

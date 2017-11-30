@@ -24,6 +24,7 @@
 #define BLUETOOTHMANAGER_H
 
 #include <QAbstractItemModel>
+#include <QBluetoothDeviceDiscoveryAgent>
 #include <QObject>
 #include <QString>
 #include <QQmlApplicationEngine>
@@ -48,6 +49,7 @@ public:
     bool isUIOpen();
 
 private:
+    QBluetoothDeviceDiscoveryAgent *bluetoothDeviceDiscoveryAgent;
     QObject *window;
     QQmlApplicationEngine engine;
     BluetoothDeviceListModel *bluetoothDevices;
@@ -58,6 +60,8 @@ public slots:
     void scanForDevices();
     void connectToDevice(QString deviceId);
     void forgetDevice(QString deviceId);
+    void deviceDiscovered(QBluetoothDeviceInfo deviceInfo);
+    void scanFinished();
 };
 
 #endif // BLUETOOTHMANAGER_H

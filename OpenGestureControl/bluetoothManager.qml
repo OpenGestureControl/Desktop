@@ -37,6 +37,8 @@ Window {
     signal forgetRequest(string deviceId)
 
     property string status: "IDLE"
+    // FIXME: Remove this line later
+    visible: true
 
     SystemPalette { id: palette; colorGroup: SystemPalette.Active }
 
@@ -75,17 +77,6 @@ Window {
 
                 model: bluetoothDevices
 
-
-                add: Transition {
-                    NumberAnimation { property: "opacity"; to: 1; duration: 1000 }
-                }
-                displaced: Transition {
-                    NumberAnimation { properties: "x,y"; duration: 1000 }
-                }
-                remove: Transition {
-                    NumberAnimation { property: "opacity"; to: 0; duration: 1000 }
-                }
-
                 delegate: Component {
                     Item {
                         id: wrapper
@@ -96,7 +87,7 @@ Window {
                         Row {
                             Text {
                                 id: text
-                                text: "%1 (%2)".arg(model.name).arg(model.deviceId)
+                                text: "%1 (%2)".arg(model.name).arg(model.deviceAddress)
                                 height: connectButton.height
                                 width: deviceList.width - connectButton.width - forgetButton.width
                                 elide: Text.ElideRight
@@ -141,9 +132,9 @@ Window {
             Layout.fillWidth: true
 
             text: root.status == "IDLE" ? qsTr("Search for devices") : qsTr("Searching...")
+            enabled: root.status == "IDLE"
 
             onClicked: {
-                root.status = "SCANNING";
                 scanRequest();
             }
         }

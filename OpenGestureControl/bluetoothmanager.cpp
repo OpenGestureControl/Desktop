@@ -21,6 +21,7 @@
 */
 
 #include "bluetoothmanager.h"
+#include <QDebug>
 
 BluetoothManager::BluetoothManager(QObject *parent) : QObject(parent)
 {
@@ -29,6 +30,12 @@ BluetoothManager::BluetoothManager(QObject *parent) : QObject(parent)
 
     this->engine.load(QUrl(QStringLiteral("qrc:/bluetoothManager.qml")));
     this->window = this->engine.rootObjects()[0];
+
+    this->bluetoothDeviceDiscoveryAgent = new QBluetoothDeviceDiscoveryAgent();
+    this->bluetoothDeviceDiscoveryAgent->setLowEnergyDiscoveryTimeout(5000);
+
+    connect(this->bluetoothDeviceDiscoveryAgent, SIGNAL(deviceDiscovered(QBluetoothDeviceInfo)), this, SLOT(deviceDiscovered(QBluetoothDeviceInfo)));
+    connect(this->bluetoothDeviceDiscoveryAgent, SIGNAL(finished()), this, SLOT(scanFinished()));
 
     connect(this->window, SIGNAL(scanRequest()), this, SLOT(scanForDevices()));
     connect(this->window, SIGNAL(connectRequest(QString)), this, SLOT(connectToDevice(QString)));
@@ -52,11 +59,9 @@ void BluetoothManager::closeUI()
 
 void BluetoothManager::scanForDevices()
 {
-    // TODO: Scan for devices
+    this->window->setProperty("status", "SCANNING");
     this->bluetoothDevices->clear();
-    this->bluetoothDevices->addDevice(new BluetoothDevice("Example device", "00000000-0000-1000-8000-00805F9B34FB"));
-    // Set back to IDLE when done
-    this->window->setProperty("status", "IDLE");
+    this->bluetoothDeviceDiscoveryAgent->start();
 }
 
 void BluetoothManager::connectToDevice(QString deviceId)
@@ -67,4 +72,14 @@ void BluetoothManager::connectToDevice(QString deviceId)
 void BluetoothManager::forgetDevice(QString deviceId)
 {
     // TODO: Forget device
+}
+
+void BluetoothManager::deviceDiscovered(QBluetoothDeviceInfo deviceInfo)
+{
+    bluetoothDevices->addDevice(new BluetoothDevice(deviceInfo.name(), deviceInfo.address().toString()));
+}
+
+void BluetoothManager::scanFinished()
+{
+    this->window->setProperty("status", "IDLE");
 }

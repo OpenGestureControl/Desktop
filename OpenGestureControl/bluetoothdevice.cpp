@@ -22,8 +22,8 @@
 
 #include "bluetoothdevice.h"
 
-BluetoothDevice::BluetoothDevice(const QString &name, const QString &deviceId, QObject *parent)
-    : QObject(parent), m_name(name), m_deviceId(deviceId)
+BluetoothDevice::BluetoothDevice(const QString &name, const QString &deviceAddress, QObject *parent)
+    : QObject(parent), m_name(name), m_deviceAddress(deviceAddress)
 {
 
 }
@@ -33,9 +33,9 @@ QString BluetoothDevice::name() const
     return this->m_name;
 }
 
-QString BluetoothDevice::deviceId() const
+QString BluetoothDevice::deviceAddress() const
 {
-    return this->m_deviceId;
+    return this->m_deviceAddress;
 }
 
 void BluetoothDevice::setName(const QString name)
@@ -46,10 +46,10 @@ void BluetoothDevice::setName(const QString name)
     }
 }
 
-void BluetoothDevice::setDeviceId(const QString deviceId)
+void BluetoothDevice::setDeviceAddress(const QString deviceAddress)
 {
-    if (deviceId != this->m_deviceId) {
-        this->m_deviceId = deviceId;
-        emit deviceIdChanged();
+    if (deviceAddress != this->m_deviceAddress) {
+        this->m_deviceAddress = deviceAddress;
+        emit deviceAddressChanged();
     }
 }

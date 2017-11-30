@@ -30,25 +30,25 @@ class BluetoothDevice : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QString deviceId READ deviceId WRITE setDeviceId NOTIFY deviceIdChanged)
+    Q_PROPERTY(QString deviceAddress READ deviceAddress WRITE setDeviceAddress NOTIFY deviceAddressChanged)
 
 public:
     explicit BluetoothDevice(QObject *parent = 0);
-    explicit BluetoothDevice(const QString &name, const QString &deviceId, QObject *parent = 0);
+    explicit BluetoothDevice(const QString &name, const QString &deviceAddress, QObject *parent = 0);
 
     QString name() const;
     void setName(const QString name);
 
-    QString deviceId() const;
-    void setDeviceId(const QString deviceId);
+    QString deviceAddress() const;
+    void setDeviceAddress(const QString deviceAddress);
 
 private:
     QString m_name;
-    QString m_deviceId;
+    QString m_deviceAddress;
 
 signals:
     void nameChanged();
-    void deviceIdChanged();
+    void deviceAddressChanged();
 
 public slots:
 };

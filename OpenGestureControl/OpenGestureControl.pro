@@ -40,7 +40,8 @@ RESOURCES += qml.qrc
 win32:INCLUDEPATH += $$PWD/libs $$PWD/libs/include
 win32:DEPENDPATH += $$PWD/libs
 
-unix:LIBS += -llua -lm -ldl
+unix:LIBS += -llua5.3 -lm -ldl
+unix:INCLUDEPATH += /usr/include/lua5.3
 win32:LIBS += -lpsapi -L$$PWD/libs/ -llua53
 
 # Additional import path used to resolve QML modules in Qt Creator's code model

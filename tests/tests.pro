@@ -10,7 +10,7 @@ INCLUDEPATH += .
 
 # gcov
 QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
-macx: {
+unix: {
     QMAKE_LFLAGS += --coverage
     QMAKE_CFLAGS += --coverage
 }

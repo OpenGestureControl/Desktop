@@ -38,7 +38,7 @@
 #include <QUrl>
 #include <QDesktopServices>
 
-#include <lua.hpp>
+#include "lua.hpp"
 
 #include <functional>
 #include <sstream>

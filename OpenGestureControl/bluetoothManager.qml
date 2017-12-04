@@ -87,7 +87,7 @@ Window {
                         Row {
                             Text {
                                 id: text
-                                text: "%1 (%2)".arg(model.name).arg(model.deviceAddress)
+                                text: "%1 (%2)".arg(model.name).arg(model.address)
                                 height: connectButton.height
                                 width: deviceList.width - connectButton.width - forgetButton.width
                                 elide: Text.ElideRight
@@ -98,14 +98,14 @@ Window {
 
                                 text: qsTr("Connect")
 
-                                onClicked: connectRequest(model.deviceAddress)
+                                onClicked: connectRequest(model.address)
                             }
                             Button {
                                 id: forgetButton
 
                                 text: qsTr("Forget")
 
-                                onClicked: forgetRequest(model.deviceAddress)
+                                onClicked: forgetRequest(model.address)
                             }
                         }
                     }

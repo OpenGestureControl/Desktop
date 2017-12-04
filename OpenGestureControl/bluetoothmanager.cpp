@@ -66,13 +66,16 @@ void BluetoothManager::scanForDevices()
 
 void BluetoothManager::connectToDevice(QString deviceAddress)
 {
-    qWarning() << "Connecting to device" << deviceAddress;
-    QBluetoothServiceDiscoveryAgent *discoveryAgent = new QBluetoothServiceDiscoveryAgent(this);
-    discoveryAgent->setRemoteAddress(QBluetoothAddress(deviceAddress));
-    connect(discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
-            this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
-
-    discoveryAgent->start();
+    qWarning() << deviceAddress;
+    qWarning() << "Creating Low Energy Controller";
+    lowEnergyController = QLowEnergyController::createCentral(bluetoothDevices->get(deviceAddress)->deviceInfo());
+    qWarning() << "Workaround for failing to connect";
+    lowEnergyController->setRemoteAddressType(QLowEnergyController::RandomAddress);
+    qWarning() << "Preparing connecting to device";
+    connect(lowEnergyController, SIGNAL(connected()),
+            this, SLOT(connected()));
+    qWarning() << "Connecting to device";
+    lowEnergyController->connectToDevice();
 }
 
 void BluetoothManager::forgetDevice(QString deviceAddress)
@@ -82,13 +85,28 @@ void BluetoothManager::forgetDevice(QString deviceAddress)
 
 void BluetoothManager::deviceDiscovered(QBluetoothDeviceInfo deviceInfo)
 {
-    bluetoothDevices->addDevice(new BluetoothDevice(deviceInfo.name(), deviceInfo.address().toString()));
+    bluetoothDevices->addDevice(new BluetoothDevice(deviceInfo));
 }
 
-void BluetoothManager::serviceDiscovered(QBluetoothServiceInfo serviceInfo)
+void BluetoothManager::serviceDiscovered(const QBluetoothUuid serviceUuid)
 {
-    qWarning() << "Found services:";
-    qWarning() << serviceInfo.attributes();
+    QString uuid = serviceUuid.toString();
+    if (uuid == "{e95d0753-251d-470a-a062-fa1922dfa9a8}") {
+        qWarning() << "Found accelerometer service:" << uuid;
+    } else if (uuid == "{e95d9882-251d-470a-a062-fa1922dfa9a8}") {
+        qWarning() << "Found button service:" << uuid;
+    } else {
+        qWarning() << "Found unknown service:" << uuid;
+    }
+}
+
+void BluetoothManager::connected()
+{
+    qWarning() << "Preparing service discovery";
+    connect(lowEnergyController, SIGNAL(serviceDiscovered(QBluetoothUuid)),
+            this, SLOT(serviceDiscovered(QBluetoothUuid)));
+    qWarning() << "Starting service discovery";
+    lowEnergyController->discoverServices();
 }
 
 void BluetoothManager::scanFinished()

@@ -23,32 +23,33 @@
 #ifndef BLUETOOTHDEVICE_H
 #define BLUETOOTHDEVICE_H
 
+#include <QBluetoothAddress>
+#include <QBluetoothDeviceInfo>
 #include <QObject>
 #include <QString>
 
 class BluetoothDevice : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QString deviceAddress READ deviceAddress WRITE setDeviceAddress NOTIFY deviceAddressChanged)
+    Q_PROPERTY(QBluetoothDeviceInfo deviceInfo READ deviceInfo WRITE setDeviceInfo NOTIFY deviceInfoChanged)
+    Q_PROPERTY(QString name READ name NOTIFY deviceInfoChanged)
+    Q_PROPERTY(QString address READ address NOTIFY deviceInfoChanged)
 
 public:
     explicit BluetoothDevice(QObject *parent = 0);
-    explicit BluetoothDevice(const QString &name, const QString &deviceAddress, QObject *parent = 0);
+    explicit BluetoothDevice(const QBluetoothDeviceInfo &deviceInfo, QObject *parent = 0);
 
-    QString name() const;
-    void setName(const QString name);
+    QBluetoothDeviceInfo deviceInfo() const;
+    void setDeviceInfo(const QBluetoothDeviceInfo name);
 
-    QString deviceAddress() const;
-    void setDeviceAddress(const QString deviceAddress);
+    QString name() const { return m_deviceInfo.name(); }
+    QString address() const { return m_deviceInfo.address().toString(); }
 
 private:
-    QString m_name;
-    QString m_deviceAddress;
+    QBluetoothDeviceInfo m_deviceInfo;
 
 signals:
-    void nameChanged();
-    void deviceAddressChanged();
+    void deviceInfoChanged();
 
 public slots:
 };

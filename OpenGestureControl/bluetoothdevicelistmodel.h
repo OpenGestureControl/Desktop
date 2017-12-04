@@ -24,6 +24,7 @@
 #define BLUETOOTHDEVICELISTMODEL_H
 
 #include <QAbstractListModel>
+#include <QBluetoothAddress>
 
 #include "bluetoothdevice.h"
 
@@ -35,7 +36,7 @@ class BluetoothDeviceListModel : public QAbstractListModel
 public:
     enum BluetoothDeviceRoles {
         NameRole = Qt::UserRole + 1,
-        DeviceAddressRole
+        AddressRole
     };
 
     explicit BluetoothDeviceListModel(QObject *parent = 0);
@@ -44,9 +45,11 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
     Q_INVOKABLE BluetoothDevice* get(int index) const { return m_data.at(index); }
+    BluetoothDevice* get(QString deviceAddress);
 
     bool addDevice(BluetoothDevice* device);
     void clear();
+
 
 signals:
     void countChanged(int c);

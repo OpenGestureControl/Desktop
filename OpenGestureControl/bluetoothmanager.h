@@ -26,6 +26,7 @@
 #include <QAbstractItemModel>
 #include <QBluetoothDeviceDiscoveryAgent>
 #include <QBluetoothServiceDiscoveryAgent>
+#include <QLowEnergyController>
 #include <QObject>
 #include <QString>
 #include <QQmlApplicationEngine>
@@ -51,6 +52,7 @@ public:
 
 private:
     QBluetoothDeviceDiscoveryAgent *bluetoothDeviceDiscoveryAgent;
+    QLowEnergyController *lowEnergyController;
     QObject *window;
     QQmlApplicationEngine engine;
     BluetoothDeviceListModel *bluetoothDevices;
@@ -61,8 +63,9 @@ public slots:
     void scanForDevices();
     void connectToDevice(QString deviceAddress);
     void forgetDevice(QString deviceAddress);
+    void connected();
     void deviceDiscovered(QBluetoothDeviceInfo deviceInfo);
-    void serviceDiscovered(QBluetoothServiceInfo serviceInfo);
+    void serviceDiscovered(QBluetoothUuid serviceUuid);
     void scanFinished();
 };
 

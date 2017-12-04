@@ -96,8 +96,6 @@ Window {
                             Button {
                                 id: connectButton
 
-                                visible: wrapper.ListView.isCurrentItem
-
                                 text: qsTr("Connect")
 
                                 onClicked: connectRequest(model.deviceAddress)
@@ -105,25 +103,13 @@ Window {
                             Button {
                                 id: forgetButton
 
-                                visible: wrapper.ListView.isCurrentItem
-
                                 text: qsTr("Forget")
 
                                 onClicked: forgetRequest(model.deviceAddress)
                             }
                         }
-                        MouseArea {
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            onPositionChanged: deviceList.currentIndex = index
-                        }
                     }
                 }
-                highlight: Rectangle {
-                    color: palette.highlight
-                }
-                highlightFollowsCurrentItem: true
-                highlightMoveDuration: 0
             }
         }
 

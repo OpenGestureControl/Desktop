@@ -33,8 +33,8 @@ Window {
     title: qsTr("OpenGestureControl - Bluetooth Manager")
 
     signal scanRequest()
-    signal connectRequest(string deviceId)
-    signal forgetRequest(string deviceId)
+    signal connectRequest(string deviceAddress)
+    signal forgetRequest(string deviceAddress)
 
     property string status: "IDLE"
     // FIXME: Remove this line later
@@ -100,7 +100,7 @@ Window {
 
                                 text: qsTr("Connect")
 
-                                onClicked: connectRequest(model.deviceId)
+                                onClicked: connectRequest(model.deviceAddress)
                             }
                             Button {
                                 id: forgetButton
@@ -109,7 +109,7 @@ Window {
 
                                 text: qsTr("Forget")
 
-                                onClicked: forgetRequest(model.deviceId)
+                                onClicked: forgetRequest(model.deviceAddress)
                             }
                         }
                         MouseArea {

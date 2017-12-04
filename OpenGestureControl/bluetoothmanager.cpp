@@ -64,12 +64,18 @@ void BluetoothManager::scanForDevices()
     this->bluetoothDeviceDiscoveryAgent->start();
 }
 
-void BluetoothManager::connectToDevice(QString deviceId)
+void BluetoothManager::connectToDevice(QString deviceAddress)
 {
-    // TODO: Connect to device
+    qWarning() << "Connecting to device" << deviceAddress;
+    QBluetoothServiceDiscoveryAgent *discoveryAgent = new QBluetoothServiceDiscoveryAgent(this);
+    discoveryAgent->setRemoteAddress(QBluetoothAddress(deviceAddress));
+    connect(discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
+            this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
+
+    discoveryAgent->start();
 }
 
-void BluetoothManager::forgetDevice(QString deviceId)
+void BluetoothManager::forgetDevice(QString deviceAddress)
 {
     // TODO: Forget device
 }
@@ -77,6 +83,12 @@ void BluetoothManager::forgetDevice(QString deviceId)
 void BluetoothManager::deviceDiscovered(QBluetoothDeviceInfo deviceInfo)
 {
     bluetoothDevices->addDevice(new BluetoothDevice(deviceInfo.name(), deviceInfo.address().toString()));
+}
+
+void BluetoothManager::serviceDiscovered(QBluetoothServiceInfo serviceInfo)
+{
+    qWarning() << "Found services:";
+    qWarning() << serviceInfo.attributes();
 }
 
 void BluetoothManager::scanFinished()

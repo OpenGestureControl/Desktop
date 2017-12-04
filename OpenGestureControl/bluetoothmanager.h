@@ -25,6 +25,7 @@
 
 #include <QAbstractItemModel>
 #include <QBluetoothDeviceDiscoveryAgent>
+#include <QBluetoothServiceDiscoveryAgent>
 #include <QObject>
 #include <QString>
 #include <QQmlApplicationEngine>
@@ -58,9 +59,10 @@ signals:
 
 public slots:
     void scanForDevices();
-    void connectToDevice(QString deviceId);
-    void forgetDevice(QString deviceId);
+    void connectToDevice(QString deviceAddress);
+    void forgetDevice(QString deviceAddress);
     void deviceDiscovered(QBluetoothDeviceInfo deviceInfo);
+    void serviceDiscovered(QBluetoothServiceInfo serviceInfo);
     void scanFinished();
 };
 

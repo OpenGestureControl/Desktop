@@ -26,6 +26,7 @@
 CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 {
     std::string filename = "browser.lua";
+
 #ifdef Q_OS_WIN32
     this->lastProcess = GetForegroundWindow();
     //qWarning() << this->lastProcess;
@@ -46,6 +47,31 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
     }
 
 #endif // Q_OS_WIN32
+
+#ifdef Q_OS_UNIX
+    // Obtain the X11 display.
+       Display *display = XOpenDisplay(0);
+       if(display == NULL)
+          //return -1;
+
+    // Get the root window for the current display.
+       Window winRoot = XDefaultRootWindow(display);
+
+    // Find the window which has the current keyboard focus.
+       Window winFocus;
+       int    revert;
+       XGetInputFocus(display, &winFocus, &revert);
+
+    // Send a fake key press event to the window.
+       //XKeyEvent event = createKeyEvent(display, winFocus, winRoot, true, KEYCODE, 0);
+       //XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
+
+    // Send a fake key release event to the window.
+       //event = createKeyEvent(display, winFocus, winRoot, false, KEYCODE, 0);
+       //XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
+
+#endif // Q_OS_UNIX
+
     this->moduleOptions = new ModuleOptionsModel();
 
     // Start initializing the Lua
@@ -150,7 +176,34 @@ WORD CallbackHandler::lookupKey(QString keyname)
 
     return lookupMap[keyname.toLower()];
 }
-#endif
+#endif // Q_OS_WIN32
+
+#ifdef Q_OS_UNIX
+XKeyEvent createKeyEvent(Display *display, Window &win, Window &winRoot, bool press, int keycode, int modifiers)
+{
+   XKeyEvent event;
+
+   event.display     = display;
+   event.window      = win;
+   event.root        = winRoot;
+   event.subwindow   = None;
+   event.time        = CurrentTime;
+   event.x           = 1;
+   event.y           = 1;
+   event.x_root      = 1;
+   event.y_root      = 1;
+   event.same_screen = True;
+   event.keycode     = XKeysymToKeycode(display, keycode);
+   event.state       = modifiers;
+
+   if(press)
+      event.type = KeyPress;
+   else
+      event.type = KeyRelease;
+
+   return event;
+}
+#endif //Q_OS_UNIX
 
 void CallbackHandler::parseKey(QStringList hotkey)
 {

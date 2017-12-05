@@ -46,6 +46,14 @@
 #include "moduleoptionsmodel.h"
 #include "moduleoption.h"
 
+#ifdef Q_OS_UNIX
+#include <X11/Xlib.h>
+#include <X11/keysym.h>
+#undef Bool
+#endif
+
+#define KEYCODE XK_Down
+
 /*! \brief A class which handles callbacks from the piemenu.
  *
  *  This class is created to be attached to an options in the piemenu.
@@ -85,10 +93,18 @@ private:
      *  Examples: "Ctrl+T" or "Ctrl+Shift+T" or "T".
      */
     static int ModuleHelperSendKeyboardKey(lua_State* L /*!< An lua_State pointer to the active Lua instance (the module, the interpreter etc). */);
+#ifdef Q_OS_UNIX
+    /*! \brief This function creates an XKeyEvent.
+     *
+     *
+     */
+    XKeyEvent createKeyEvent(Display *display, Window &win, Window &winRoot, bool press, int keycode, int modifiers);
+#endif // Q_OS_UNIX
+
 #ifdef Q_OS_WIN32
     /*! \brief This function translates a keyname to the Windows OS representation.*/
     static WORD lookupKey(QString keyname /*!< A QString reference to the keyname to be found. */);
-#endif
+#endif // Q_OS_WIN32
 
     QString exeTitle; /*!< An QString reference to the name of the last application executable on the foreground. */
     ModuleOptionsModel *moduleOptions; /*!< An ModuleOptionsModel pointer to the model containing all piemenu options. */

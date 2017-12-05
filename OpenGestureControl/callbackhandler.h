@@ -49,10 +49,8 @@
 #ifdef Q_OS_UNIX
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
-#undef Bool
+#undef Bool // Needed because of weird Xlib C library
 #endif
-
-#define KEYCODE XK_Down
 
 /*! \brief A class which handles callbacks from the piemenu.
  *
@@ -74,8 +72,10 @@ public:
      *  It uses this name to define which Lua module to call (currently only browser and music module).
      */
     explicit CallbackHandler(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
+
     /*! \brief This function returns all options defined within the active Lua module.*/
     ModuleOptionsModel* getOptions();
+
     /*! \brief This function closes the Lua interpreter.*/
     void close();
 
@@ -86,6 +86,7 @@ private:
      *  It remembers the order of modifiers and sends the keys in correct order to the Windows OS.
      */
     static void parseKey(QStringList hotkey);
+
     /*! \brief This function allows the Lua module to send a key sequence to the windows OS.
      *
      *  The Lua module has to send a single key sequence as a string.
@@ -93,11 +94,9 @@ private:
      *  Examples: "Ctrl+T" or "Ctrl+Shift+T" or "T".
      */
     static int ModuleHelperSendKeyboardKey(lua_State* L /*!< An lua_State pointer to the active Lua instance (the module, the interpreter etc). */);
+
 #ifdef Q_OS_UNIX
-    /*! \brief This function creates an XKeyEvent.
-     *
-     *
-     */
+    /*! \brief This function creates an XKeyEvent.*/
     XKeyEvent createKeyEvent(Display *display, Window &win, Window &winRoot, bool press, int keycode, int modifiers);
 #endif // Q_OS_UNIX
 
@@ -106,11 +105,19 @@ private:
     static WORD lookupKey(QString keyname /*!< A QString reference to the keyname to be found. */);
 #endif // Q_OS_WIN32
 
-    QString exeTitle; /*!< An QString reference to the name of the last application executable on the foreground. */
-    ModuleOptionsModel *moduleOptions; /*!< An ModuleOptionsModel pointer to the model containing all piemenu options. */
-    lua_State *L; /*!< An lua_State pointer to the menu options pointers from the piemenu. */
+    QString exeTitle;                   /*!< A QString reference to the name of the last application executable on the foreground. */
+    ModuleOptionsModel *moduleOptions;  /*!< A ModuleOptionsModel pointer to the model containing all piemenu options. */
+    lua_State *L;                       /*!< A lua_State pointer to the menu options pointers from the piemenu. */
+
+#ifdef Q_OS_UNIX
+    Display *display;                   /*!< A Display (An Xlib X server handle) pointer to the Xlib X server. */
+    Window winRoot;                     /*!< A Window (An Xlib window handle) reference to the root window of the application. */
+    Window lastProcess;                 /*!< A Window (An Xlib window handle) reference to the last foreground application. */
+    bool ctrlFlag, altFlag, shiftFlag;  /*!< A boolean reference used for the control, alt and shift key presses. */
+#endif // Q_OS_UNIX
+
 #ifdef Q_OS_WIN32
-    HWND lastProcess; /*!< An HWND (A Windows window handle) reference to the last foreground application. */
+    HWND lastProcess;                   /*!< A HWND (A Windows window handle) reference to the last foreground application. */
 #endif // Q_OS_WIN32
 signals:
 

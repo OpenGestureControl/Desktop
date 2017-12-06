@@ -133,7 +133,14 @@ void BluetoothManager::accelerometerDataChanged(QLowEnergyCharacteristic charact
         qWarning() << "Not the characteristic we want for accelerometer, ignoring";
         return;
     }
-    qWarning() << "Accelerometer:" << data;
+    QDataStream ds(data);
+    short x;
+    ds >> x;
+    short y;
+    ds >> y;
+    short z;
+    ds >> z;
+    qWarning() << "Accelerometer:" << x/1000 << y/1000 << z/1000;
 }
 
 void BluetoothManager::buttonServiceStateChanged(QLowEnergyService::ServiceState state)

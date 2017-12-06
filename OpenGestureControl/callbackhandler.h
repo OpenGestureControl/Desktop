@@ -49,6 +49,7 @@
 #ifdef Q_OS_UNIX
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
+#include <X11/Xutil.h>
 #undef Bool // Needed because of weird Xlib C library
 #endif
 

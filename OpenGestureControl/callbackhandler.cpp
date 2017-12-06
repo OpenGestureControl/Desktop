@@ -25,7 +25,7 @@
 
 CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 {
-    std::string filename = "browser.lua";
+    std::string filename = "";
 
 #ifdef Q_OS_WIN32
     // Obtain the window which currnetly has focus
@@ -42,34 +42,40 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
     GetModuleBaseName(hProcess, NULL, szProcessName, sizeof(szProcessName)/sizeof(TCHAR));
     this->exeTitle = QString::fromWCharArray(szProcessName);
     qWarning() << this->exeTitle;
-
-    if (this->exeTitle == "Spotify.exe") {
-        filename = "music.lua";
-    }
-
 #endif // Q_OS_WIN32
 
 #ifdef Q_OS_UNIX
-
     // Obtain the X11 display.
-       this->display = XOpenDisplay(0);
-       if(this->display == NULL)
-          qWarning() << "No X server connection established!";
+    this->display = XOpenDisplay(0);
+    if(this->display == NULL)
+        qWarning() << "No X server connection established!";
 
     // Get the root window for the current display.
-       this->winRoot = XDefaultRootWindow(this->display);
-       qWarning() << winRoot;
+    this->winRoot = XDefaultRootWindow(this->display);
+    qWarning() << "Winroot: " << winRoot;
 
     // Find the window which has the current keyboard focus.
-       int    revert;
-       XGetInputFocus(this->display, &this->lastProcess, &revert);
-       qWarning() << this->lastProcess;
+    int    revert;
+    XGetInputFocus(this->display, &this->lastProcess, &revert);
+    qWarning() << "lastProcess: " << this->lastProcess;
 
-       this->ctrlFlag = false;
-       this->altFlag = false;
-       this->shiftFlag = false;
+    this->ctrlFlag = false;
+    this->altFlag = false;
+    this->shiftFlag = false;
 
+    // Retrieve window name //
+    XClassHint classProp;
+    XGetClassHint(this->display, (this->lastProcess -1), &classProp);
+    this->exeTitle = classProp.res_class;
+
+    qWarning() << classProp.res_class << " : " << classProp.res_name << endl;
 #endif // Q_OS_UNIX
+
+    if (this->exeTitle == "Spotify.exe" || this->exeTitle == "Spotify") {
+        filename = "music.lua";
+    } else {
+        filename = "browser.lua";
+    }
 
     this->moduleOptions = new ModuleOptionsModel();
 
@@ -131,7 +137,7 @@ void CallbackHandler::parseKey(QStringList hotkey)
         keybd_event(VK_LCONTROL, 0, 0, 0);
 #endif // Q_OS_WIN32
 #ifdef Q_OS_UNIX
-        this->ctrlFlag = true;
+        //this->ctrlFlag = true;
 #endif // Q_OS_UNIX
         CallbackHandler::parseKey(hotkey);
         hotkey.pop_front();
@@ -145,7 +151,7 @@ void CallbackHandler::parseKey(QStringList hotkey)
         keybd_event(VK_LMENU, 0, 0, 0);
 #endif // Q_OS_WIN32
 #ifdef Q_OS_UNIX
-        this->altFlag = true;
+        //this->altFlag = true;
 #endif // Q_OS_UNIX
         CallbackHandler::parseKey(hotkey);
         hotkey.pop_front();
@@ -159,7 +165,7 @@ void CallbackHandler::parseKey(QStringList hotkey)
         keybd_event(VK_LSHIFT, 0, 0, 0);
 #endif // Q_OS_WIN32
 #ifdef Q_OS_UNIX
-        this->shiftFlag = true;
+        //this->shiftFlag = true;
 #endif // Q_OS_UNIX
         CallbackHandler::parseKey(hotkey);
         hotkey.pop_front();
@@ -180,14 +186,14 @@ void CallbackHandler::parseKey(QStringList hotkey)
 #ifdef Q_OS_UNIX
 
 
-        // Send a key press event to the window.
-           XKeyEvent event = CallbackHandler::createKeyEvent(this->display, this->lastProcess, winRoot, true, XK_T, ControlMask | Mod1Mask | ShiftMask);
-           event.state +=
-           XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
+    // Send a key press event to the window.
+       /*XKeyEvent event = CallbackHandler::createKeyEvent(this->display, this->lastProcess, winRoot, true, XK_T, ControlMask | Mod1Mask | ShiftMask);
+       event.state +=
+       XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
 
-        // Send a key release event to the window.
-           event = CallbackHandler::createKeyEvent(this->display, this->lastProcess, winRoot, false, XK_T, ControlMask);
-           XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
+    // Send a key release event to the window.
+       event = CallbackHandler::createKeyEvent(this->display, this->lastProcess, winRoot, false, XK_T, ControlMask);
+       XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);*/
 #endif // Q_OS_UNIX
     }
 

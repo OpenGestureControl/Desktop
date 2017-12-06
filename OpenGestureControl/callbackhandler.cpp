@@ -45,6 +45,7 @@ CallbackHandler::CallbackHandler(QObject *parent) : QObject(parent)
 #endif // Q_OS_WIN32
 
 #ifdef Q_OS_UNIX
+
     // Obtain the X11 display.
     this->display = XOpenDisplay(0);
     if(this->display == NULL)
@@ -184,7 +185,6 @@ void CallbackHandler::parseKey(QStringList hotkey)
         }
 #endif // Q_OS_WIN32
 #ifdef Q_OS_UNIX
-
 
     // Send a key press event to the window.
        /*XKeyEvent event = CallbackHandler::createKeyEvent(this->display, this->lastProcess, winRoot, true, XK_T, ControlMask | Mod1Mask | ShiftMask);

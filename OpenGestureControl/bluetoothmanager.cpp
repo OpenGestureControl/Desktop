@@ -68,7 +68,7 @@ void BluetoothManager::connectToDevice(QString deviceAddress)
 {
     qWarning() << deviceAddress;
     qWarning() << "Creating Low Energy Controller";
-    lowEnergyController = QLowEnergyController::createCentral(bluetoothDevices->get(deviceAddress)->deviceInfo());
+    this->lowEnergyController = QLowEnergyController::createCentral(bluetoothDevices->get(deviceAddress)->deviceInfo());
     qWarning() << "Workaround for failing to connect";
     lowEnergyController->setRemoteAddressType(QLowEnergyController::RandomAddress);
     qWarning() << "Preparing connecting to device";
@@ -88,23 +88,88 @@ void BluetoothManager::deviceDiscovered(QBluetoothDeviceInfo deviceInfo)
     bluetoothDevices->addDevice(new BluetoothDevice(deviceInfo));
 }
 
-void BluetoothManager::serviceDiscovered(const QBluetoothUuid serviceUuid)
+void BluetoothManager::discoveryFinished()
 {
-    QString uuid = serviceUuid.toString();
-    if (uuid == "{e95d0753-251d-470a-a062-fa1922dfa9a8}") {
-        qWarning() << "Found accelerometer service:" << uuid;
-    } else if (uuid == "{e95d9882-251d-470a-a062-fa1922dfa9a8}") {
-        qWarning() << "Found button service:" << uuid;
-    } else {
-        qWarning() << "Found unknown service:" << uuid;
+     qWarning() << "Discovery finished";
+     qWarning() << "Preparing services we want";
+     if (!(this->accelerometer = lowEnergyController->createServiceObject(QBluetoothUuid(QString("{e95d0753-251d-470a-a062-fa1922dfa9a8}")))))
+         qWarning() << "Could not find the accelerometer service!";
+
+     if (!(this->button = lowEnergyController->createServiceObject(QBluetoothUuid(QString("{e95d9882-251d-470a-a062-fa1922dfa9a8}")))))
+         qWarning() << "Could not find the button service!";
+
+     connect(this->accelerometer, SIGNAL(stateChanged(QLowEnergyService::ServiceState)),
+            this, SLOT(accelerometerServiceStateChanged(QLowEnergyService::ServiceState)));
+     connect(this->button, SIGNAL(stateChanged(QLowEnergyService::ServiceState)),
+             this, SLOT(buttonServiceStateChanged(QLowEnergyService::ServiceState)));
+
+     this->accelerometer->discoverDetails();
+     this->button->discoverDetails();
+}
+
+void BluetoothManager::accelerometerServiceStateChanged(QLowEnergyService::ServiceState state)
+{
+    qWarning() << state;
+    if (state == QLowEnergyService::ServiceDiscovered) {
+        qWarning() << "Accelerometer service is ready";
+        QLowEnergyCharacteristic accelerometerData = this->accelerometer->characteristic(QBluetoothUuid(QString("{e95dca4b-251d-470a-a062-fa1922dfa9a8}")));
+        QLowEnergyDescriptor notification = accelerometerData.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration);
+
+        if (!accelerometerData.isValid())
+            qWarning() << "Accelerometer data not valid! Halp!";
+
+        connect(this->accelerometer, SIGNAL(characteristicChanged(QLowEnergyCharacteristic, QByteArray)),
+                this, SLOT(accelerometerDataChanged(QLowEnergyCharacteristic, QByteArray)));
+
+        // Enable notification
+        this->accelerometer->writeDescriptor(notification, QByteArray::fromHex("0100"));
     }
+}
+
+void BluetoothManager::accelerometerDataChanged(QLowEnergyCharacteristic characteristic, QByteArray data)
+{
+    if (characteristic.uuid() != QBluetoothUuid(QString("{e95dca4b-251d-470a-a062-fa1922dfa9a8}")))
+    {
+        qWarning() << "Not the characteristic we want for accelerometer, ignoring";
+        return;
+    }
+    qWarning() << "Accelerometer:" << data;
+}
+
+void BluetoothManager::buttonServiceStateChanged(QLowEnergyService::ServiceState state)
+{
+    qWarning() << state;
+    if (state == QLowEnergyService::ServiceDiscovered) {
+        qWarning() << "Button service is ready";
+        QLowEnergyCharacteristic buttonData = this->button->characteristic(QBluetoothUuid(QString("{e95dda90-251d-470a-a062-fa1922dfa9a8}")));
+        QLowEnergyDescriptor notification = buttonData.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration);
+
+        if (!buttonData.isValid())
+            qWarning() << "Button data not valid! Halp!";
+
+        connect(this->button, SIGNAL(characteristicChanged(QLowEnergyCharacteristic, QByteArray)),
+                this, SLOT(buttonDataChanged(QLowEnergyCharacteristic, QByteArray)));
+
+        // Enable notification
+        this->button->writeDescriptor(notification, QByteArray::fromHex("0100"));
+    }
+}
+
+void BluetoothManager::buttonDataChanged(QLowEnergyCharacteristic characteristic, QByteArray data)
+{
+    if (characteristic.uuid() != QBluetoothUuid(QString("{e95dda90-251d-470a-a062-fa1922dfa9a8}")))
+    {
+        qWarning() << "Not the characteristic we want for button, ignoring";
+        return;
+    }
+    qWarning() << "Button:" << data;
 }
 
 void BluetoothManager::connected()
 {
     qWarning() << "Preparing service discovery";
-    connect(lowEnergyController, SIGNAL(serviceDiscovered(QBluetoothUuid)),
-            this, SLOT(serviceDiscovered(QBluetoothUuid)));
+    connect(lowEnergyController, SIGNAL(discoveryFinished()),
+            this, SLOT(discoveryFinished()));
     qWarning() << "Starting service discovery";
     lowEnergyController->discoverServices();
 }

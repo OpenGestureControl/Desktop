@@ -52,6 +52,7 @@ public:
 
 private:
     QBluetoothDeviceDiscoveryAgent *bluetoothDeviceDiscoveryAgent;
+    QLowEnergyService *accelerometer, *button;
     QLowEnergyController *lowEnergyController;
     QObject *window;
     QQmlApplicationEngine engine;
@@ -65,8 +66,12 @@ public slots:
     void forgetDevice(QString deviceAddress);
     void connected();
     void deviceDiscovered(QBluetoothDeviceInfo deviceInfo);
-    void serviceDiscovered(QBluetoothUuid serviceUuid);
     void scanFinished();
+    void discoveryFinished();
+    void accelerometerServiceStateChanged(QLowEnergyService::ServiceState state);
+    void accelerometerDataChanged(QLowEnergyCharacteristic characteristic, QByteArray data);
+    void buttonServiceStateChanged(QLowEnergyService::ServiceState state);
+    void buttonDataChanged(QLowEnergyCharacteristic characteristic, QByteArray data);
 };
 
 #endif // BLUETOOTHMANAGER_H

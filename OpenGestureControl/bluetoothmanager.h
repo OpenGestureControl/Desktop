@@ -34,6 +34,7 @@
 #include <QQmlContext>
 
 #include "bluetoothdevicelistmodel.h"
+#include "piemenu.h"
 
 /*! \brief A class which manages all known Bluetooth devices.
  *
@@ -60,6 +61,7 @@ private:
     BluetoothDeviceListModel *bluetoothDevices;
     int connectionProgress;
     BluetoothDevice *connectingTo;
+    PieMenu *pieMenu;
 
 signals:
 

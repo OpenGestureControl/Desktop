@@ -27,6 +27,7 @@
 #include <QBluetoothDeviceInfo>
 #include <QObject>
 #include <QString>
+#include <QVariant>
 
 class BluetoothDevice : public QObject
 {
@@ -34,22 +35,28 @@ class BluetoothDevice : public QObject
     Q_PROPERTY(QBluetoothDeviceInfo deviceInfo READ deviceInfo WRITE setDeviceInfo NOTIFY deviceInfoChanged)
     Q_PROPERTY(QString name READ name NOTIFY deviceInfoChanged)
     Q_PROPERTY(QString address READ address NOTIFY deviceInfoChanged)
+    Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)
 
 public:
     explicit BluetoothDevice(QObject *parent = 0);
     explicit BluetoothDevice(const QBluetoothDeviceInfo &deviceInfo, QObject *parent = 0);
 
-    QBluetoothDeviceInfo deviceInfo() const;
+    QBluetoothDeviceInfo deviceInfo() const { return m_deviceInfo; }
     void setDeviceInfo(const QBluetoothDeviceInfo name);
 
     QString name() const { return m_deviceInfo.name(); }
     QString address() const { return m_deviceInfo.address().toString(); }
 
+    bool active() const { return m_active; }
+    void setActive(const bool value);
+
 private:
     QBluetoothDeviceInfo m_deviceInfo;
+    bool m_active = false;
 
 signals:
     void deviceInfoChanged();
+    void activeChanged();
 
 public slots:
 };

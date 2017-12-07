@@ -36,7 +36,8 @@ class BluetoothDeviceListModel : public QAbstractListModel
 public:
     enum BluetoothDeviceRoles {
         NameRole = Qt::UserRole + 1,
-        AddressRole
+        AddressRole,
+        ActiveRole
     };
 
     explicit BluetoothDeviceListModel(QObject *parent = 0);
@@ -45,7 +46,7 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
     Q_INVOKABLE BluetoothDevice* get(int index) const { return m_data.at(index); }
-    BluetoothDevice* get(QString deviceAddress);
+    BluetoothDevice* getDevice(QString deviceAddress);
 
     bool addDevice(BluetoothDevice* device);
     void clear();

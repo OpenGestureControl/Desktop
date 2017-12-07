@@ -58,6 +58,8 @@ private:
     QObject *window;
     QQmlApplicationEngine engine;
     BluetoothDeviceListModel *bluetoothDevices;
+    int connectionProgress;
+    BluetoothDevice *connectingTo;
 
 signals:
 
@@ -66,6 +68,8 @@ public slots:
     void connectToDevice(QString deviceAddress);
     void forgetDevice(QString deviceAddress);
     void connected();
+    void disconnected();
+    void error(QLowEnergyController::Error error);
     void deviceDiscovered(QBluetoothDeviceInfo deviceInfo);
     void scanFinished();
     void discoveryFinished();

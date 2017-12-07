@@ -24,18 +24,11 @@
 
 BluetoothDevice::BluetoothDevice(QObject *parent) : QObject(parent)
 {
-
 }
 
 BluetoothDevice::BluetoothDevice(const QBluetoothDeviceInfo &deviceInfo, QObject *parent)
     : QObject(parent), m_deviceInfo(deviceInfo)
 {
-
-}
-
-QBluetoothDeviceInfo BluetoothDevice::deviceInfo() const
-{
-    return this->m_deviceInfo;
 }
 
 void BluetoothDevice::setDeviceInfo(const QBluetoothDeviceInfo deviceInfo)
@@ -43,5 +36,13 @@ void BluetoothDevice::setDeviceInfo(const QBluetoothDeviceInfo deviceInfo)
     if (deviceInfo != this->m_deviceInfo) {
         this->m_deviceInfo = deviceInfo;
         emit deviceInfoChanged();
+    }
+}
+
+void BluetoothDevice::setActive(const bool value)
+{
+    if (value != this->m_active) {
+        this->m_active = value;
+        emit activeChanged();
     }
 }

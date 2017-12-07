@@ -98,12 +98,16 @@ Window {
 
                                 text: qsTr("Connect")
 
+                                enabled: !model.active && root.status != "CONNECTING"
+
                                 onClicked: connectRequest(model.address)
                             }
                             Button {
                                 id: forgetButton
 
                                 text: qsTr("Forget")
+
+                                enabled: !connectButton.enabled && root.status != "CONNECTING"
 
                                 onClicked: forgetRequest(model.address)
                             }
@@ -117,8 +121,15 @@ Window {
             id: newDeviceButton
             Layout.fillWidth: true
 
-            text: root.status == "IDLE" ? qsTr("Search for devices") : qsTr("Searching...")
-            enabled: root.status == "IDLE"
+            text: if (root.status == "IDLE")
+                     return qsTr("Search for devices")
+                  else if (root.status == "SCANNING")
+                      return qsTr("Searching...")
+                  else if (root.status == "CONNECTING")
+                      return qsTr("Connecting...")
+                  else if (root.status == "CONNECTED")
+                      return qsTr("Disconnect and search for devices")
+            enabled: root.status == "IDLE" || root.status == "CONNECTED"
 
             onClicked: {
                 scanRequest();

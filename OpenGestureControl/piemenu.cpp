@@ -43,7 +43,7 @@ void PieMenu::open()
     if(callbackHandler) {
         delete callbackHandler;
     }
-    callbackHandler = new CallbackHandler;
+    callbackHandler = new WindowsCallbackHandler;
 
     if (this->activeCallbackConnection) {
         disconnect(this->activeCallbackConnection);

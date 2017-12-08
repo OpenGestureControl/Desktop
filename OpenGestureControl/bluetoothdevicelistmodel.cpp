@@ -30,7 +30,8 @@ BluetoothDeviceListModel::BluetoothDeviceListModel(QObject *parent) :
 QHash<int, QByteArray> BluetoothDeviceListModel::roleNames() const {
     QHash<int, QByteArray> roles;
     roles[NameRole] = "name";
-    roles[DeviceIdRole] = "deviceId";
+    roles[AddressRole] = "address";
+    roles[ActiveRole] = "active";
     return roles;
 }
 
@@ -43,17 +44,27 @@ QVariant BluetoothDeviceListModel::data(const QModelIndex &index, int role) cons
 
     switch (role) {
     case Qt::DisplayRole:
-        return QString("%1 (%2)").arg(val->name(), val->deviceId());
-        break;
+        return QString("%1 (%2)").arg(val->name(), val->address());
     case NameRole:
         return val->name();
-        break;
-    case DeviceIdRole:
-        return val->deviceId();
-        break;
+    case AddressRole:
+        return val->address();
+    case ActiveRole:
+        return val->active();
     default:
         return QVariant();
     }
+}
+
+BluetoothDevice* BluetoothDeviceListModel::getDevice(QString deviceAddress)
+{
+    for (int i = 0; i < m_data.size(); i++)
+    {
+        if (m_data.at(i)->deviceInfo().address().toString() == deviceAddress)
+            return m_data.at(i);
+    }
+
+    return new BluetoothDevice();
 }
 
 bool BluetoothDeviceListModel::addDevice(BluetoothDevice *device)

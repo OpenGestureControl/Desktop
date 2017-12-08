@@ -23,32 +23,40 @@
 #ifndef BLUETOOTHDEVICE_H
 #define BLUETOOTHDEVICE_H
 
+#include <QBluetoothAddress>
+#include <QBluetoothDeviceInfo>
 #include <QObject>
 #include <QString>
+#include <QVariant>
 
 class BluetoothDevice : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QString deviceId READ deviceId WRITE setDeviceId NOTIFY deviceIdChanged)
+    Q_PROPERTY(QBluetoothDeviceInfo deviceInfo READ deviceInfo WRITE setDeviceInfo NOTIFY deviceInfoChanged)
+    Q_PROPERTY(QString name READ name NOTIFY deviceInfoChanged)
+    Q_PROPERTY(QString address READ address NOTIFY deviceInfoChanged)
+    Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)
 
 public:
     explicit BluetoothDevice(QObject *parent = 0);
-    explicit BluetoothDevice(const QString &name, const QString &deviceId, QObject *parent = 0);
+    explicit BluetoothDevice(const QBluetoothDeviceInfo &deviceInfo, QObject *parent = 0);
 
-    QString name() const;
-    void setName(const QString name);
+    QBluetoothDeviceInfo deviceInfo() const { return m_deviceInfo; }
+    void setDeviceInfo(const QBluetoothDeviceInfo name);
 
-    QString deviceId() const;
-    void setDeviceId(const QString deviceId);
+    QString name() const { return m_deviceInfo.name(); }
+    QString address() const { return m_deviceInfo.address().toString(); }
+
+    bool active() const { return m_active; }
+    void setActive(const bool value);
 
 private:
-    QString m_name;
-    QString m_deviceId;
+    QBluetoothDeviceInfo m_deviceInfo;
+    bool m_active = false;
 
 signals:
-    void nameChanged();
-    void deviceIdChanged();
+    void deviceInfoChanged();
+    void activeChanged();
 
 public slots:
 };

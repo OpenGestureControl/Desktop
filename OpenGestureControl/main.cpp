@@ -57,6 +57,8 @@ int main(int argc, char *argv[])
     tray.setContextMenu(&trayMenu);
     tray.show();
 
+    BluetoothManager bluetoothManager;
+
 #ifdef Q_OS_WIN32
     KeyBoardInput keyboardinput(&pieMenu);
 #endif // Q_OS_WIN32

@@ -21,17 +21,52 @@
 */
 #include "windowscallbackhandler.h"
 
-//#ifdef Q_OS_WIN32
-WindowsCallbackHandler::WindowsCallbackHandler() : AbstractCallbackHandler()
+#ifdef Q_OS_WIN32
+WindowsCallbackHandler::WindowsCallbackHandler(QObject *parent) : AbstractCallbackHandler(parent)
 {
     WindowsCallbackHandler::retrieveFocusWindowInfo();
 
+    this->moduleOptions = new ModuleOptionsModel();
+
+    // Start initializing the Lua
+    int status;
+    L = luaL_newstate();
+    luaL_openlibs(L);
+
+    lua_register(L, "ModuleHelperSendKeyboardKey", ModuleHelperSendKeyboardKey);
+
+    status = luaL_dofile(L, this->filename.c_str());
+    if (status) {
+        fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
+        exit(1);
+    }
+
     // TODO REDO this to be generic
     if (this->exeTitle == "Spotify.exe" || this->exeTitle == "Spotify") {
-        filename = "music.lua";
+        thtis->filename = "music.lua";
     } else {
-        filename = "browser.lua";
+        this->filename = "browser.lua";
     }
+}
+
+extern "C" int WindowsCallbackHandler::ModuleHelperSendKeyboardKey(lua_State* L)
+{
+  const char *hotkey = lua_tostring(L, 1); // First argument
+  std::string hotkeystring(hotkey);
+
+  std::replace(hotkeystring.begin(), hotkeystring.end(), '+', ' ');
+  std::string temp;
+  std::stringstream ss(hotkeystring);
+
+  QStringList stringList;
+
+  while (ss >> temp) {
+      stringList.append(QString(temp.c_str()));
+  }
+
+  WindowsCallbackHandler::parseKey(stringList);
+
+  return 0; // Count of returned values
 }
 
 void WindowsCallbackHandler::parseKey(QStringList hotkey)
@@ -95,6 +130,33 @@ void WindowsCallbackHandler::retrieveFocusWindowInfo()
     qWarning() << this->exeTitle;
 }
 
+bool WindowsCallbackHandler::handle(QString optionName)
+{
+    qWarning() << optionName;
+
+    // This MUST be saved into a QByteArray first, or it'll crash
+    // See https://wiki.qt.io/Technical_FAQ#How_can_I_convert_a_QString_to_char.2A_and_vice_versa.3F
+    QByteArray optionNameByteArray = optionName.toLocal8Bit();
+    const char *optionNameChar = optionNameByteArray.data();
+
+    // Set return_options on stack to call
+    lua_getglobal(L, "handle"); /* function to be called */
+    lua_pushstring(L, optionNameChar);
+
+    WindowsCallbackHandler::restoreFocusWindow();
+
+    // Call return_options
+    int result = lua_pcall(L, 1, 0, 0);
+    if (result) {
+        fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
+        return false;
+    }
+
+    // TODO change this
+    WindowsCallbackHandler::close();
+    return true;
+}
+
 void WindowsCallbackHandler::restoreFocusWindow()
 {
     // if minimized
@@ -106,7 +168,7 @@ void WindowsCallbackHandler::restoreFocusWindow()
     }
 }
 
-WORD CallbackHandler::lookupKeyWindows(QString keyname)
+WORD CallbackHandler::lookupKey(QString keyname)
 {
     QMap<QString, WORD> lookupMap;
     lookupMap["0"] = 0x30;

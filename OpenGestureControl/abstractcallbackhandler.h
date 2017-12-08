@@ -41,33 +41,17 @@ public:
     ModuleOptionsModel* getOptions();
 
     /*! \brief This function closes the Lua interpreter.*/
-    void close();
+    virtual void close();
 
     QString exeTitle;                   /*!< A QString reference to the name of the last application executable on the foreground. */
+    QString filename;                   /*!< A QString reference to the name of the Lua file which needs to be loaded in. */
     ModuleOptionsModel *moduleOptions;  /*!< A ModuleOptionsModel pointer to the model containing all piemenu options. */
     lua_State *L;                       /*!< A lua_State pointer to the menu options pointers from the piemenu. */
 
-private:
-    /*! \brief This function allows the Lua module to send a key sequence to the OS.
-     *
-     *  The Lua module has to send a single key sequence as a string.
-     *  This sequence should be formatted as follows: [modifier] + [keyname].
-     *  Examples: "Ctrl+T" or "Ctrl+Shift+T" or "T".
-     */
-    static int ModuleHelperSendKeyboardKey(lua_State* L /*!< An lua_State pointer to the active Lua instance (the module, the interpreter etc). */);
+protected:
     virtual void retrieveFocusWindowInfo() = 0;
     virtual void restoreFocusWindow() = 0;
     virtual void parseKey(QStringList hotkey) = 0;
-
-public slots:
-    /*! \brief This function handles a selected piemenu option.
-     *
-     *  This function is called when an option in the piemenu is selected.
-     *  It retrieves the action to execute from the Lua module with the given option name.
-     *  It retrieves the last application on the foreground, brings it to back to the foreground and executes the action on it.
-     *  It return true when successful.
-     */
-    bool handle(QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/);
 };
 
 #endif // ABSTRACTCALLBACKHANDLER_H

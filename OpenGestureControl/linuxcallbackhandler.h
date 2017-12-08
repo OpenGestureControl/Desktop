@@ -23,7 +23,7 @@
 #ifndef LINUXCALLBACKHANDLER_H
 #define LINUXCALLBACKHANDLER_H
 
-//#ifdef Q_OS_LINUX
+#ifdef Q_OS_LINUX
 #include "abstractcallbackhandler.h"
 
 #include <X11/Xlib.h>
@@ -33,24 +33,43 @@
 
 class LinuxCallbackHandler : public AbstractCallbackHandler
 {
+    Q_OBJECT
 public:
-    LinuxCallbackHandler();
+    explicit LinuxCallbackHandler(QObject *parent = 0);
 
 private:
     /*! \brief This function creates an XKeyEvent.*/
     XKeyEvent createKeyEvent(Display *display, Window &win, Window &winRoot, bool press, int keycode, int modifiers);
 
     /*! \brief This function translates a keyname to the Linux OS representation.*/
-    static int lookupKeyLinux(QString keyname /*!< A QString reference to the keyname to be found. */);
+    static int lookupKey(QString keyname /*!< A QString reference to the keyname to be found. */);
 
     void retrieveFocusWindowInfo() override;
     void restoreFocusWindow() override;
     void parseKey(QStringList hotkey) override;
     void close() override;
 
-    Display *display;                   /*!< A Display (An Xlib X server handle) pointer to the Xlib X server. */
-    Window winRoot;                     /*!< A Window (An Xlib window handle) reference to the root window of the application. */
-    Window lastProcess;                 /*!< A Window (An Xlib window handle) reference to the last foreground application. */
+    Display *display;   /*!< A Display (An Xlib X server handle) pointer to the Xlib X server. */
+    Window winRoot;     /*!< A Window (An Xlib window handle) reference to the root window of the application. */
+    Window lastProcess; /*!< A Window (An Xlib window handle) reference to the last foreground application. */
+
+    /*! \brief This function allows the Lua module to send a key sequence to the OS.
+     *
+     *  The Lua module has to send a single key sequence as a string.
+     *  This sequence should be formatted as follows: [modifier] + [keyname].
+     *  Examples: "Ctrl+T" or "Ctrl+Shift+T" or "T".
+     */
+    static int ModuleHelperSendKeyboardKey(lua_State* L /*!< An lua_State pointer to the active Lua instance (the module, the interpreter etc). */);
+
+public slots:
+    /*! \brief This function handles a selected piemenu option.
+     *
+     *  This function is called when an option in the piemenu is selected.
+     *  It retrieves the action to execute from the Lua module with the given option name.
+     *  It retrieves the last application on the foreground, brings it to back to the foreground and executes the action on it.
+     *  It return true when successful.
+     */
+    virtual bool handle(QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/);
 
 };
 

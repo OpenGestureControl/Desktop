@@ -1,16 +1,72 @@
-#include "linuxcallbackhandler.h"
-//#ifdef Q_OS_LINUX
+/*
+   Copyright (c) 2017 ICT Group
 
-LinuxCallbackHandler::LinuxCallbackHandler() : AbstractCallbackHandler()
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in all
+   copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+*/
+#include "linuxcallbackhandler.h"
+
+#ifdef Q_OS_LINUX
+LinuxCallbackHandler::LinuxCallbackHandler(QObject *parent) : AbstractCallbackHandler(parent)
 {
     LinuxCallbackHandler::retrieveFocusWindowInfo();
 
+    this->moduleOptions = new ModuleOptionsModel();
+
+    // Start initializing the Lua
+    int status;
+    L = luaL_newstate();
+    luaL_openlibs(L);
+
+    lua_register(L, "ModuleHelperSendKeyboardKey", ModuleHelperSendKeyboardKey);
+
+    status = luaL_dofile(L, this->filename.c_str());
+    if (status) {
+        fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
+        exit(1);
+    }
+
     // TODO REDO this to be generic
     if (this->exeTitle == "Spotify.exe" || this->exeTitle == "Spotify") {
-        filename = "music.lua";
+        this->filename = "music.lua";
     } else {
-        filename = "browser.lua";
+        this->filename = "browser.lua";
     }
+}
+
+extern "C" int LinuxCallbackHandler::ModuleHelperSendKeyboardKey(lua_State* L)
+{
+  const char *hotkey = lua_tostring(L, 1); // First argument
+  std::string hotkeystring(hotkey);
+
+  std::replace(hotkeystring.begin(), hotkeystring.end(), '+', ' ');
+  std::string temp;
+  std::stringstream ss(hotkeystring);
+
+  QStringList stringList;
+
+  while (ss >> temp) {
+      stringList.append(QString(temp.c_str()));
+  }
+
+  LinuxCallbackHandler::parseKey(stringList);
+
+  return 0; // Count of returned values
 }
 
 XKeyEvent LinuxCallbackHandler::createKeyEvent(Display *display, Window &win, Window &winRoot, bool press, int keycode, int modifiers)
@@ -41,45 +97,34 @@ XKeyEvent LinuxCallbackHandler::createKeyEvent(Display *display, Window &win, Wi
 
 void LinuxCallbackHandler::parseKey(QStringList hotkey)
 {
-    if (hotkey.isEmpty())
-        return;
+    // Create key event
+    XKeyEvent event = WindowsCallbackHandler::createKeyEvent(this->display, this->lastProcess, winRoot, true, XK_T, 0);
 
-    QString tempkey = hotkey[0];
-    hotkey.pop_front();
-    if (QString::compare(tempkey, "ctrl", Qt::CaseInsensitive) == 0) { // Check if the Control key needs to be pressed
-        qWarning() << "Control pressed";
-    }
-    else if (QString::compare(tempkey, "alt", Qt::CaseInsensitive) == 0) { // Check if the Alt key needs to be pressed
-        qWarning() << "Alt pressed";
-    }
-    else if (QString::compare(tempkey, "shift", Qt::CaseInsensitive) == 0) { // Check if the Shift key needs to be pressed
-        qWarning() << "Shift pressed";
-    }
-    else {
-        qWarning() << "Other key pressed: " << tempkey;
-
-        // Send a key press event to the window.
-        XKeyEvent event = WindowsCallbackHandler::createKeyEvent(this->display, this->lastProcess, winRoot, true, XK_T, 0);
-        if((flags - 100) >= 0) {
+    for(int i = 0; i > hotkey.size(); i++) {
+        if (QString::compare(hotkey[i], "ctrl", Qt::CaseInsensitive) == 0) { // Check if the Control key needs to be pressed
+            qWarning() << "Control pressed";
             event.state += ControlMask;
-            flags -= 100;
         }
-        if((flags - 10) >= 0) {
+        else if (QString::compare(hotkey[i], "alt", Qt::CaseInsensitive) == 0) { // Check if the Alt key needs to be pressed
+            qWarning() << "Alt pressed";
             event.state += Mod1Mask;
-            flags -= 10;
         }
-        if((flags - 1) >= 0) {
+        else if (QString::compare(hotkey[i], "shift", Qt::CaseInsensitive) == 0) { // Check if the Shift key needs to be pressed
+            qWarning() << "Shift pressed";
             event.state += ShiftMask;
-            flags -= 1;
         }
-        XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
+        else {
+            qWarning() << "Other key pressed: " << tempkey;
+            event.keycode = LinuxCallbackHandler::lookupKey(hotkey[i]);
 
-        // Send a key release event to the window.
-        //event = CallbackHandler::createKeyEvent(this->display, this->lastProcess, winRoot, false, XK_T, 0);
-        //XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
+            // Send a key press event to the window.
+            XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
+
+            // Send a key release event to the window.
+            //event = CallbackHandler::createKeyEvent(this->display, this->lastProcess, winRoot, false, XK_T, 0);
+            //XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
+        }
     }
-
-    LinuxCallbackHandler::parseKey(hotkey);
 }
 
 void LinuxCallbackHandler::close()
@@ -112,12 +157,39 @@ void LinuxCallbackHandler::retrieveFocusWindowInfo()
     qWarning() << classProp.res_class << " : " << classProp.res_name << endl;
 }
 
+bool LinuxCallbackHandler::handle(QString optionName)
+{
+    qWarning() << optionName;
+
+    // This MUST be saved into a QByteArray first, or it'll crash
+    // See https://wiki.qt.io/Technical_FAQ#How_can_I_convert_a_QString_to_char.2A_and_vice_versa.3F
+    QByteArray optionNameByteArray = optionName.toLocal8Bit();
+    const char *optionNameChar = optionNameByteArray.data();
+
+    // Set return_options on stack to call
+    lua_getglobal(L, "handle"); /* function to be called */
+    lua_pushstring(L, optionNameChar);
+
+    LinuxCallbackHandler::restoreFocusWindow();
+
+    // Call return_options
+    int result = lua_pcall(L, 1, 0, 0);
+    if (result) {
+        fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
+        return false;
+    }
+
+    // TODO change this
+    LinuxCallbackHandler::close();
+    return true;
+}
+
 void LinuxCallbackHandler::restoreFocusWindow()
 {
     // TODO
 }
 
-int WindowsCallbackHandler::lookupKeyLinux(QString keyname)
+int WindowsCallbackHandler::lookupKey(QString keyname)
 {
     QMap<QString, int> lookupMap;
     lookupMap["0"] = XK_0;

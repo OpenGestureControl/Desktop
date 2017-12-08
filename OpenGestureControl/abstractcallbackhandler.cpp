@@ -1,69 +1,9 @@
 #include "abstractcallbackhandler.h"
 
-AbstractCallbackHandler::AbstractCallbackHandler(QObject *parent) : QObject(parent)
+/*AbstractCallbackHandler::AbstractCallbackHandler(QObject *parent) : QObject(parent)
 {
-    this->moduleOptions = new ModuleOptionsModel();
 
-    // Start initializing the Lua
-    int status;
-    L = luaL_newstate();
-    luaL_openlibs(L);
-
-    lua_register(L, "ModuleHelperSendKeyboardKey", ModuleHelperSendKeyboardKey);
-
-    status = luaL_dofile(L, filename.c_str());
-    if (status) {
-        fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
-        exit(1);
-    }
-}
-
-extern "C" int AbstractCallbackHandler::ModuleHelperSendKeyboardKey(lua_State* L)
-{
-  const char *hotkey = lua_tostring(L, 1); // First argument
-  std::string hotkeystring(hotkey);
-
-  std::replace(hotkeystring.begin(), hotkeystring.end(), '+', ' ');
-  std::string temp;
-  std::stringstream ss(hotkeystring);
-
-  QStringList stringList;
-
-  while (ss >> temp) {
-      stringList.append(QString(temp.c_str()));
-  }
-
-  parseKey(stringList);
-
-  return 0; // Count of returned values
-}
-
-bool AbstractCallbackHandler::handle(QString optionName)
-{
-    qWarning() << optionName;
-
-    // This MUST be saved into a QByteArray first, or it'll crash
-    // See https://wiki.qt.io/Technical_FAQ#How_can_I_convert_a_QString_to_char.2A_and_vice_versa.3F
-    QByteArray optionNameByteArray = optionName.toLocal8Bit();
-    const char *optionNameChar = optionNameByteArray.data();
-
-    // Set return_options on stack to call
-    lua_getglobal(L, "handle"); /* function to be called */
-    lua_pushstring(L, optionNameChar);
-
-    restoreFocusWindow();
-
-    // Call return_options
-    int result = lua_pcall(L, 1, 0, 0);
-    if (result) {
-        fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
-        return false;
-    }
-
-    AbstractCallbackHandler::close();
-    return true;
-}
-
+}*/
 
 ModuleOptionsModel *AbstractCallbackHandler::getOptions()
 {

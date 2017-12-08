@@ -244,6 +244,8 @@ void BluetoothManager::disconnected()
 {
     this->connectingTo->setActive(false);
     this->window->setProperty("status", "IDLE");
+    // Hack because the Connect/Forget buttons don't work well
+    this->scanForDevices();
 }
 
 void BluetoothManager::error(QLowEnergyController::Error error)
@@ -251,6 +253,8 @@ void BluetoothManager::error(QLowEnergyController::Error error)
     qWarning() << error;
     this->connectingTo->setActive(false);
     this->window->setProperty("status", "IDLE");
+    // Hack because the Connect/Forget buttons don't work well
+    this->scanForDevices();
 }
 
 void BluetoothManager::scanFinished()

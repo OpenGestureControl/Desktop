@@ -26,10 +26,10 @@ void TestBluetoothDeviceListModel::storingAndRetrievingBluetoothDevice()
 {
     // Arrange
     QString name = "Example device";
-    QString deviceAddress = "00000000-0000-1000-8000-00805F9B34FB";
+    QString deviceAddress = "01:23:45:67:89:01";
 
     BluetoothDeviceListModel *bluetoothDeviceListModel = new BluetoothDeviceListModel();
-    BluetoothDevice *bluetoothDevice = new BluetoothDevice(name, deviceAddress);
+    BluetoothDevice *bluetoothDevice = new BluetoothDevice(QBluetoothDeviceInfo(QBluetoothAddress(deviceAddress), name, 0));
 
     // Act
     bluetoothDeviceListModel->addDevice(bluetoothDevice);
@@ -37,7 +37,7 @@ void TestBluetoothDeviceListModel::storingAndRetrievingBluetoothDevice()
 
     // Assert
     QVERIFY(retrievedBluetoothDevice->name() == name);
-    QVERIFY(retrievedBluetoothDevice->deviceAddress() == deviceAddress);
+    QVERIFY(retrievedBluetoothDevice->address() == deviceAddress);
 }
 
 void TestBluetoothDeviceListModel::getCorrectBluetoothDeviceCount()
@@ -46,14 +46,14 @@ void TestBluetoothDeviceListModel::getCorrectBluetoothDeviceCount()
     QString name1 = "Example device 1";
     QString name2 = "Example device 2";
     QString name3 = "Example device 3";
-    QString deviceAddress1 = "00000000-0000-1000-8000-00805F9B34FA";
-    QString deviceAddress2 = "00000000-0000-1000-8000-00805F9B34FB";
-    QString deviceAddress3 = "00000000-0000-1000-8000-00805F9B34FC";
+    QString deviceAddress1 = "01:23:45:67:89:01";
+    QString deviceAddress2 = "01:23:45:67:89:02";
+    QString deviceAddress3 = "01:23:45:67:89:03";
 
     BluetoothDeviceListModel *bluetoothDeviceListModel = new BluetoothDeviceListModel();
-    BluetoothDevice *bluetoothDevice1 = new BluetoothDevice(name1, deviceAddress1);
-    BluetoothDevice *bluetoothDevice2 = new BluetoothDevice(name2, deviceAddress2);
-    BluetoothDevice *bluetoothDevice3 = new BluetoothDevice(name3, deviceAddress3);
+    BluetoothDevice *bluetoothDevice1 = new BluetoothDevice(QBluetoothDeviceInfo(QBluetoothAddress(deviceAddress1), name1, 0));
+    BluetoothDevice *bluetoothDevice2 = new BluetoothDevice(QBluetoothDeviceInfo(QBluetoothAddress(deviceAddress2), name2, 0));
+    BluetoothDevice *bluetoothDevice3 = new BluetoothDevice(QBluetoothDeviceInfo(QBluetoothAddress(deviceAddress3), name3, 0));
 
     bluetoothDeviceListModel->addDevice(bluetoothDevice1);
     bluetoothDeviceListModel->addDevice(bluetoothDevice2);
@@ -72,14 +72,14 @@ void TestBluetoothDeviceListModel::correctlyClearBluetoothDeviceCount()
     QString name1 = "Example device 1";
     QString name2 = "Example device 2";
     QString name3 = "Example device 3";
-    QString deviceAddress1 = "00000000-0000-1000-8000-00805F9B34FA";
-    QString deviceAddress2 = "00000000-0000-1000-8000-00805F9B34FB";
-    QString deviceAddress3 = "00000000-0000-1000-8000-00805F9B34FC";
+    QString deviceAddress1 = "01:23:45:67:89:01";
+    QString deviceAddress2 = "01:23:45:67:89:02";
+    QString deviceAddress3 = "01:23:45:67:89:03";
 
     BluetoothDeviceListModel *bluetoothDeviceListModel = new BluetoothDeviceListModel();
-    BluetoothDevice *bluetoothDevice1 = new BluetoothDevice(name1, deviceAddress1);
-    BluetoothDevice *bluetoothDevice2 = new BluetoothDevice(name2, deviceAddress2);
-    BluetoothDevice *bluetoothDevice3 = new BluetoothDevice(name3, deviceAddress3);
+    BluetoothDevice *bluetoothDevice1 = new BluetoothDevice(QBluetoothDeviceInfo(QBluetoothAddress(deviceAddress1), name1, 0));
+    BluetoothDevice *bluetoothDevice2 = new BluetoothDevice(QBluetoothDeviceInfo(QBluetoothAddress(deviceAddress2), name2, 0));
+    BluetoothDevice *bluetoothDevice3 = new BluetoothDevice(QBluetoothDeviceInfo(QBluetoothAddress(deviceAddress3), name3, 0));
 
     bluetoothDeviceListModel->addDevice(bluetoothDevice1);
     bluetoothDeviceListModel->addDevice(bluetoothDevice2);

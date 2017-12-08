@@ -274,7 +274,7 @@ ModuleOptionsModel *CallbackHandler::getOptions()
     int result = lua_pcall(L, 0, 1, 0);
     if (result) {
         fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
-        exit(1);
+        return this->moduleOptions;
     }
 
     // Prepare table vars

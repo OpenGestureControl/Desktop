@@ -189,7 +189,7 @@ void LinuxCallbackHandler::restoreFocusWindow()
     // TODO
 }
 
-int WindowsCallbackHandler::lookupKey(QString keyname)
+int LinuxCallbackHandler::lookupKey(QString keyname)
 {
     QMap<QString, int> lookupMap;
     lookupMap["0"] = XK_0;
@@ -270,9 +270,9 @@ int WindowsCallbackHandler::lookupKey(QString keyname)
     lookupMap["mediaprev"] = 0x1008ff16;
     lookupMap["mediaplaypause"] = 0x1008ff14;
     lookupMap["mediastop"] = 0x1008ff15;
-    lookupMap["volumeup"] = NULL;
-    lookupMap["volumedown"] = NULL;
-    lookupMap["volumemute"] = NULL;
+    lookupMap["volumeup"] = 0x1008ff13;
+    lookupMap["volumedown"] = 0x1008ff11;
+    lookupMap["volumemute"] = 0x1008ff12;
 
     return lookupMap[keyname.toLower()];
 }

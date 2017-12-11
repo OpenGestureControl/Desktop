@@ -1,9 +1,9 @@
 #include "abstractcallbackhandler.h"
 
-/*AbstractCallbackHandler::AbstractCallbackHandler(QObject *parent) : QObject(parent)
+AbstractCallbackHandler::AbstractCallbackHandler(QObject *parent) : QObject(parent)
 {
 
-}*/
+}
 
 ModuleOptionsModel *AbstractCallbackHandler::getOptions()
 {

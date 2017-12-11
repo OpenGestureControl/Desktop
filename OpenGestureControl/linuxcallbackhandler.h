@@ -23,6 +23,8 @@
 #ifndef LINUXCALLBACKHANDLER_H
 #define LINUXCALLBACKHANDLER_H
 
+#include <QtGlobal>
+
 #ifdef Q_OS_LINUX
 #include "abstractcallbackhandler.h"
 

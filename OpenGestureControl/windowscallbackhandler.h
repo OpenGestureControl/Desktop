@@ -23,6 +23,8 @@
 #ifndef WINDOWSCALLBACKHANDLER_H
 #define WINDOWSCALLBACKHANDLER_H
 
+#include <QtGlobal>
+
 #ifdef Q_OS_WIN32
 #include "abstractcallbackhandler.h"
 

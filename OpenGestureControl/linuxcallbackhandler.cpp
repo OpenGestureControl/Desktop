@@ -24,7 +24,7 @@
 #ifdef Q_OS_LINUX
 LinuxCallbackHandler::LinuxCallbackHandler(QObject *parent) : AbstractCallbackHandler(parent)
 {
-    LinuxCallbackHandler::retrieveFocusWindowInfo();
+    retrieveFocusWindowInfo();
 
     this->moduleOptions = new ModuleOptionsModel();
 
@@ -35,17 +35,17 @@ LinuxCallbackHandler::LinuxCallbackHandler(QObject *parent) : AbstractCallbackHa
 
     lua_register(L, "ModuleHelperSendKeyboardKey", ModuleHelperSendKeyboardKey);
 
-    status = luaL_dofile(L, this->filename.c_str());
-    if (status) {
-        fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
-        exit(1);
-    }
-
     // TODO REDO this to be generic
     if (this->exeTitle == "Spotify.exe" || this->exeTitle == "Spotify") {
         this->filename = "music.lua";
     } else {
         this->filename = "browser.lua";
+    }
+
+    status = luaL_dofile(L, this->filename.toStdString().c_str());
+    if (status) {
+        fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
+        exit(1);
     }
 }
 
@@ -64,7 +64,7 @@ extern "C" int LinuxCallbackHandler::ModuleHelperSendKeyboardKey(lua_State* L)
       stringList.append(QString(temp.c_str()));
   }
 
-  LinuxCallbackHandler::parseKey(stringList);
+  parseKey(stringList);
 
   return 0; // Count of returned values
 }
@@ -98,7 +98,7 @@ XKeyEvent LinuxCallbackHandler::createKeyEvent(Display *display, Window &win, Wi
 void LinuxCallbackHandler::parseKey(QStringList hotkey)
 {
     // Create key event
-    XKeyEvent event = WindowsCallbackHandler::createKeyEvent(this->display, this->lastProcess, winRoot, true, XK_T, 0);
+    XKeyEvent event = createKeyEvent(this->display, this->lastProcess, winRoot, true, XK_T, 0);
 
     for(int i = 0; i > hotkey.size(); i++) {
         if (QString::compare(hotkey[i], "ctrl", Qt::CaseInsensitive) == 0) { // Check if the Control key needs to be pressed
@@ -115,7 +115,7 @@ void LinuxCallbackHandler::parseKey(QStringList hotkey)
         }
         else {
             qWarning() << "Other key pressed: " << tempkey;
-            event.keycode = LinuxCallbackHandler::lookupKey(hotkey[i]);
+            event.keycode = lookupKey(hotkey[i]);
 
             // Send a key press event to the window.
             XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
@@ -170,7 +170,7 @@ bool LinuxCallbackHandler::handle(QString optionName)
     lua_getglobal(L, "handle"); /* function to be called */
     lua_pushstring(L, optionNameChar);
 
-    LinuxCallbackHandler::restoreFocusWindow();
+    restoreFocusWindow();
 
     // Call return_options
     int result = lua_pcall(L, 1, 0, 0);
@@ -180,7 +180,7 @@ bool LinuxCallbackHandler::handle(QString optionName)
     }
 
     // TODO change this
-    LinuxCallbackHandler::close();
+    close();
     return true;
 }
 

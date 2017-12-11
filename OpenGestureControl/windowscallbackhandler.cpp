@@ -255,4 +255,4 @@ WORD CallbackHandler::lookupKey(QString keyname)
 
     return lookupMap[keyname.toLower()];
 }
-#endif Q_OS_WIN32
+#endif //Q_OS_WIN32

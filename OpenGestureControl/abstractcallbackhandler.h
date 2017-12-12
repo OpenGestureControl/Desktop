@@ -9,6 +9,7 @@
 #include <QString>
 #include <QUrl>
 #include <QDesktopServices>
+#include <QMessageBox>
 
 #include <lua.hpp>
 
@@ -40,18 +41,18 @@ public:
     /*! \brief This function returns all options defined within the active Lua module.*/
     ModuleOptionsModel* getOptions();
 
-    /*! \brief This function closes the Lua interpreter.*/
-    virtual void close();
-
     QString exeTitle;                   /*!< A QString reference to the name of the last application executable on the foreground. */
     QString filename;                   /*!< A QString reference to the name of the Lua file which needs to be loaded in. */
     ModuleOptionsModel *moduleOptions;  /*!< A ModuleOptionsModel pointer to the model containing all piemenu options. */
     lua_State *L;                       /*!< A lua_State pointer to the menu options pointers from the piemenu. */
 
 protected:
+    /*! \brief This function retrieves all info from the current active window.*/
     virtual void retrieveFocusWindowInfo() = 0;
+    /*! \brief This function returns the previously active window to the foreground.*/
     virtual void restoreFocusWindow() = 0;
-    //virtual void parseKey(QStringList hotkey) = 0;
+    /*! \brief This function closes the Lua interpreter.*/
+    virtual void close();
 };
 
 #endif // ABSTRACTCALLBACKHANDLER_H

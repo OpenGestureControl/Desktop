@@ -24,7 +24,7 @@
 #ifdef Q_OS_LINUX
 LinuxCallbackHandler::LinuxCallbackHandler(QObject *parent) : AbstractCallbackHandler(parent)
 {
-    retrieveFocusWindowInfo();
+    LinuxCallbackHandler::retrieveFocusWindowInfo();
 
     this->moduleOptions = new ModuleOptionsModel();
 
@@ -35,17 +35,26 @@ LinuxCallbackHandler::LinuxCallbackHandler(QObject *parent) : AbstractCallbackHa
 
     lua_register(L, "ModuleHelperSendKeyboardKey", ModuleHelperSendKeyboardKey);
 
-    // TODO REDO this to be generic
     if (this->exeTitle == "Spotify.exe" || this->exeTitle == "Spotify") {
         this->filename = "music.lua";
-    } else {
+    } else if (this->exeTitle == "FireFox.exe" || this->exeTitle == "FireFox") {
         this->filename = "browser.lua";
+    } else {
+        // Show the user that the current program is not supported
+        QMessageBox* msgbox = new QMessageBox();
+        msgbox->setWindowTitle("Missing Module");
+        msgbox->setText("The current program does not have an OpenGestureControl module, cancelling action.");
+        msgbox->exec();
+        LinuxCallbackHandler::close();
     }
 
-    status = luaL_dofile(L, this->filename.toStdString().c_str());
-    if (status) {
-        fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
-        exit(1);
+    qWarning() << "Return lua values";
+    if(supported) {
+        status = luaL_dofile(L, this->filename.toStdString().c_str());
+        if (status) {
+            fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
+            exit(1);
+        }
     }
 }
 
@@ -73,7 +82,7 @@ void LinuxCallbackHandler::parseKey(QStringList hotkey)
 {
     XKeyEvent event;
 
-    event.display     = XDisplay;     // Server connection
+    event.display     = XDisplay;    // Server connection
     event.window      = LastProcess; // "event" window reported in
     event.root        = WinRoot;     // Root window event occurred on
     event.subwindow   = None;        // Child window
@@ -86,8 +95,8 @@ void LinuxCallbackHandler::parseKey(QStringList hotkey)
     event.keycode     = 0;           // Which key to send
     event.state       = 0;           // Key or button mask
     event.type        = KeyPress;    // Key press of release
+    event.state       = 0;           // Modifier keys
 
-    int p = hotkey.size();
     for(int i = 0; i < hotkey.size(); i++) {
         if (QString::compare(hotkey[i], "ctrl", Qt::CaseInsensitive) == 0) { // Check if the Control key needs to be pressed
             qWarning() << "Control pressed";
@@ -113,30 +122,6 @@ void LinuxCallbackHandler::parseKey(QStringList hotkey)
             //XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
         }
     }
-}
-
-void LinuxCallbackHandler::retrieveFocusWindowInfo()
-{
-    // Obtain the X11 display.
-    XDisplay = XOpenDisplay(0);
-    if(XDisplay == NULL)
-        qWarning() << "No X server connection established!";
-
-    // Get the root window for the current display.
-    WinRoot = XDefaultRootWindow(XDisplay);
-    qWarning() << "Winroot: " << WinRoot;
-
-    // Find the window which has the current keyboard focus.
-    int revert;
-    XGetInputFocus(XDisplay, &LastProcess, &revert);
-    qWarning() << "lastProcess: " << LastProcess;
-
-    // Retrieve window name //
-    XClassHint classProp;
-    XGetClassHint(XDisplay, (LastProcess -1), &classProp); // -1 required because Linux is weird like that, -1 will cause error for Qt itself but w/e
-    this->exeTitle = classProp.res_class;
-
-    qWarning() << classProp.res_class << " : " << classProp.res_name << endl;
 }
 
 bool LinuxCallbackHandler::handle(QString optionName)
@@ -166,9 +151,35 @@ bool LinuxCallbackHandler::handle(QString optionName)
     return true;
 }
 
+void LinuxCallbackHandler::retrieveFocusWindowInfo()
+{
+    // Obtain the X11 display.
+    XDisplay = XOpenDisplay(0);
+    if(XDisplay == NULL)
+        qWarning() << "No X server connection established!";
+
+    // Get the root window for the current display.
+    WinRoot = XDefaultRootWindow(XDisplay);
+    qWarning() << "Winroot: " << WinRoot;
+
+    // Find the window which has the current keyboard focus.
+    int revert = 0;
+    XGetInputFocus(XDisplay, &LastProcess, &revert);
+    qWarning() << "lastProcess: " << LastProcess;
+
+    // Retrieve window name //
+    XClassHint classProp;
+    XGetClassHint(XDisplay, (LastProcess -1), &classProp); // -1 required because Linux is weird like that, -1 will cause error for Qt itself but w/e
+    this->exeTitle = classProp.res_class;
+
+    qWarning() << classProp.res_class << " : " << classProp.res_name << endl;
+}
+
 void LinuxCallbackHandler::restoreFocusWindow()
 {
-    // TODO
+    //XRaiseWindow(XDisplay, LastProcess); // currently does not work
+    int revert = 0;
+    XSetInputFocus(XDisplay, LastProcess, revert, CurrentTime);
 }
 
 void LinuxCallbackHandler::close()

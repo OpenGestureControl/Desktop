@@ -112,24 +112,6 @@ void WindowsCallbackHandler::parseKey(QStringList hotkey)
     WindowsCallbackHandler::parseKey(hotkey);
 }
 
-void WindowsCallbackHandler::retrieveFocusWindowInfo()
-{
-    // Obtain the window which currnetly has focus
-    this->lastProcess = GetForegroundWindow();
-    //qWarning() << this->lastProcess;
-
-    DWORD processID;
-    GetWindowThreadProcessId(this->lastProcess, &processID);
-
-    TCHAR szProcessName[MAX_PATH] = TEXT("<unknown>");
-
-    HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID);
-
-    GetModuleBaseName(hProcess, NULL, szProcessName, sizeof(szProcessName)/sizeof(TCHAR));
-    this->exeTitle = QString::fromWCharArray(szProcessName);
-    qWarning() << this->exeTitle;
-}
-
 bool WindowsCallbackHandler::handle(QString optionName)
 {
     qWarning() << optionName;
@@ -155,6 +137,24 @@ bool WindowsCallbackHandler::handle(QString optionName)
     // TODO change this
     WindowsCallbackHandler::close();
     return true;
+}
+
+void WindowsCallbackHandler::retrieveFocusWindowInfo()
+{
+    // Obtain the window which currnetly has focus
+    this->lastProcess = GetForegroundWindow();
+    //qWarning() << this->lastProcess;
+
+    DWORD processID;
+    GetWindowThreadProcessId(this->lastProcess, &processID);
+
+    TCHAR szProcessName[MAX_PATH] = TEXT("<unknown>");
+
+    HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID);
+
+    GetModuleBaseName(hProcess, NULL, szProcessName, sizeof(szProcessName)/sizeof(TCHAR));
+    this->exeTitle = QString::fromWCharArray(szProcessName);
+    qWarning() << this->exeTitle;
 }
 
 void WindowsCallbackHandler::restoreFocusWindow()

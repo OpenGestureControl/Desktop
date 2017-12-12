@@ -36,22 +36,12 @@ class WindowsCallbackHandler : public AbstractCallbackHandler
 {
     Q_OBJECT
 public:
-
     explicit WindowsCallbackHandler(QObject *parent = 0);
-    ModuleOptionsModel* getOptions();
-    void close();
 
 private:
-
-    static int ModuleHelperSendKeyboardKey(lua_State* L /*!< An lua_State pointer to the active Lua instance (the module, the interpreter etc). */);
-
     /*! \brief This function translates a keyname to the Windows OS representation.*/
     static WORD lookupKey(QString keyname /*!< A QString reference to the keyname to be found. */);
 
-    HWND lastProcess; /*!< A HWND (A Windows window handle) reference to the last foreground application. */
-
-    void retrieveFocusWindowInfo() override;
-    void restoreFocusWindow() override;
     static void parseKey(QStringList hotkey);
 
     /*! \brief This function allows the Lua module to send a key sequence to the OS.
@@ -61,6 +51,12 @@ private:
      *  Examples: "Ctrl+T" or "Ctrl+Shift+T" or "T".
      */
     static int ModuleHelperSendKeyboardKey(lua_State* L /*!< An lua_State pointer to the active Lua instance (the module, the interpreter etc). */);
+
+    HWND lastProcess; /*!< A HWND (A Windows window handle) reference to the last foreground application. */
+
+protected:
+    void retrieveFocusWindowInfo() override;
+    void restoreFocusWindow() override;
 
 public slots:
     /*! \brief This function handles a selected piemenu option.

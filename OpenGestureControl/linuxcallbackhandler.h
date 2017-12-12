@@ -44,16 +44,11 @@ public:
     explicit LinuxCallbackHandler(QObject *parent = 0);
 
 private:
-    /*! \brief This function creates an XKeyEvent.*/
-    XKeyEvent createKeyEvent(Display *display, Window &win, Window &winRoot, bool press, int keycode, int modifiers);
-
     /*! \brief This function translates a keyname to the Linux OS representation.*/
     static int lookupKey(QString keyname /*!< A QString reference to the keyname to be found. */);
 
-    void retrieveFocusWindowInfo() override;
-    void restoreFocusWindow() override;
+    /*! \brief This function creates a fake keypressevent and send it.*/
     static void parseKey(QStringList hotkey);
-    void close() override;
 
     /*! \brief This function allows the Lua module to send a key sequence to the OS.
      *
@@ -62,6 +57,11 @@ private:
      *  Examples: "Ctrl+T" or "Ctrl+Shift+T" or "T".
      */
     static int ModuleHelperSendKeyboardKey(lua_State* L /*!< An lua_State pointer to the active Lua instance (the module, the interpreter etc). */);
+
+protected:
+    void retrieveFocusWindowInfo() override;
+    void restoreFocusWindow() override;
+    void close() override;
 
 public slots:
     /*! \brief This function handles a selected piemenu option.

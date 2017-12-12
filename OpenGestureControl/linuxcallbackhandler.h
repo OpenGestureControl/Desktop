@@ -33,6 +33,10 @@
 #include <X11/Xutil.h>
 #undef Bool // Needed because of weird Xlib C library
 
+static Display *XDisplay;  /*!< A Display (An Xlib X server handle) pointer to the Xlib X server. */
+static Window WinRoot;     /*!< A Window (An Xlib window handle) reference to the root window of the application. */
+static Window LastProcess; /*!< A Window (An Xlib window handle) reference to the last foreground application. */
+
 class LinuxCallbackHandler : public AbstractCallbackHandler
 {
     Q_OBJECT
@@ -48,12 +52,8 @@ private:
 
     void retrieveFocusWindowInfo() override;
     void restoreFocusWindow() override;
-    void parseKey(QStringList hotkey) override;
+    static void parseKey(QStringList hotkey);
     void close() override;
-
-    Display *display;   /*!< A Display (An Xlib X server handle) pointer to the Xlib X server. */
-    Window winRoot;     /*!< A Window (An Xlib window handle) reference to the root window of the application. */
-    Window lastProcess; /*!< A Window (An Xlib window handle) reference to the last foreground application. */
 
     /*! \brief This function allows the Lua module to send a key sequence to the OS.
      *

@@ -51,7 +51,7 @@ public:
 protected:
     virtual void retrieveFocusWindowInfo() = 0;
     virtual void restoreFocusWindow() = 0;
-    virtual void parseKey(QStringList hotkey) = 0;
+    //virtual void parseKey(QStringList hotkey) = 0;
 };
 
 #endif // ABSTRACTCALLBACKHANDLER_H

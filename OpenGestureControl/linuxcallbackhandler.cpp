@@ -64,43 +64,31 @@ extern "C" int LinuxCallbackHandler::ModuleHelperSendKeyboardKey(lua_State* L)
       stringList.append(QString(temp.c_str()));
   }
 
-  parseKey(stringList);
+  LinuxCallbackHandler::parseKey(stringList);
 
   return 0; // Count of returned values
 }
 
-XKeyEvent LinuxCallbackHandler::createKeyEvent(Display *display, Window &win, Window &winRoot, bool press, int keycode, int modifiers)
-{
-   XKeyEvent event;
-
-   event.display     = display;     // Server connection
-   event.window      = win;         // "event" window reported in
-   event.root        = winRoot;     // Root window event occurred on
-   event.subwindow   = None;        // Child window
-   event.time        = CurrentTime; // Milliseconds
-   event.x           = 1;           // Coordinates in event window
-   event.y           = 1;           // Coordinates in event window
-   event.x_root      = 1;           // Coordinates relative to root
-   event.y_root      = 1;           // Coordinates relative to root
-   event.same_screen = True;        // Same screen flag
-   event.keycode     = XKeysymToKeycode(display, keycode); // Which key to send
-   event.state       = modifiers;   // Key or button mask
-
-   if(press)
-      event.type = KeyPress;
-   else
-      event.type = KeyRelease;
-
-   return event;
-}
-
-
 void LinuxCallbackHandler::parseKey(QStringList hotkey)
 {
-    // Create key event
-    XKeyEvent event = createKeyEvent(this->display, this->lastProcess, winRoot, true, XK_T, 0);
+    XKeyEvent event;
 
-    for(int i = 0; i > hotkey.size(); i++) {
+    event.display     = XDisplay;     // Server connection
+    event.window      = LastProcess; // "event" window reported in
+    event.root        = WinRoot;     // Root window event occurred on
+    event.subwindow   = None;        // Child window
+    event.time        = CurrentTime; // Milliseconds
+    event.x           = 1;           // Coordinates in event window
+    event.y           = 1;           // Coordinates in event window
+    event.x_root      = 1;           // Coordinates relative to root
+    event.y_root      = 1;           // Coordinates relative to root
+    event.same_screen = True;        // Same screen flag
+    event.keycode     = 0;           // Which key to send
+    event.state       = 0;           // Key or button mask
+    event.type        = KeyPress;    // Key press of release
+
+    int p = hotkey.size();
+    for(int i = 0; i < hotkey.size(); i++) {
         if (QString::compare(hotkey[i], "ctrl", Qt::CaseInsensitive) == 0) { // Check if the Control key needs to be pressed
             qWarning() << "Control pressed";
             event.state += ControlMask;
@@ -114,8 +102,8 @@ void LinuxCallbackHandler::parseKey(QStringList hotkey)
             event.state += ShiftMask;
         }
         else {
-            qWarning() << "Other key pressed: " << tempkey;
-            event.keycode = lookupKey(hotkey[i]);
+            qWarning() << "Other key pressed: " << hotkey[i];
+            event.keycode = XKeysymToKeycode(XDisplay, lookupKey(hotkey[i]));
 
             // Send a key press event to the window.
             XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
@@ -127,31 +115,25 @@ void LinuxCallbackHandler::parseKey(QStringList hotkey)
     }
 }
 
-void LinuxCallbackHandler::close()
-{
-    AbstractCallbackHandler::close();
-    XCloseDisplay(this->display); // Close link to X display server
-}
-
 void LinuxCallbackHandler::retrieveFocusWindowInfo()
 {
     // Obtain the X11 display.
-    this->display = XOpenDisplay(0);
-    if(this->display == NULL)
+    XDisplay = XOpenDisplay(0);
+    if(XDisplay == NULL)
         qWarning() << "No X server connection established!";
 
     // Get the root window for the current display.
-    this->winRoot = XDefaultRootWindow(this->display);
-    qWarning() << "Winroot: " << winRoot;
+    WinRoot = XDefaultRootWindow(XDisplay);
+    qWarning() << "Winroot: " << WinRoot;
 
     // Find the window which has the current keyboard focus.
-    int    revert;
-    XGetInputFocus(this->display, &this->lastProcess, &revert);
-    qWarning() << "lastProcess: " << this->lastProcess;
+    int revert;
+    XGetInputFocus(XDisplay, &LastProcess, &revert);
+    qWarning() << "lastProcess: " << LastProcess;
 
     // Retrieve window name //
     XClassHint classProp;
-    XGetClassHint(this->display, (this->lastProcess -1), &classProp); // -1 required because Linux is weird like that, -1 will cause error for Qt itself but w/e
+    XGetClassHint(XDisplay, (LastProcess -1), &classProp); // -1 required because Linux is weird like that, -1 will cause error for Qt itself but w/e
     this->exeTitle = classProp.res_class;
 
     qWarning() << classProp.res_class << " : " << classProp.res_name << endl;
@@ -170,7 +152,7 @@ bool LinuxCallbackHandler::handle(QString optionName)
     lua_getglobal(L, "handle"); /* function to be called */
     lua_pushstring(L, optionNameChar);
 
-    restoreFocusWindow();
+    LinuxCallbackHandler::restoreFocusWindow();
 
     // Call return_options
     int result = lua_pcall(L, 1, 0, 0);
@@ -180,13 +162,19 @@ bool LinuxCallbackHandler::handle(QString optionName)
     }
 
     // TODO change this
-    close();
+    LinuxCallbackHandler::close();
     return true;
 }
 
 void LinuxCallbackHandler::restoreFocusWindow()
 {
     // TODO
+}
+
+void LinuxCallbackHandler::close()
+{
+    AbstractCallbackHandler::close();
+    XCloseDisplay(XDisplay); // Close link to X display server
 }
 
 int LinuxCallbackHandler::lookupKey(QString keyname)

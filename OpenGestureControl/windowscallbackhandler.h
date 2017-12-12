@@ -52,7 +52,7 @@ private:
 
     void retrieveFocusWindowInfo() override;
     void restoreFocusWindow() override;
-    void parseKey(QStringList hotkey) override;
+    static void parseKey(QStringList hotkey);
 
     /*! \brief This function allows the Lua module to send a key sequence to the OS.
      *

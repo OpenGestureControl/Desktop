@@ -68,7 +68,7 @@ public slots:
      *  It return true when successful.
      */
     virtual bool handle(QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/);
-}
+};
 #endif // Q_OS_WIN32
 
 #endif // WINDOWSCALLBACKHANDLER_H

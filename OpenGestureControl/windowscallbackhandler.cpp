@@ -26,7 +26,7 @@ WindowsCallbackHandler::WindowsCallbackHandler(QObject *parent) : AbstractCallba
 {
     WindowsCallbackHandler::retrieveFocusWindowInfo();
 
-    this->moduleOptions = new ModuleOptionsModel();
+    this->moduleOptions = new ModuleOptionsListModel();
 
     // Start initializing the Lua
     int status;
@@ -35,17 +35,24 @@ WindowsCallbackHandler::WindowsCallbackHandler(QObject *parent) : AbstractCallba
 
     lua_register(L, "ModuleHelperSendKeyboardKey", ModuleHelperSendKeyboardKey);
 
-    status = luaL_dofile(L, this->filename.c_str());
+    if (this->exeTitle == "Spotify.exe" || this->exeTitle == "Spotify") {
+        this->filename = "music.lua";
+    } else if (this->exeTitle == "FireFox.exe" || this->exeTitle == "Firefox") {
+        this->filename = "browser.lua";
+    } else {
+        // Show the user that the current program is not supported
+        QMessageBox* msgbox = new QMessageBox();
+        msgbox->setWindowTitle("Missing Module");
+        msgbox->setText("The current program does not have an OpenGestureControl module, cancelling action.");
+        msgbox->exec();
+        AbstractCallbackHandler::close();
+    }
+
+    qWarning() << "Return lua values";
+    status = luaL_dofile(L, this->filename.toStdString().c_str());
     if (status) {
         fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
         exit(1);
-    }
-
-    // TODO REDO this to be generic
-    if (this->exeTitle == "Spotify.exe" || this->exeTitle == "Spotify") {
-        thtis->filename = "music.lua";
-    } else {
-        this->filename = "browser.lua";
     }
 }
 
@@ -101,7 +108,7 @@ void WindowsCallbackHandler::parseKey(QStringList hotkey)
     }
     else {
         qWarning() << "Other key pressed: " << tempkey;
-        WORD key = CallbackHandler::lookupKeyWindows(tempkey);
+        WORD key = WindowsCallbackHandler::lookupKey(tempkey);
         if (key != 0x00) {
             keybd_event(key, 0, 0, 0);
         } else {
@@ -168,7 +175,7 @@ void WindowsCallbackHandler::restoreFocusWindow()
     }
 }
 
-WORD CallbackHandler::lookupKey(QString keyname)
+WORD WindowsCallbackHandler::lookupKey(QString keyname)
 {
     QMap<QString, WORD> lookupMap;
     lookupMap["0"] = 0x30;

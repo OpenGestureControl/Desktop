@@ -24,12 +24,17 @@
 #define BLUETOOTHMANAGER_H
 
 #include <QAbstractItemModel>
+#include <QBluetoothDeviceDiscoveryAgent>
+#include <QBluetoothServiceDiscoveryAgent>
+#include <QLowEnergyController>
+#include <QDataStream>
 #include <QObject>
 #include <QString>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
 #include "bluetoothdevicelistmodel.h"
+#include "piemenu.h"
 
 /*! \brief A class which manages all known Bluetooth devices.
  *
@@ -48,16 +53,32 @@ public:
     bool isUIOpen();
 
 private:
+    QBluetoothDeviceDiscoveryAgent *bluetoothDeviceDiscoveryAgent;
+    QLowEnergyService *accelerometer, *button;
+    QLowEnergyController *lowEnergyController;
     QObject *window;
     QQmlApplicationEngine engine;
     BluetoothDeviceListModel *bluetoothDevices;
+    int connectionProgress;
+    BluetoothDevice *connectingTo;
+    PieMenu *pieMenu;
 
 signals:
 
 public slots:
     void scanForDevices();
-    void connectToDevice(QString deviceId);
-    void forgetDevice(QString deviceId);
+    void connectToDevice(QString deviceAddress);
+    void forgetDevice(QString deviceAddress);
+    void connected();
+    void disconnected();
+    void error(QLowEnergyController::Error error);
+    void deviceDiscovered(QBluetoothDeviceInfo deviceInfo);
+    void scanFinished();
+    void discoveryFinished();
+    void accelerometerServiceStateChanged(QLowEnergyService::ServiceState state);
+    void accelerometerDataChanged(QLowEnergyCharacteristic characteristic, QByteArray data);
+    void buttonServiceStateChanged(QLowEnergyService::ServiceState state);
+    void buttonDataChanged(QLowEnergyCharacteristic characteristic, QByteArray data);
 };
 
 #endif // BLUETOOTHMANAGER_H

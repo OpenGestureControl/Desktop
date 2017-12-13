@@ -33,10 +33,12 @@ Window {
     title: qsTr("OpenGestureControl - Bluetooth Manager")
 
     signal scanRequest()
-    signal connectRequest(string deviceId)
-    signal forgetRequest(string deviceId)
+    signal connectRequest(string deviceAddress)
+    signal forgetRequest(string deviceAddress)
 
     property string status: "IDLE"
+    // FIXME: Remove this line later
+    visible: true
 
     SystemPalette { id: palette; colorGroup: SystemPalette.Active }
 
@@ -75,17 +77,6 @@ Window {
 
                 model: bluetoothDevices
 
-
-                add: Transition {
-                    NumberAnimation { property: "opacity"; to: 1; duration: 1000 }
-                }
-                displaced: Transition {
-                    NumberAnimation { properties: "x,y"; duration: 1000 }
-                }
-                remove: Transition {
-                    NumberAnimation { property: "opacity"; to: 0; duration: 1000 }
-                }
-
                 delegate: Component {
                     Item {
                         id: wrapper
@@ -96,7 +87,7 @@ Window {
                         Row {
                             Text {
                                 id: text
-                                text: "%1 (%2)".arg(model.name).arg(model.deviceId)
+                                text: "%1 (%2)".arg(model.name).arg(model.address)
                                 height: connectButton.height
                                 width: deviceList.width - connectButton.width - forgetButton.width
                                 elide: Text.ElideRight
@@ -105,34 +96,24 @@ Window {
                             Button {
                                 id: connectButton
 
-                                visible: wrapper.ListView.isCurrentItem
-
                                 text: qsTr("Connect")
 
-                                onClicked: connectRequest(model.deviceId)
+                                enabled: !model.active && root.status != "CONNECTING"
+
+                                onClicked: connectRequest(model.address)
                             }
                             Button {
                                 id: forgetButton
 
-                                visible: wrapper.ListView.isCurrentItem
-
                                 text: qsTr("Forget")
 
-                                onClicked: forgetRequest(model.deviceId)
+                                enabled: !connectButton.enabled && root.status != "CONNECTING"
+
+                                onClicked: forgetRequest(model.address)
                             }
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            onPositionChanged: deviceList.currentIndex = index
                         }
                     }
                 }
-                highlight: Rectangle {
-                    color: palette.highlight
-                }
-                highlightFollowsCurrentItem: true
-                highlightMoveDuration: 0
             }
         }
 
@@ -140,10 +121,17 @@ Window {
             id: newDeviceButton
             Layout.fillWidth: true
 
-            text: root.status == "IDLE" ? qsTr("Search for devices") : qsTr("Searching...")
+            text: if (root.status == "IDLE")
+                     return qsTr("Search for devices")
+                  else if (root.status == "SCANNING")
+                      return qsTr("Searching...")
+                  else if (root.status == "CONNECTING")
+                      return qsTr("Connecting...")
+                  else if (root.status == "CONNECTED")
+                      return qsTr("Disconnect and search for devices")
+            enabled: root.status == "IDLE" || root.status == "CONNECTED"
 
             onClicked: {
-                root.status = "SCANNING";
                 scanRequest();
             }
         }

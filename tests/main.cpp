@@ -22,7 +22,7 @@
 
 #include "testbluetoothdevicelistmodel.cpp"
 #include "testmoduleoptionslistmodel.cpp"
-#include "testcallbackhandler.h"
+//#include "testcallbackhandler.h"
 
 int main(int argc, char **argv)
 {
@@ -37,11 +37,11 @@ int main(int argc, char **argv)
       TestModuleOptionsModel tc;
       status |= QTest::qExec(&tc, argc, argv);
    }
-
+/*
    {
       TestCallbackHandler tc;
       status |= QTest::qExec(&tc, argc, argv);
    }
-
+*/
    return status;
 }

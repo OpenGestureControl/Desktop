@@ -31,9 +31,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 HEADERS += ../OpenGestureControl/piemenu.h \
     ../OpenGestureControl/keyboardinput.h \
-#    ../OpenGestureControl/abstractcallbackhandler.h \
-#    ../OpenGestureControl/linuxcallbackhandler.h \
-#    ../OpenGestureControl/windowscallbackhandler.h \
+    ../OpenGestureControl/abstractcallbackhandler.h \
+    ../OpenGestureControl/linuxcallbackhandler.h \
+    ../OpenGestureControl/windowscallbackhandler.h \
     ../OpenGestureControl/bluetoothmanager.h \
     ../OpenGestureControl/bluetoothdevice.h \
     ../OpenGestureControl/bluetoothdevicelistmodel.h \
@@ -46,9 +46,9 @@ HEADERS += ../OpenGestureControl/piemenu.h \
 
 SOURCES += ../OpenGestureControl/piemenu.cpp \
     ../OpenGestureControl/keyboardinput.cpp \
-#    ../OpenGestureControl/abstractcallbackhandler.cpp \
-#    ../OpenGestureControl/linuxcallbackhandler.cpp \
-#    ../OpenGestureControl/windowscallbackhandler.cpp \
+    ../OpenGestureControl/abstractcallbackhandler.cpp \
+    ../OpenGestureControl/linuxcallbackhandler.cpp \
+    ../OpenGestureControl/windowscallbackhandler.cpp \
     ../OpenGestureControl/bluetoothmanager.cpp \
     ../OpenGestureControl/bluetoothdevice.cpp \
     ../OpenGestureControl/bluetoothdevicelistmodel.cpp \

@@ -16,7 +16,7 @@
 #include <functional>
 #include <sstream>
 
-#include "moduleoptionsmodel.h"
+#include "moduleoptionslistmodel.h"
 #include "moduleoption.h"
 
 /*! \brief A class which handles callbacks from the piemenu.
@@ -39,11 +39,11 @@ public:
     explicit AbstractCallbackHandler(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
 
     /*! \brief This function returns all options defined within the active Lua module.*/
-    ModuleOptionsModel* getOptions();
+    ModuleOptionsListModel* getOptions();
 
     QString exeTitle;                   /*!< A QString reference to the name of the last application executable on the foreground. */
     QString filename;                   /*!< A QString reference to the name of the Lua file which needs to be loaded in. */
-    ModuleOptionsModel *moduleOptions;  /*!< A ModuleOptionsModel pointer to the model containing all piemenu options. */
+    ModuleOptionsListModel *moduleOptions;  /*!< A ModuleOptionsModel pointer to the model containing all piemenu options. */
     lua_State *L;                       /*!< A lua_State pointer to the menu options pointers from the piemenu. */
 
 protected:

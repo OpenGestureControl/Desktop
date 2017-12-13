@@ -20,14 +20,14 @@
    SOFTWARE.
 */
 
-#include "moduleoptionsmodel.h"
+#include "moduleoptionslistmodel.h"
 
-ModuleOptionsModel::ModuleOptionsModel(QObject *parent) :
+ModuleOptionsListModel::ModuleOptionsListModel(QObject *parent) :
     QAbstractListModel(parent)
 {
 }
 
-QHash<int, QByteArray> ModuleOptionsModel::roleNames() const {
+QHash<int, QByteArray> ModuleOptionsListModel::roleNames() const {
     QHash<int, QByteArray> roles;
     roles[NameRole] = "name";
     roles[IconRole] = "icon";
@@ -35,7 +35,7 @@ QHash<int, QByteArray> ModuleOptionsModel::roleNames() const {
     return roles;
 }
 
-QVariant ModuleOptionsModel::data(const QModelIndex &index, int role) const
+QVariant ModuleOptionsListModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid() || index.row() < 0 || index.row() >= rowCount())
         return QVariant();
@@ -58,7 +58,7 @@ QVariant ModuleOptionsModel::data(const QModelIndex &index, int role) const
     }
 }
 
-bool ModuleOptionsModel::addOption(ModuleOption *option)
+bool ModuleOptionsListModel::addOption(ModuleOption *option)
 {
     if (m_data.contains(option)) {
         return false;
@@ -73,7 +73,7 @@ bool ModuleOptionsModel::addOption(ModuleOption *option)
     return true;
 }
 
-void ModuleOptionsModel::clear()
+void ModuleOptionsListModel::clear()
 {
     beginRemoveRows(QModelIndex(), 0, m_data.size());
 

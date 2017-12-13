@@ -5,7 +5,7 @@ AbstractCallbackHandler::AbstractCallbackHandler(QObject *parent) : QObject(pare
 
 }
 
-ModuleOptionsModel *AbstractCallbackHandler::getOptions()
+ModuleOptionsListModel *AbstractCallbackHandler::getOptions()
 {
     // Clear the list of items
     this->moduleOptions->clear();

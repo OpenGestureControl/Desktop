@@ -32,7 +32,7 @@
  *  This class manages a group of ModuleOptionsModel to store module options received from a Lua module.
  */
 
-class ModuleOptionsModel : public QAbstractListModel
+class ModuleOptionsListModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
@@ -49,7 +49,7 @@ public:
      *
      *  This constructor instantiates this class.
      */
-    explicit ModuleOptionsModel(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
+    explicit ModuleOptionsListModel(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
 
     /*! \brief This function returns the amount of ModuleOptions currently loaded.*/
     int rowCount(const QModelIndex & = QModelIndex() /*!< [in] optional parameter, a QModelIndex reference required to overload this function.*/) const override { return m_data.count(); }

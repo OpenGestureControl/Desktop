@@ -31,11 +31,11 @@ SOURCES += main.cpp \
     bluetoothmanager.cpp \
     bluetoothdevice.cpp \
     bluetoothdevicelistmodel.cpp \
-    moduleoptionsmodel.cpp \
     moduleoption.cpp \
     abstractcallbackhandler.cpp \
     linuxcallbackhandler.cpp \
-    windowscallbackhandler.cpp
+    windowscallbackhandler.cpp \
+    moduleoptionslistmodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -78,11 +78,11 @@ HEADERS += \
     bluetoothmanager.h \
     bluetoothdevice.h \
     bluetoothdevicelistmodel.h \
-    moduleoptionsmodel.h \
     moduleoption.h \
     abstractcallbackhandler.h \
     linuxcallbackhandler.h \
-    windowscallbackhandler.h
+    windowscallbackhandler.h \
+    moduleoptionslistmodel.h
 
 DISTFILES += \
     browser.lua \

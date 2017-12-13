@@ -26,7 +26,7 @@ LinuxCallbackHandler::LinuxCallbackHandler(QObject *parent) : AbstractCallbackHa
 {
     LinuxCallbackHandler::retrieveFocusWindowInfo();
 
-    this->moduleOptions = new ModuleOptionsModel();
+    this->moduleOptions = new ModuleOptionsListModel();
 
     // Start initializing the Lua
     int status;
@@ -37,7 +37,7 @@ LinuxCallbackHandler::LinuxCallbackHandler(QObject *parent) : AbstractCallbackHa
 
     if (this->exeTitle == "Spotify.exe" || this->exeTitle == "Spotify") {
         this->filename = "music.lua";
-    } else if (this->exeTitle == "FireFox.exe" || this->exeTitle == "FireFox") {
+    } else if (this->exeTitle == "FireFox.exe" || this->exeTitle == "Firefox") {
         this->filename = "browser.lua";
     } else {
         // Show the user that the current program is not supported
@@ -49,12 +49,10 @@ LinuxCallbackHandler::LinuxCallbackHandler(QObject *parent) : AbstractCallbackHa
     }
 
     qWarning() << "Return lua values";
-    if(supported) {
-        status = luaL_dofile(L, this->filename.toStdString().c_str());
-        if (status) {
-            fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
-            exit(1);
-        }
+    status = luaL_dofile(L, this->filename.toStdString().c_str());
+    if (status) {
+        fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
+        exit(1);
     }
 }
 
@@ -255,6 +253,7 @@ int LinuxCallbackHandler::lookupKey(QString keyname)
     lookupMap["f24"] = XK_F24;
 
     lookupMap["backspace"] = XK_BackSpace;
+    lookupMap["space"] = XK_space;
 
     lookupMap["enter"] = XK_Return;
     lookupMap["return"] = XK_Return;

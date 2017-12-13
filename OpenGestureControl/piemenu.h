@@ -36,7 +36,7 @@
 #include "abstractcallbackhandler.h"
 #include "windowscallbackhandler.h"
 #include "linuxcallbackhandler.h"
-#include "moduleoptionsmodel.h"
+#include "moduleoptionslistmodel.h"
 
 /*! \brief A class which creates and manages the piemenu QML view object.
  *

@@ -21,7 +21,7 @@
 */
 
 #include "testbluetoothdevicelistmodel.cpp"
-#include "testmoduleoptionsmodel.cpp"
+#include "testmoduleoptionslistmodel.cpp"
 #include "testcallbackhandler.h"
 
 int main(int argc, char **argv)

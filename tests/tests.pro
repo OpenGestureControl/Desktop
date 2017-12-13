@@ -31,11 +31,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 HEADERS += ../OpenGestureControl/piemenu.h \
     ../OpenGestureControl/keyboardinput.h \
-    ../OpenGestureControl/callbackhandler.h \
+    ../OpenGestureControl/abstractcallbackhandler.h \
+    ../OpenGestureControl/linuxcallbackhandler.h \
+    ../OpenGestureControl/windowscallbackhandler.h \
     ../OpenGestureControl/bluetoothmanager.h \
     ../OpenGestureControl/bluetoothdevice.h \
     ../OpenGestureControl/bluetoothdevicelistmodel.h \
-    ../OpenGestureControl/moduleoptionsmodel.h \
+    ../OpenGestureControl/moduleoptionslistmodel.h \
     ../OpenGestureControl/moduleoption.h \ # End of main project headers
     testbluetoothdevicelistmodel.h \
     testmoduleoptionsmodel.h \
@@ -44,20 +46,24 @@ HEADERS += ../OpenGestureControl/piemenu.h \
 
 SOURCES += ../OpenGestureControl/piemenu.cpp \
     ../OpenGestureControl/keyboardinput.cpp \
-    ../OpenGestureControl/callbackhandler.cpp \
+    ../OpenGestureControl/abstractcallbackhandler.cpp \
+    ../OpenGestureControl/linuxcallbackhandler.cpp \
+    ../OpenGestureControl/windowscallbackhandler.cpp \
     ../OpenGestureControl/bluetoothmanager.cpp \
     ../OpenGestureControl/bluetoothdevice.cpp \
     ../OpenGestureControl/bluetoothdevicelistmodel.cpp \
-    ../OpenGestureControl/moduleoptionsmodel.cpp \
+    ../OpenGestureControl/moduleoptionslistmodel.cpp \
     ../OpenGestureControl/moduleoption.cpp \ # End of main project sources
     testbluetoothdevicelistmodel.cpp \
-    testmoduleoptionsmodel.cpp \
     testcallbackhandler.cpp \
-    main.cpp
+    main.cpp \
+    testmoduleoptionslistmodel.cpp
 
 # Lua
 win32:INCLUDEPATH += $$PWD/../OpenGestureControl/libs $$PWD/../OpenGestureControl/libs/include
 win32:DEPENDPATH += $$PWD/../OpenGestureControl/libs
-
-unix:LIBS += -llua -lm -ldl
 win32:LIBS += -lpsapi -L$$PWD/../OpenGestureControl/libs/ -llua53
+
+unix:INCLUDEPATH += /usr/include/lua5.3
+unix:LIBS += -llua5.3 -lm -ldl -lX11
+#unix:LIBS += -llua -lm -ldl -lX11

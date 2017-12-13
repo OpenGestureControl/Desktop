@@ -24,9 +24,12 @@
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
+#include "../OpenGestureControl/windowscallbackhandler.h"
 #endif
 
-#include "../OpenGestureControl/callbackhandler.h"
+#ifdef Q_OS_LINUX
+    #include "../OpenGestureControl/linuxcallbackhandler.h"
+#endif
 
 class TestCallbackHandler : public QObject
 {

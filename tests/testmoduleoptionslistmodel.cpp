@@ -28,7 +28,7 @@ void TestModuleOptionsModel::storingAndRetrievingOptions()
     QString name = "Example option";
     QString icon = "test.png";
 
-    ModuleOptionsModel *moduleOptionsModel = new ModuleOptionsModel();
+    ModuleOptionsListModel *moduleOptionsModel = new ModuleOptionsListModel();
     ModuleOption *moduleOption = new ModuleOption(name, icon, 1);
 
     // Act
@@ -47,7 +47,7 @@ void TestModuleOptionsModel::storingAndRetrievingDuplicateOptions()
     QString name = "Example option";
     QString icon = "test.png";
 
-    ModuleOptionsModel *moduleOptionsModel = new ModuleOptionsModel();
+    ModuleOptionsListModel *moduleOptionsModel = new ModuleOptionsListModel();
     ModuleOption *moduleOption = new ModuleOption(name, icon, 1);
 
     moduleOptionsModel->addOption(moduleOption);
@@ -70,7 +70,7 @@ void TestModuleOptionsModel::getCorrectOptionsCount()
     QString icon2 = "test2.png";
     QString icon3 = "test3.png";
 
-    ModuleOptionsModel *moduleOptionsModel = new ModuleOptionsModel();
+    ModuleOptionsListModel *moduleOptionsModel = new ModuleOptionsListModel();
     ModuleOption *moduleOption1 = new ModuleOption(name1, icon1, 1);
     ModuleOption *moduleOption2 = new ModuleOption(name2, icon2, 2);
     ModuleOption *moduleOption3 = new ModuleOption(name3, icon3, 3);
@@ -96,7 +96,7 @@ void TestModuleOptionsModel::correctlyClearOptionsCount()
     QString icon2 = "test2.png";
     QString icon3 = "test3.png";
 
-    ModuleOptionsModel *moduleOptionsModel = new ModuleOptionsModel();
+    ModuleOptionsListModel *moduleOptionsModel = new ModuleOptionsListModel();
     ModuleOption *moduleOption1 = new ModuleOption(name1, icon1, 1);
     ModuleOption *moduleOption2 = new ModuleOption(name2, icon2, 2);
     ModuleOption *moduleOption3 = new ModuleOption(name3, icon3, 3);
@@ -120,7 +120,7 @@ void TestModuleOptionsModel::retrieveIncorrectRoleData()
     QString name = "Example option";
     QString icon = "test.png";
 
-    ModuleOptionsModel *moduleOptionsModel = new ModuleOptionsModel();
+    ModuleOptionsListModel *moduleOptionsModel = new ModuleOptionsListModel();
     ModuleOption *moduleOption = new ModuleOption(name, icon, 1);
 
     moduleOptionsModel->addOption(moduleOption);

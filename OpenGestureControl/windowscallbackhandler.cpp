@@ -242,6 +242,7 @@ WORD WindowsCallbackHandler::lookupKey(QString keyname)
     lookupMap["f24"] = VK_F24;
 
     lookupMap["backspace"] = VK_BACK;
+    lookupMap["space"] = VK_SPACE;
 
     lookupMap["enter"] = VK_RETURN;
     lookupMap["return"] = VK_RETURN;

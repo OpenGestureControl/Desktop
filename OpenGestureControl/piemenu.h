@@ -37,6 +37,7 @@
 #include "windowscallbackhandler.h"
 #include "linuxcallbackhandler.h"
 #include "moduleoptionslistmodel.h"
+#include "modulemanager.h"
 
 /*! \brief A class which creates and manages the piemenu QML view object.
  *
@@ -82,6 +83,7 @@ private:
     QQmlApplicationEngine engine; /*!< A QQmlApplicationEngine reference to a QML creator engine. */
     QMetaObject::Connection activeCallbackConnection; /*!< A QMetaObject reference between a QML Signal and pieMenu slot */
     AbstractCallbackHandler *callbackHandler; /*!< A CallbackHandler pointer to a callback handler. */
+    ModuleManager * moduleManager;
 
 signals:
 

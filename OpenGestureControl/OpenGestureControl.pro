@@ -35,7 +35,9 @@ SOURCES += main.cpp \
     abstractcallbackhandler.cpp \
     linuxcallbackhandler.cpp \
     windowscallbackhandler.cpp \
-    moduleoptionslistmodel.cpp
+    moduleoptionslistmodel.cpp \
+    modulemanager.cpp \
+    windowinformation.cpp
 
 RESOURCES += qml.qrc
 
@@ -44,8 +46,8 @@ win32:DEPENDPATH += $$PWD/libs
 win32:LIBS += -lpsapi -L$$PWD/libs/ -llua53
 
 unix:INCLUDEPATH += /usr/include/lua5.3
-#unix:LIBS += -llua5.3 -lm -ldl -lX11
-unix:LIBS += -llua -lm -ldl -lX11
+unix:LIBS += -llua5.3 -lm -ldl -lX11
+#unix:LIBS += -llua -lm -ldl -lX11
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -82,7 +84,9 @@ HEADERS += \
     abstractcallbackhandler.h \
     linuxcallbackhandler.h \
     windowscallbackhandler.h \
-    moduleoptionslistmodel.h
+    moduleoptionslistmodel.h \
+    modulemanager.h \
+    windowinformation.h
 
 DISTFILES += \
     browser.lua \

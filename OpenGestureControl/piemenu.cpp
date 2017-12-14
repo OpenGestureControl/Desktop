@@ -43,12 +43,15 @@ void PieMenu::open()
     if(this->callbackHandler) {
         delete this->callbackHandler;
     }
+    /*
 #ifdef Q_OS_WIN32
     this->callbackHandler = new WindowsCallbackHandler();
 #endif // Q_OS_WIN32
 #ifdef Q_OS_LINUX
     this->callbackHandler = new LinuxCallbackHandler();
 #endif // Q_OS_LINUX
+*/
+    this->moduleManager = new ModuleManager(); // TODO - expand on this
 
     if (this->activeCallbackConnection) {
         disconnect(this->activeCallbackConnection);

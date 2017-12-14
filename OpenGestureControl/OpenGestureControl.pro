@@ -28,20 +28,24 @@ CONFIG += c++11 qt
 SOURCES += main.cpp \
     piemenu.cpp \
     keyboardinput.cpp \
-    callbackhandler.cpp \
     bluetoothmanager.cpp \
     bluetoothdevice.cpp \
     bluetoothdevicelistmodel.cpp \
-    moduleoptionsmodel.cpp \
-    moduleoption.cpp
+    moduleoption.cpp \
+    abstractcallbackhandler.cpp \
+    linuxcallbackhandler.cpp \
+    windowscallbackhandler.cpp \
+    moduleoptionslistmodel.cpp
 
 RESOURCES += qml.qrc
 
 win32:INCLUDEPATH += $$PWD/libs $$PWD/libs/include
 win32:DEPENDPATH += $$PWD/libs
-
-unix:LIBS += -llua -lm -ldl
 win32:LIBS += -lpsapi -L$$PWD/libs/ -llua53
+
+unix:INCLUDEPATH += /usr/include/lua5.3
+#unix:LIBS += -llua5.3 -lm -ldl -lX11
+unix:LIBS += -llua -lm -ldl -lX11
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -71,12 +75,14 @@ CONFIG += console
 HEADERS += \
     piemenu.h \
     keyboardinput.h \
-    callbackhandler.h \
     bluetoothmanager.h \
     bluetoothdevice.h \
     bluetoothdevicelistmodel.h \
-    moduleoptionsmodel.h \
-    moduleoption.h
+    moduleoption.h \
+    abstractcallbackhandler.h \
+    linuxcallbackhandler.h \
+    windowscallbackhandler.h \
+    moduleoptionslistmodel.h
 
 DISTFILES += \
     browser.lua \

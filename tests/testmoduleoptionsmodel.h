@@ -22,7 +22,7 @@
 
 #include <QtTest/QtTest>
 
-#include "../OpenGestureControl/moduleoptionsmodel.h"
+#include "../OpenGestureControl/moduleoptionslistmodel.h"
 
 class TestModuleOptionsModel : public QObject
 {

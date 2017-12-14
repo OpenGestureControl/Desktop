@@ -15,17 +15,17 @@ end
 function handle(selection)
     io.write(string.format("We were asked to handle %s.\n", selection))
     if selection == "Next" then
-        ModuleHelperSendKeyboardKey("MediaNext")
+        ModuleHelperSendKeyboardKey("Ctrl+Right")
     elseif selection == "Previous" then
-        ModuleHelperSendKeyboardKey("MediaPrev")
+        ModuleHelperSendKeyboardKey("Ctrl+Left")
     elseif selection == "Play" then
-        ModuleHelperSendKeyboardKey("MediaPlayPause")
+        ModuleHelperSendKeyboardKey("Space")
     elseif selection == "Stop" then
-        ModuleHelperSendKeyboardKey("MediaStop")
+        ModuleHelperSendKeyboardKey("Space")
     elseif selection == "VolumeUp" then
-        ModuleHelperSendKeyboardKey("VolumeUp")
+        ModuleHelperSendKeyboardKey("Ctrl+Up")
     elseif selection == "VolumeDown" then
-        ModuleHelperSendKeyboardKey("VolumeDown")
+        ModuleHelperSendKeyboardKey("Ctrl+Down")
     else
         io.write("Unknown selection made\n")
     end

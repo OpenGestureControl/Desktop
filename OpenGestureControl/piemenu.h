@@ -33,8 +33,10 @@
 #include <QWindow>
 #include <iostream>
 
-#include "callbackhandler.h"
-#include "moduleoptionsmodel.h"
+#include "abstractcallbackhandler.h"
+#include "windowscallbackhandler.h"
+#include "linuxcallbackhandler.h"
+#include "moduleoptionslistmodel.h"
 
 /*! \brief A class which creates and manages the piemenu QML view object.
  *
@@ -79,7 +81,7 @@ private:
     QString appPath; /*!< A QString reference path to the active Lua module. */
     QQmlApplicationEngine engine; /*!< A QQmlApplicationEngine reference to a QML creator engine. */
     QMetaObject::Connection activeCallbackConnection; /*!< A QMetaObject reference between a QML Signal and pieMenu slot */
-    CallbackHandler *callbackHandler; /*!< A CallbackHandler pointer to a callback handler. */
+    AbstractCallbackHandler *callbackHandler; /*!< A CallbackHandler pointer to a callback handler. */
 
 signals:
 

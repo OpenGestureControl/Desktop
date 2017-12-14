@@ -30,7 +30,7 @@ PieMenu::PieMenu(QObject *parent) : QObject(parent)
     this->window = this->engine.rootObjects()[0];
 
     connect(this->window, SIGNAL(closeRequest()), this, SLOT(close()));
-    callbackHandler = NULL;
+    this->callbackHandler = NULL;
 }
 
 bool PieMenu::isOpen()
@@ -40,17 +40,22 @@ bool PieMenu::isOpen()
 
 void PieMenu::open()
 {
-    if(callbackHandler) {
-        delete callbackHandler;
+    if(this->callbackHandler) {
+        delete this->callbackHandler;
     }
-    callbackHandler = new CallbackHandler;
+#ifdef Q_OS_WIN32
+    this->callbackHandler = new WindowsCallbackHandler();
+#endif // Q_OS_WIN32
+#ifdef Q_OS_LINUX
+    this->callbackHandler = new LinuxCallbackHandler();
+#endif // Q_OS_LINUX
 
     if (this->activeCallbackConnection) {
         disconnect(this->activeCallbackConnection);
     }
     this->activeCallbackConnection = connect(this->window, SIGNAL(optionSelected(QString)), callbackHandler, SLOT(handle(QString)));
 
-    this->engine.rootContext()->setContextProperty("moduleOptions", callbackHandler->getOptions());
+    this->engine.rootContext()->setContextProperty("moduleOptions", this->callbackHandler->getOptions());
 
     this->window->setProperty("visible", true);
     ((QWindow*) this->window)->requestActivate();

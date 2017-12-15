@@ -40,6 +40,9 @@ bool PieMenu::isOpen()
 
 void PieMenu::open()
 {
+    if (isOpen())
+        return;
+
     if(this->callbackHandler) {
         delete this->callbackHandler;
     }

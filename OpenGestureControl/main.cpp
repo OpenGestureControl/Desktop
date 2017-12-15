@@ -46,18 +46,20 @@ int main(int argc, char *argv[])
     translator.load(QLocale(), "", "i18n", ".qm");
     app.installTranslator(&translator);
 
-    PieMenu pieMenu;
+    PieMenu *pieMenu = new PieMenu();
 
     QSystemTrayIcon tray(QIcon(":/icons/app.png"), &app);
 
     QMenu trayMenu;
-    trayMenu.addAction(QObject::tr("Open menu"), std::bind(&PieMenu::open, &pieMenu));
+    trayMenu.addAction(QObject::tr("Open menu"), std::bind(&PieMenu::open, pieMenu));
     trayMenu.addAction(QObject::tr("&Quit"), qApp, &QApplication::quit);
 
     tray.setContextMenu(&trayMenu);
     tray.show();
 
-    BluetoothManager bluetoothManager;
+    BluetoothManager *bluetoothManager = new BluetoothManager();
+    pieMenu->connect(bluetoothManager, SIGNAL(buttonPressed()), pieMenu, SLOT(open()));
+    pieMenu->connect(bluetoothManager, SIGNAL(buttonReleased()), pieMenu, SLOT(close()));
 
 #ifdef Q_OS_WIN32
     KeyBoardInput keyboardinput(&pieMenu);

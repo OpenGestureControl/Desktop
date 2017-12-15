@@ -57,13 +57,6 @@ public:
      */
     explicit PieMenu(QObject *parent = Q_NULLPTR /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
 
-    /*! \brief This function opens the QML.
-     *
-     *  This function removes all previous callbackhandlers and instantiates a new one.
-     *  It then opens the QML view with options from the active Lua module in Callbackhandler.
-     */
-    void open();
-
     /*! \brief This function translates the mouse position to an option entry.
      *
      *  This function recieves a mouse/hand position and calculates which option the mouse/hand hovering over.
@@ -88,6 +81,13 @@ private:
 signals:
 
 public slots:
+    /*! \brief This function opens the QML.
+     *
+     *  This function removes all previous callbackhandlers and instantiates a new one.
+     *  It then opens the QML view with options from the active Lua module in Callbackhandler.
+     */
+    void open();
+
     /*! \brief This function closes the QML.
      *
      *  This function sets the visible property of the QML view object on false.

@@ -63,6 +63,7 @@ void PieMenu::open()
 
 void PieMenu::setActive(int degrees)
 {
+    qWarning() << degrees;
     QMetaObject::invokeMethod(this->window,
             "setActiveEntry",
             Q_ARG(QVariant, degrees));

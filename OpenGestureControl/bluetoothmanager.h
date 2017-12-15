@@ -28,6 +28,7 @@
 #include <QBluetoothServiceDiscoveryAgent>
 #include <QLowEnergyController>
 #include <QDataStream>
+#include <QtMath>
 #include <QObject>
 #include <QString>
 #include <QQmlApplicationEngine>

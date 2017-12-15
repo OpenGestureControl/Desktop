@@ -35,42 +35,58 @@ Window {
 
     flags: Qt.FramelessWindowHint | Qt.WA_TranslucentBackground | Qt.WindowStaysOnTopHint
 
-    color: Qt.rgba(0, 0, 0, 0.2)
+    color: Qt.rgba(0, 0, 0, 0.9)
 
     signal optionSelected(string optionName)
     signal closeRequest()
 
     onOptionSelected: closeRequest()
 
+    function setActiveEntry(degrees) {
+        var optionSize = 360 / moduleOptions.count;
+        var currentPlace = 0;
+        for (var i = 0; i < moduleOptions.count; i++) {
+            if (degrees >= currentPlace && degrees <= currentPlace + optionSize) {
+                pieMenuOptions.activeEntry = i;
+                return;
+            }
+        }
+    }
+
     ListView {
+        id: pieMenuOptions
+        objectName: "pieMenuOptions"
+
+        property int activeEntry: -1;
+
         model: moduleOptions
 
-        delegate: Component {
-            Item {
-                Button {
-                    x: ((Math.min(root.width, root.height) / 3) * Math.sin((360 / moduleOptions.count * (model.index - 1)) * (Math.PI / 180))) + ((root.width / 2) - (this.width / 2))
-                    y: (root.height - this.height) - (((Math.min(root.width, root.height) / 3) * Math.cos((360 / moduleOptions.count * (model.index - 1)) * (Math.PI / 180))) + ((root.height / 2) - (this.height / 2)))
-                    height: 200
-                    width: 200
-                    style: ButtonStyle {
-                        background: Rectangle {
-                            radius: 99999999
-                        }
+        delegate: Item {
+            property int thisIndex: index
+            Button {
+                x: ((Math.min(root.width, root.height) / 3) * Math.sin((360 / moduleOptions.count * (model.index - 1)) * (Math.PI / 180))) + ((root.width / 2) - (this.width / 2))
+                y: (root.height - this.height) - (((Math.min(root.width, root.height) / 3) * Math.cos((360 / moduleOptions.count * (model.index - 1)) * (Math.PI / 180))) + ((root.height / 2) - (this.height / 2)))
+                height: 200
+                width: 200
+                style: ButtonStyle {
+                    background: Rectangle {
+                        color: pieMenuOptions.activeEntry == thisIndex ? "green" : "red"
+                        radius: 99999999
                     }
+                }
 
-                    onClicked: optionSelected(model.name)
+                onClicked: optionSelected(model.name)
 
-                    Image {
-                        anchors {
-                            fill: parent
-                            leftMargin: 0.1 * parent.width
-                            rightMargin: 0.1 * parent.width
-                            topMargin: 0.1 * parent.height
-                            bottomMargin: 0.1 * parent.height
-                        }
-                        source: "/icons/" + model.icon
-                        fillMode: Image.PreserveAspectFit
+                Image {
+                    anchors {
+                        fill: parent
+                        leftMargin: 0.1 * parent.width
+                        rightMargin: 0.1 * parent.width
+                        topMargin: 0.1 * parent.height
+                        bottomMargin: 0.1 * parent.height
                     }
+                    source: "file:" + model.icon
+                    fillMode: Image.PreserveAspectFit
                 }
             }
         }

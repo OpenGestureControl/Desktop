@@ -33,6 +33,8 @@ BluetoothManager::BluetoothManager(QObject *parent) : QObject(parent)
 
     this->pieMenu = new PieMenu();
 
+    this->lowEnergyController = NULL;
+
     this->bluetoothDeviceDiscoveryAgent = new QBluetoothDeviceDiscoveryAgent();
     this->bluetoothDeviceDiscoveryAgent->setLowEnergyDiscoveryTimeout(5000);
 
@@ -182,7 +184,73 @@ void BluetoothManager::accelerometerDataChanged(QLowEnergyCharacteristic charact
     ds >> y;
     short z;
     ds >> z;
-    qWarning() << "Accelerometer:" << x/1000 << y/1000 << z/1000;
+
+    int threshold = 20000;
+
+    //qWarning() << "Accelerometer:" << x/1000 << y/1000 << z/1000;
+    if (!(x > threshold || x < -threshold || y > threshold || y < -threshold))
+        return;
+
+    // See https://github.com/lancaster-university/microbit-dal/blob/5fa55812c7be1e428d9b255ca31b21cd66c72e4a/source/drivers/MicroBitAccelerometer.cpp
+    double calcX = y;
+    double calcY = -x;
+    double calcZ = -z;
+
+    qreal roll = qAtan2(qreal(y), qreal(z));
+    qreal pitch = qAtan(qreal(-x) / (qreal(y)*qSin(roll) + qreal(z)*qCos(roll)));
+
+    int degrees = (int) ((360*pitch) / (2*M_PI));
+    pieMenu->setActive(degrees);
+    return;
+
+    int updown = 0;
+    int leftright = 0;
+
+    if (x > threshold) {
+        leftright = -1;
+    } else if (x < -threshold) {
+        leftright = 1;
+    }
+
+    if (y > threshold) {
+        updown = 1;
+    } else if (y < -threshold) {
+        updown = -1;
+    }
+
+    if (updown == 1) {
+        if (leftright == -1) {
+            qWarning() << "Up left";
+            //pieMenu->setActive(315);
+        } else if (leftright == 0) {
+            qWarning() << "Up";
+            //pieMenu->setActive(0);
+        } else if (leftright == 1) {
+            qWarning() << "Up right";
+            //pieMenu->setActive(45);
+        }
+    } else if (updown == 0) {
+        if (leftright == -1) {
+            qWarning() << "Left";
+            //pieMenu->setActive(270);
+        } else if (leftright == 0) {
+            qWarning() << "Center";
+        } else if (leftright == 1) {
+            qWarning() << "Right";
+            //pieMenu->setActive(90);
+        }
+    } else if (updown == -1) {
+        if (leftright == -1) {
+            qWarning() << "Down left";
+            //pieMenu->setActive(225);
+        } else if (leftright == 0) {
+            qWarning() << "Down";
+            //pieMenu->setActive(180);
+        } else if (leftright == 1) {
+            qWarning() << "Down right";
+            //pieMenu->setActive(135);
+        }
+    }
 }
 
 void BluetoothManager::buttonServiceStateChanged(QLowEnergyService::ServiceState state)

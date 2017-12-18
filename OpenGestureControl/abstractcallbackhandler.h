@@ -39,6 +39,9 @@ public:
      */
     explicit AbstractCallbackHandler(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
 
+    /*! \brief This function initializes the callbackhandler for usage of Lua. Returns success. */
+    bool init(QDir modulePath);
+
     /*! \brief This function returns all options defined within the active Lua module.*/
     ModuleOptionsListModel* getOptions();
 

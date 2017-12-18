@@ -5,6 +5,29 @@ AbstractCallbackHandler::AbstractCallbackHandler(QObject *parent) : QObject(pare
 
 }
 
+bool AbstractCallbackHandler::init(QDir modulePath)
+{
+    this->modulePath = modulePath;
+
+    if (modulePath == QDir::currentPath()) {
+        // Show the user that the current program is not supported
+        QMessageBox* msgbox = new QMessageBox();
+        msgbox->setWindowTitle("Missing Module");
+        msgbox->setText("The current program does not have an OpenGestureControl module, cancelling action.");
+        msgbox->exec();
+        return false;
+    }
+
+    qWarning() << "Return lua values";
+    int status = luaL_dofile(L, modulePath.filePath("main.lua").toStdString().c_str());
+    if (status) {
+        fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
+        return false;
+    }
+
+    return true;
+}
+
 ModuleOptionsListModel *AbstractCallbackHandler::getOptions()
 {
     ModuleOptionsListModel *moduleOptions = new ModuleOptionsListModel();

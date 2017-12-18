@@ -27,29 +27,13 @@ LinuxCallbackHandler::LinuxCallbackHandler(QDir modulePath, QObject *parent) : A
     LinuxCallbackHandler::retrieveFocusWindowInfo();
 
     // Start initializing the Lua
-    int status;
-    L = luaL_newstate();
+    this->L = luaL_newstate();
     luaL_openlibs(L);
 
     lua_register(L, "ModuleHelperSendKeyboardKey", ModuleHelperSendKeyboardKey);
 
-    this->modulePath = modulePath;
-
-    if (modulePath == QDir::currentPath()) {
-        // Show the user that the current program is not supported
-        QMessageBox* msgbox = new QMessageBox();
-        msgbox->setWindowTitle("Missing Module");
-        msgbox->setText("The current program does not have an OpenGestureControl module, cancelling action.");
-        msgbox->exec();
+    if (!init(modulePath)) {
         LinuxCallbackHandler::close();
-        return;
-    }
-
-    qWarning() << "Return lua values";
-    status = luaL_dofile(L, modulePath.filePath("main.lua").toStdString().c_str());
-    if (status) {
-        fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
-        return;
     }
 }
 

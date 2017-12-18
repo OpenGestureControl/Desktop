@@ -35,7 +35,7 @@ Window {
 
     flags: Qt.FramelessWindowHint | Qt.WA_TranslucentBackground | Qt.WindowStaysOnTopHint
 
-    color: Qt.rgba(0, 0, 0, 0.2)
+    color: Qt.rgba(0, 0, 0, 0.9)
 
     signal optionSelected(string optionName)
     signal closeRequest()

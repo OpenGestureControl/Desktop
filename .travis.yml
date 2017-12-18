@@ -6,7 +6,6 @@ compiler:
 dist: trusty
 os:
   - linux
-  - osx
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then

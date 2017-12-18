@@ -82,6 +82,4 @@ void PieMenu::setActive(int degrees)
 void PieMenu::close()
 {
     this->window->setProperty("visible", false);
-    // This needs to be delayed until the handle function is done
-    //callbackHandler->close();
 }

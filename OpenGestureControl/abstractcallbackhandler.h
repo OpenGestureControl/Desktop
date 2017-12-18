@@ -39,12 +39,13 @@ public:
      */
     explicit AbstractCallbackHandler(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
 
-    /*! \brief This function initializes the callbackhandler for usage of Lua. Returns success. */
+    /*! \brief This function initializes the callbackhandler for usage of Lua. */
     bool init(QDir modulePath);
 
     /*! \brief This function returns all options defined within the active Lua module.*/
     ModuleOptionsListModel* getOptions();
 
+    bool initialized = false;           /*!< A boolean stating if the callbackhandler initialized correctly. */
     QString exeTitle;                   /*!< A QString reference to the name of the last application executable on the foreground. */
     QDir modulePath;                    /*!< A QDir reference to the path of module. */
     lua_State *L;                       /*!< A lua_State pointer to the menu options pointers from the piemenu. */

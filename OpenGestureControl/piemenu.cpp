@@ -62,6 +62,10 @@ void PieMenu::open()
     }
     this->activeCallbackConnection = connect(this->window, SIGNAL(optionSelected(QString)), callbackHandler, SLOT(handle(QString)));
 
+    ModuleOptionsListModel *moduleOptions = this->callbackHandler->getOptions();
+    if (moduleOptions->rowCount() == 0)
+        return;
+
     this->engine.rootContext()->setContextProperty("moduleOptions", this->callbackHandler->getOptions());
 
     this->window->setProperty("visible", true);

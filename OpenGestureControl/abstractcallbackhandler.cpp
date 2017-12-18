@@ -25,12 +25,16 @@ bool AbstractCallbackHandler::init(QDir modulePath)
         return false;
     }
 
+    this->initialized = true;
     return true;
 }
 
 ModuleOptionsListModel *AbstractCallbackHandler::getOptions()
 {
     ModuleOptionsListModel *moduleOptions = new ModuleOptionsListModel();
+
+    if (!this->initialized)
+        return moduleOptions;
 
     // Set return_options on stack to call
     lua_getglobal(L, "return_options"); /* function to be called */

@@ -22,23 +22,19 @@ class WindowInformation : public QObject
 {
     Q_OBJECT
 public:
-    static QString GetWindowTitle();
-    static void RestoreWindow();
+    explicit WindowInformation(QObject *parent = nullptr);
+    QString GetWindowTitle();
+    void RestoreWindow();
 
 private:
-    explicit WindowInformation(QObject *parent = nullptr);
-
-    static void GetWindowInformation();
+    void GetWindowInformation();
 
 #ifdef Q_OS_LINUX
-    static Display *XDisplay;  /*!< A Display (An Xlib X server handle) pointer to the Xlib X server. */
-    //static Window WinRoot;     /*!< A Window (An Xlib window handle) reference to the root window of the application. */
-    static Window FocusWindow; /*!< A Window (An Xlib window handle) reference to the last foreground application. */
+    Window FocusWindow; /*!< A Window (An Xlib window handle) reference to the last foreground application. */
 #endif // Q_OS_LINUX
 #ifdef Q_OS_WIN32
-    static HWND FocusWindow; /*!< A HWND (A Windows window handle) reference to the last foreground application. */
-    //static DWORD ProcessID;
-    static HANDLE HProcess;
+    HWND FocusWindow; /*!< A HWND (A Windows window handle) reference to the last foreground application. */
+    HANDLE HProcess;
 #endif // Q_OS_WIN32
 
 signals:

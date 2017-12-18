@@ -12,7 +12,7 @@ QString WindowInformation::GetWindowTitle()
 
 #ifdef Q_OS_LINUX
     // Obtain the X11 display.
-    XDisplay = XOpenDisplay(0);
+    Display *XDisplay = XOpenDisplay(0);
     if(XDisplay == NULL) {
         qWarning() << "No X server connection established!" << endl;
     }
@@ -62,7 +62,7 @@ void WindowInformation::GetWindowInformation()
 {
 #ifdef Q_OS_LINUX
     // Obtain the X11 display.
-    XDisplay = XOpenDisplay(0);
+    Display *XDisplay = XOpenDisplay(0);
     if(XDisplay == NULL)
         qWarning() << "No X server connection established!" << endl;
 

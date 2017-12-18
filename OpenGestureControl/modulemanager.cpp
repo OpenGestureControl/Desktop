@@ -6,7 +6,7 @@ ModuleManager::ModuleManager(QObject *parent) : QObject(parent)
 }
 
 bool ModuleManager::checkForModule() {
-    QString windowTitle = WindowInformation::GetWindowTitle();
+    QString windowTitle = WindowInformation().GetWindowTitle();
 
     // TODO
     // Check all files in modules map in config map

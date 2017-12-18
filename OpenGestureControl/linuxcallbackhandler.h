@@ -41,7 +41,7 @@ class LinuxCallbackHandler : public AbstractCallbackHandler
 {
     Q_OBJECT
 public:
-    explicit LinuxCallbackHandler(QObject *parent = 0);
+    explicit LinuxCallbackHandler(QDir modulePath, QObject *parent = 0);
 
 private:
     /*! \brief This function translates a keyname to the Linux OS representation.*/

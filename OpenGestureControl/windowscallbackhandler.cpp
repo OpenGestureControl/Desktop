@@ -22,7 +22,7 @@
 #include "windowscallbackhandler.h"
 
 #ifdef Q_OS_WIN32
-WindowsCallbackHandler::WindowsCallbackHandler(QObject *parent) : AbstractCallbackHandler(parent)
+WindowsCallbackHandler::WindowsCallbackHandler(QDir modulePath, QObject *parent) : AbstractCallbackHandler(parent)
 {
     WindowsCallbackHandler::retrieveFocusWindowInfo();
 

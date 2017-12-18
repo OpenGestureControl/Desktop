@@ -68,7 +68,7 @@ Window {
                             topMargin: 0.1 * parent.height
                             bottomMargin: 0.1 * parent.height
                         }
-                        source: "/icons/" + model.icon
+                        source: "file:" + model.icon
                         fillMode: Image.PreserveAspectFit
                     }
                 }

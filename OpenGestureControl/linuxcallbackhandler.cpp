@@ -22,11 +22,9 @@
 #include "linuxcallbackhandler.h"
 
 #ifdef Q_OS_LINUX
-LinuxCallbackHandler::LinuxCallbackHandler(QObject *parent) : AbstractCallbackHandler(parent)
+LinuxCallbackHandler::LinuxCallbackHandler(QDir modulePath, QObject *parent) : AbstractCallbackHandler(parent)
 {
     LinuxCallbackHandler::retrieveFocusWindowInfo();
-
-    this->moduleOptions = new ModuleOptionsListModel();
 
     // Start initializing the Lua
     int status;
@@ -35,7 +33,7 @@ LinuxCallbackHandler::LinuxCallbackHandler(QObject *parent) : AbstractCallbackHa
 
     lua_register(L, "ModuleHelperSendKeyboardKey", ModuleHelperSendKeyboardKey);
 
-    QDir modulePath = ModuleManager().getModule();
+    this->modulePath = modulePath;
 
     if (modulePath == QDir::currentPath()) {
         // Show the user that the current program is not supported
@@ -45,15 +43,13 @@ LinuxCallbackHandler::LinuxCallbackHandler(QObject *parent) : AbstractCallbackHa
         msgbox->exec();
         LinuxCallbackHandler::close();
         return;
-    } else {
-        this->filename = modulePath.filePath("main.lua");
     }
 
     qWarning() << "Return lua values";
-    status = luaL_dofile(L, this->filename.toStdString().c_str());
+    status = luaL_dofile(L, modulePath.filePath("main.lua").toStdString().c_str());
     if (status) {
         fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
-        exit(1);
+        return;
     }
 }
 

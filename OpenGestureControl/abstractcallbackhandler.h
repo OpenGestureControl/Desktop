@@ -43,8 +43,7 @@ public:
     ModuleOptionsListModel* getOptions();
 
     QString exeTitle;                   /*!< A QString reference to the name of the last application executable on the foreground. */
-    QString filename;                   /*!< A QString reference to the name of the Lua file which needs to be loaded in. */
-    ModuleOptionsListModel *moduleOptions;  /*!< A ModuleOptionsModel pointer to the model containing all piemenu options. */
+    QDir modulePath;                    /*!< A QDir reference to the path of module. */
     lua_State *L;                       /*!< A lua_State pointer to the menu options pointers from the piemenu. */
 
 protected:

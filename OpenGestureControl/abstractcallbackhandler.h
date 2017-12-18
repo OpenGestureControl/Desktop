@@ -16,6 +16,7 @@
 #include <functional>
 #include <sstream>
 
+#include "modulemanager.h"
 #include "moduleoptionslistmodel.h"
 #include "moduleoption.h"
 

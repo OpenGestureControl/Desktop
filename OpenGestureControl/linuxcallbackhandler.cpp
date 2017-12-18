@@ -35,17 +35,18 @@ LinuxCallbackHandler::LinuxCallbackHandler(QObject *parent) : AbstractCallbackHa
 
     lua_register(L, "ModuleHelperSendKeyboardKey", ModuleHelperSendKeyboardKey);
 
-    if (this->exeTitle == "Spotify.exe" || this->exeTitle == "Spotify") {
-        this->filename = "music.lua";
-    } else if (this->exeTitle == "FireFox.exe" || this->exeTitle == "Firefox") {
-        this->filename = "browser.lua";
-    } else {
+    QDir modulePath = ModuleManager().getModule();
+
+    if (modulePath == QDir::currentPath()) {
         // Show the user that the current program is not supported
         QMessageBox* msgbox = new QMessageBox();
         msgbox->setWindowTitle("Missing Module");
         msgbox->setText("The current program does not have an OpenGestureControl module, cancelling action.");
         msgbox->exec();
         LinuxCallbackHandler::close();
+        return;
+    } else {
+        this->filename = modulePath.filePath("main.lua");
     }
 
     qWarning() << "Return lua values";

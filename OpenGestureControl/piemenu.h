@@ -79,6 +79,8 @@ private:
     ModuleManager * moduleManager;
 
 signals:
+    /*! \brief This signal fires when something went wrong with opening the pie menu */
+    void couldntOpenMenu(QString reason);
 
 public slots:
     /*! \brief This function opens the QML.

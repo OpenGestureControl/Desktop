@@ -10,11 +10,6 @@ bool AbstractCallbackHandler::init(QDir modulePath)
     this->modulePath = modulePath;
 
     if (modulePath == QDir::currentPath()) {
-        // Show the user that the current program is not supported
-        QMessageBox* msgbox = new QMessageBox();
-        msgbox->setWindowTitle("Missing Module");
-        msgbox->setText("The current program does not have an OpenGestureControl module, cancelling action.");
-        msgbox->exec();
         return false;
     }
 

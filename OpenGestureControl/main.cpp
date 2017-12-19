@@ -25,11 +25,11 @@
 #include <QDebug>
 #include <QMenu>
 #include <QObject>
-#include <QSystemTrayIcon>
 #include <QTranslator>
 
 #include "bluetoothmanager.h"
 #include "piemenu.h"
+#include "systemtray.h"
 
 #ifdef Q_OS_WIN32
     #include "keyboardinput.h"
@@ -46,16 +46,12 @@ int main(int argc, char *argv[])
     translator.load(QLocale(), "", "i18n", ".qm");
     app.installTranslator(&translator);
 
+    SystemTray *tray = new SystemTray();
+    tray->show();
+
     PieMenu *pieMenu = new PieMenu();
-
-    QSystemTrayIcon tray(QIcon(":/icons/app.png"), &app);
-
-    QMenu trayMenu;
-    trayMenu.addAction(QObject::tr("Open menu"), std::bind(&PieMenu::open, pieMenu));
-    trayMenu.addAction(QObject::tr("&Quit"), qApp, &QApplication::quit);
-
-    tray.setContextMenu(&trayMenu);
-    tray.show();
+    pieMenu->connect(pieMenu, SIGNAL(couldntOpenMenu(QString)), tray, SLOT(showMessage(QString)));
+    tray->connect(tray, SIGNAL(menuOpenClicked()), pieMenu, SLOT(open()));
 
     BluetoothManager *bluetoothManager = new BluetoothManager();
     pieMenu->connect(bluetoothManager, SIGNAL(buttonPressed()), pieMenu, SLOT(open()));

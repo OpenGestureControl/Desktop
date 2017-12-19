@@ -63,8 +63,11 @@ void PieMenu::open()
     this->activeCallbackConnection = connect(this->window, SIGNAL(optionSelected(QString)), callbackHandler, SLOT(handle(QString)));
 
     ModuleOptionsListModel *moduleOptions = this->callbackHandler->getOptions();
-    if (moduleOptions->rowCount() == 0)
+    if (moduleOptions->rowCount() == 0) {
+        QString noOptionsMessage = QObject::tr("Could not find any actions for the active window. Please ensure you have an appropriate module installed.");
+        emit couldntOpenMenu(noOptionsMessage);
         return;
+    }
 
     this->engine.rootContext()->setContextProperty("moduleOptions", this->callbackHandler->getOptions());
 

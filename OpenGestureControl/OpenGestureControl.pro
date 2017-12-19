@@ -37,7 +37,8 @@ SOURCES += main.cpp \
     windowscallbackhandler.cpp \
     moduleoptionslistmodel.cpp \
     modulemanager.cpp \
-    windowinformation.cpp
+    windowinformation.cpp \
+    systemtray.cpp
 
 RESOURCES += qml.qrc
 
@@ -86,7 +87,8 @@ HEADERS += \
     windowscallbackhandler.h \
     moduleoptionslistmodel.h \
     modulemanager.h \
-    windowinformation.h
+    windowinformation.h \
+    systemtray.h
 
 DISTFILES += \
     browser.lua \

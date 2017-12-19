@@ -5,10 +5,31 @@ AbstractCallbackHandler::AbstractCallbackHandler(QObject *parent) : QObject(pare
 
 }
 
+bool AbstractCallbackHandler::init(QDir modulePath)
+{
+    this->modulePath = modulePath;
+
+    if (modulePath == QDir::currentPath()) {
+        return false;
+    }
+
+    qWarning() << "Return lua values";
+    int status = luaL_dofile(L, modulePath.filePath("main.lua").toStdString().c_str());
+    if (status) {
+        fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
+        return false;
+    }
+
+    this->initialized = true;
+    return true;
+}
+
 ModuleOptionsListModel *AbstractCallbackHandler::getOptions()
 {
-    // Clear the list of items
-    this->moduleOptions->clear();
+    ModuleOptionsListModel *moduleOptions = new ModuleOptionsListModel();
+
+    if (!this->initialized)
+        return moduleOptions;
 
     // Set return_options on stack to call
     lua_getglobal(L, "return_options"); /* function to be called */
@@ -17,7 +38,7 @@ ModuleOptionsListModel *AbstractCallbackHandler::getOptions()
     int result = lua_pcall(L, 0, 1, 0);
     if (result) {
         fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
-        exit(1);
+        return moduleOptions;
     }
 
     // Prepare table vars
@@ -25,6 +46,8 @@ ModuleOptionsListModel *AbstractCallbackHandler::getOptions()
     const char* key;
     const char* value;
     ModuleOption* moduleOption;
+    QDir iconDir = this->modulePath;
+    iconDir.cd("icons");
 
     // Get the resulting table of entries
     lua_pushvalue(L, -1);
@@ -59,7 +82,7 @@ ModuleOptionsListModel *AbstractCallbackHandler::getOptions()
                     if (strcmp(key, "name") == 0) {
                         moduleOption->setName(QString(value));
                     } else if (strcmp(key, "icon") == 0) {
-                        moduleOption->setIcon(QString(value));
+                        moduleOption->setIcon(iconDir.filePath(QString(value)));
                     }
                 } else {
                     qWarning() << "Value was not a valid type (expected string, got " << luatypename << ")";
@@ -69,14 +92,14 @@ ModuleOptionsListModel *AbstractCallbackHandler::getOptions()
             }
         }
 
-        this->moduleOptions->addOption(moduleOption);
+        moduleOptions->addOption(moduleOption);
 
         lua_pop(L, 1);
     }
 
     lua_pop(L, 1);  /* Take the returned value out of the stack */
 
-    return this->moduleOptions;
+    return moduleOptions;
 }
 
 void AbstractCallbackHandler::close()

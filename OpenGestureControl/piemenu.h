@@ -37,6 +37,7 @@
 #include "windowscallbackhandler.h"
 #include "linuxcallbackhandler.h"
 #include "moduleoptionslistmodel.h"
+#include "modulemanager.h"
 
 /*! \brief A class which creates and manages the piemenu QML view object.
  *
@@ -55,13 +56,6 @@ public:
      *  It also sets a reference to the QML view in the QML itself (like a javascript "this" variable).
      */
     explicit PieMenu(QObject *parent = Q_NULLPTR /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
-
-    /*! \brief This function opens the QML.
-     *
-     *  This function removes all previous callbackhandlers and instantiates a new one.
-     *  It then opens the QML view with options from the active Lua module in Callbackhandler.
-     */
-    void open();
 
     /*! \brief This function translates the mouse position to an option entry.
      *
@@ -82,10 +76,20 @@ private:
     QQmlApplicationEngine engine; /*!< A QQmlApplicationEngine reference to a QML creator engine. */
     QMetaObject::Connection activeCallbackConnection; /*!< A QMetaObject reference between a QML Signal and pieMenu slot */
     AbstractCallbackHandler *callbackHandler; /*!< A CallbackHandler pointer to a callback handler. */
+    ModuleManager * moduleManager;
 
 signals:
+    /*! \brief This signal fires when something went wrong with opening the pie menu */
+    void couldntOpenMenu(QString reason);
 
 public slots:
+    /*! \brief This function opens the QML.
+     *
+     *  This function removes all previous callbackhandlers and instantiates a new one.
+     *  It then opens the QML view with options from the active Lua module in Callbackhandler.
+     */
+    void open();
+
     /*! \brief This function closes the QML.
      *
      *  This function sets the visible property of the QML view object on false.

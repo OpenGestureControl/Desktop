@@ -31,8 +31,6 @@ BluetoothManager::BluetoothManager(QObject *parent) : QObject(parent)
     this->engine.load(QUrl(QStringLiteral("qrc:/bluetoothManager.qml")));
     this->window = this->engine.rootObjects()[0];
 
-    this->pieMenu = new PieMenu();
-
     this->bluetoothDeviceDiscoveryAgent = new QBluetoothDeviceDiscoveryAgent();
     this->bluetoothDeviceDiscoveryAgent->setLowEnergyDiscoveryTimeout(5000);
 
@@ -222,12 +220,10 @@ void BluetoothManager::buttonDataChanged(QLowEnergyCharacteristic characteristic
         return;
     }
     qWarning() << "Button:" << data;
-    if (data == "\x01") {
-        if (this->pieMenu->isOpen()) {
-            this->pieMenu->close();
-        } else {
-            this->pieMenu->open();
-        }
+    if (data == "\x00") {
+        emit buttonReleased();
+    } else if (data == "\x01") {
+        emit buttonPressed();
     }
 }
 

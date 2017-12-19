@@ -61,9 +61,10 @@ private:
     BluetoothDeviceListModel *bluetoothDevices;
     int connectionProgress;
     BluetoothDevice *connectingTo;
-    PieMenu *pieMenu;
 
 signals:
+    void buttonPressed();
+    void buttonReleased();
 
 public slots:
     void scanForDevices();

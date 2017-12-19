@@ -35,7 +35,10 @@ SOURCES += main.cpp \
     abstractcallbackhandler.cpp \
     linuxcallbackhandler.cpp \
     windowscallbackhandler.cpp \
-    moduleoptionslistmodel.cpp
+    moduleoptionslistmodel.cpp \
+    modulemanager.cpp \
+    windowinformation.cpp \
+    systemtray.cpp
 
 RESOURCES += qml.qrc
 
@@ -82,7 +85,10 @@ HEADERS += \
     abstractcallbackhandler.h \
     linuxcallbackhandler.h \
     windowscallbackhandler.h \
-    moduleoptionslistmodel.h
+    moduleoptionslistmodel.h \
+    modulemanager.h \
+    windowinformation.h \
+    systemtray.h
 
 DISTFILES += \
     browser.lua \

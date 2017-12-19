@@ -22,37 +22,18 @@
 #include "windowscallbackhandler.h"
 
 #ifdef Q_OS_WIN32
-WindowsCallbackHandler::WindowsCallbackHandler(QObject *parent) : AbstractCallbackHandler(parent)
+WindowsCallbackHandler::WindowsCallbackHandler(QDir modulePath, QObject *parent) : AbstractCallbackHandler(parent)
 {
     WindowsCallbackHandler::retrieveFocusWindowInfo();
 
-    this->moduleOptions = new ModuleOptionsListModel();
-
     // Start initializing the Lua
-    int status;
-    L = luaL_newstate();
+    this->L = luaL_newstate();
     luaL_openlibs(L);
 
     lua_register(L, "ModuleHelperSendKeyboardKey", ModuleHelperSendKeyboardKey);
 
-    if (this->exeTitle == "Spotify.exe" || this->exeTitle == "Spotify") {
-        this->filename = "music.lua";
-    } else if (this->exeTitle == "FireFox.exe" || this->exeTitle == "Firefox") {
-        this->filename = "browser.lua";
-    } else {
-        // Show the user that the current program is not supported
-        QMessageBox* msgbox = new QMessageBox();
-        msgbox->setWindowTitle("Missing Module");
-        msgbox->setText("The current program does not have an OpenGestureControl module, cancelling action.");
-        msgbox->exec();
-        AbstractCallbackHandler::close();
-    }
-
-    qWarning() << "Return lua values";
-    status = luaL_dofile(L, this->filename.toStdString().c_str());
-    if (status) {
-        fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
-        exit(1);
+    if (!init(modulePath)) {
+        WindowsCallbackHandler::close();
     }
 }
 
@@ -242,6 +223,7 @@ WORD WindowsCallbackHandler::lookupKey(QString keyname)
     lookupMap["f24"] = VK_F24;
 
     lookupMap["backspace"] = VK_BACK;
+    lookupMap["space"] = VK_SPACE;
 
     lookupMap["enter"] = VK_RETURN;
     lookupMap["return"] = VK_RETURN;

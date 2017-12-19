@@ -15,7 +15,7 @@ QDir ModuleManager::getModule() {
     QDir dir = QDir::home();
     dir.mkpath(".config/opengesturecontrol/modules"); // Ensure module directory exists
     if (!dir.cd(".config/opengesturecontrol/modules")) {
-        qWarning("Couldn't cd into modules directory");
+        this->eString = tr("Couldn't cd into modules directory");
         return QDir();
     }
     qWarning() << dir << endl;
@@ -35,12 +35,18 @@ QDir ModuleManager::getModule() {
         QJsonObject metadata = metadataJson.object();
 
         if (metadata["supported_classnames"].toObject()["linux"].toArray().contains(windowTitle)) {
+            this->eString = "";
             qWarning() << moduleDir << "is compatible";
             return moduleDir;
         };
     }
 
     // Nothing found
+    this->eString = tr("Couldn't find a compatible module");
     return QDir();
 }
 
+QString ModuleManager::errorString()
+{
+    return this->eString;
+}

@@ -21,9 +21,10 @@ class ModuleManager : public QObject
 public:
     explicit ModuleManager(QObject *parent = nullptr);
     QDir getModule();
+    QString errorString();
 
 private:
-
+    QString eString;
 
 signals:
 

@@ -48,7 +48,11 @@ void PieMenu::open()
     }
 
     this->moduleManager = new ModuleManager();
-    QDir modulePath = moduleManager->getModule();
+    QDir modulePath = this->moduleManager->getModule();
+    if (!this->moduleManager->errorString().isEmpty()) {
+        emit couldntOpenMenu(this->moduleManager->errorString());
+        return;
+    }
 
 #ifdef Q_OS_WIN32
     this->callbackHandler = new WindowsCallbackHandler(modulePath);
@@ -64,7 +68,7 @@ void PieMenu::open()
 
     ModuleOptionsListModel *moduleOptions = this->callbackHandler->getOptions();
     if (moduleOptions->rowCount() == 0) {
-        QString noOptionsMessage = QObject::tr("Could not find any actions for the active window. Please ensure you have an appropriate module installed.");
+        QString noOptionsMessage = QObject::tr("Could not find any actions for the active window. This may be a bug in the active module.");
         emit couldntOpenMenu(noOptionsMessage);
         return;
     }

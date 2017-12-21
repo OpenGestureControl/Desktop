@@ -24,7 +24,6 @@
 
 PieMenu::PieMenu(QObject *parent) : QObject(parent)
 {
-    this->appPath = appPath;
     this->engine.rootContext()->setContextProperty("applicationPath", "file://" + this->appPath + "/");
     this->engine.load(QUrl(QStringLiteral("qrc:/pieMenu.qml")));
     this->window = this->engine.rootObjects()[0];

@@ -32,6 +32,7 @@
 #include <QString>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QDebug>
 
 #include "bluetoothdevicelistmodel.h"
 #include "piemenu.h"

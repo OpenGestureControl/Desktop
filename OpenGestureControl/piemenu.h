@@ -31,9 +31,9 @@
 #include <QQmlContext>
 #include <QQmlPropertyMap>
 #include <QWindow>
+#include <QDebug>
 #include <iostream>
 
-#include "abstractcallbackhandler.h"
 #include "windowscallbackhandler.h"
 #include "linuxcallbackhandler.h"
 #include "moduleoptionslistmodel.h"

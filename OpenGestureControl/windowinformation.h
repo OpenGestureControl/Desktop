@@ -18,6 +18,8 @@
 #include <psapi.h>
 #endif // Q_OS_WIN32
 
+static bool errorThrown;
+
 class WindowInformation : public QObject
 {
     Q_OBJECT

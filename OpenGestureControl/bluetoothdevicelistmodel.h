@@ -28,6 +28,10 @@
 
 #include "bluetoothdevice.h"
 
+/*! \brief This class represents the list of bluetooth devices found after scanning.
+ *
+ *  This class manages a group of BluetoothDevice classes for the user to pick out from.
+ */
 class BluetoothDeviceListModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -40,26 +44,44 @@ public:
         ActiveRole
     };
 
-    explicit BluetoothDeviceListModel(QObject *parent = 0);
+    /*! \brief The constructor.
+     *
+     *  This constructor instantiates this class.
+     */
+    explicit BluetoothDeviceListModel(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
 
+    /*! \brief This function returns the amount of BluetoothDevice found after scanning.*/
     int rowCount(const QModelIndex & = QModelIndex()) const override { return m_data.count(); }
+    /*! \brief This function returns the data stored under the given role for the item referred to by the index.
+     *
+     *  This function is required to be implemented in order to inherit from QAbstractListModel.
+     */
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
+    /*! \brief This function returns the BluetoothDevice entry at the given index.*/
     Q_INVOKABLE BluetoothDevice* get(int index) const { return m_data.at(index); }
+    /*! \brief This function returns the BluetoothDevice referred to by the device adress.*/
     BluetoothDevice* getDevice(QString deviceAddress);
 
+    /*! \brief This function adds an BluetoothDevice object to the list of device.
+     *
+     *  This function first checks if the device to add already exists. If it doesn't it will add it to the data list of the class.
+     */
     bool addDevice(BluetoothDevice* device);
+    /*! \brief This function removes all BluetoothDevice objects from the list.*/
     void clear();
 
 
 signals:
-    void countChanged(int c);
+    /*! \brief This signal fires when addDevice is finished.*/
+    void countChanged(int c /*!< [in] parameter, an integer reference to the new amount.*/);
 
 protected:
+    /*! \brief This function creates and returns a hashmap with rolenames required by Qt to work.*/
     QHash<int, QByteArray> roleNames() const;
 
 private:
-    QList<BluetoothDevice*> m_data;
+    QList<BluetoothDevice*> m_data; /*!< \brief An QList reference to the menu options pointers from the piemenu. */
 };
 
 #endif // BLUETOOTHDEVICELISTMODEL_H

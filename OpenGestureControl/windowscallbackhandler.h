@@ -56,7 +56,9 @@ private:
     HWND lastProcess; /*!< A HWND (A Windows window handle) reference to the last foreground application. */
 
 protected:
+    /*! \brief This function retrieves all info from the current active window.*/
     void retrieveFocusWindowInfo() override;
+    /*! \brief This function returns the previously active window to the foreground.*/
     void restoreFocusWindow() override;
 
 public slots:

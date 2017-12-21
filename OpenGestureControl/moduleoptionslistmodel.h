@@ -65,18 +65,18 @@ public:
 
     /*! \brief This function adds an ModuleOption object to the list of options.
      *
-     *  This function first checks if the option to add already exists. If it does it will add it to the data list of the class.
+     *  This function first checks if the option to add already exists. If it doesn't it will add it to the data list of the class.
      */
     bool addOption(ModuleOption* option /*!< [in] parameter, a ModuleOption pointer to the ModuleOption to add.*/);
     /*! \brief This function removes all ModuleOption objects from the list of options.*/
     void clear();
 
 signals:
-    /*! \brief This signal fires when addoption is finished (does not fire atm).*/
+    /*! \brief This signal fires when addoption is finished.*/
     void countChanged(int c /*!< [in] parameter, an integer reference to the new amount.*/);
 
 protected:
-    /*! \brief This function creates and returns a hashmap with rolenames.*/
+    /*! \brief This function creates and returns a hashmap with rolenames required by Qt to work.*/
     QHash<int, QByteArray> roleNames() const;
 
 private:

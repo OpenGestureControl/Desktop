@@ -59,8 +59,11 @@ private:
     static int ModuleHelperSendKeyboardKey(lua_State* L /*!< An lua_State pointer to the active Lua instance (the module, the interpreter etc). */);
 
 protected:
+    /*! \brief This function retrieves all info from the current active window.*/
     void retrieveFocusWindowInfo() override;
+    /*! \brief This function returns the previously active window to the foreground.*/
     void restoreFocusWindow() override;
+    /*! \brief This function closes the Lua interpreter.*/
     void close() override;
 
 public slots:

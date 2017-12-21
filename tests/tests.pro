@@ -43,7 +43,9 @@ HEADERS += ../OpenGestureControl/piemenu.h \
     ../OpenGestureControl/windowinformation.h \ # End of main project headers
     testbluetoothdevicelistmodel.h \
     testmoduleoptionsmodel.h \
-    testcallbackhandler.h
+    testcallbackhandler.h \
+    testpiemenu.h \
+    testwindowinformation.h
 
 
 SOURCES += ../OpenGestureControl/piemenu.cpp \
@@ -61,7 +63,9 @@ SOURCES += ../OpenGestureControl/piemenu.cpp \
     testbluetoothdevicelistmodel.cpp \
     testcallbackhandler.cpp \
     main.cpp \
-    testmoduleoptionslistmodel.cpp
+    testmoduleoptionslistmodel.cpp \
+    testpiemenu.cpp \
+    testwindowinformation.cpp
 
 # Lua
 win32:INCLUDEPATH += $$PWD/../OpenGestureControl/libs $$PWD/../OpenGestureControl/libs/include
@@ -69,5 +73,5 @@ win32:DEPENDPATH += $$PWD/../OpenGestureControl/libs
 win32:LIBS += -lpsapi -L$$PWD/../OpenGestureControl/libs/ -llua53
 
 unix:INCLUDEPATH += /usr/include/lua5.3
-#unix:LIBS += -llua5.3 -lm -ldl -lX11
-unix:LIBS += -llua -lm -ldl -lX11
+unix:LIBS += -llua5.3 -lm -ldl -lX11
+#unix:LIBS += -llua -lm -ldl -lX11

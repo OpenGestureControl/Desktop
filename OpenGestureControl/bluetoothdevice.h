@@ -29,6 +29,8 @@
 #include <QString>
 #include <QVariant>
 
+/*! \brief A class which represents a found bluetooth device.*/
+
 class BluetoothDevice : public QObject
 {
     Q_OBJECT
@@ -38,24 +40,42 @@ class BluetoothDevice : public QObject
     Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)
 
 public:
-    explicit BluetoothDevice(QObject *parent = 0);
-    explicit BluetoothDevice(const QBluetoothDeviceInfo &deviceInfo, QObject *parent = 0);
+    /*! \brief The constructor.
+     *
+     *  This constructor instantiates this class.
+     */
+    explicit BluetoothDevice(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
+    /*! \brief The constructor.
+     *
+     *  This constructor instantiates this object with all the variables given to it.
+     */
+    explicit BluetoothDevice(const QBluetoothDeviceInfo &deviceInfo, /*!< [in] parameter, a dereferenced QBluetoothDeviceInfo pointer to the QBluetoothDeviceInfo that this class governs.*/
+                             QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
 
+    /*! \brief A getter function for the QBluetoothDeviceInfo.*/
     QBluetoothDeviceInfo deviceInfo() const { return m_deviceInfo; }
+    /*! \brief A setter function for the QBluetoothDeviceInfo.*/
     void setDeviceInfo(const QBluetoothDeviceInfo name);
 
+    /*! \brief A getter function for the QBluetoothDeviceInfo device name.*/
     QString name() const { return m_deviceInfo.name(); }
+    /*! \brief A getter function for the QBluetoothDeviceInfo device adress.*/
     QString address() const { return m_deviceInfo.address().toString(); }
 
+    /*! \brief A getter function to check if the device is active.*/
     bool active() const { return m_active; }
+    /*! \brief A setter function to set the device active.*/
     void setActive(const bool value);
 
 private:
-    QBluetoothDeviceInfo m_deviceInfo;
-    bool m_active = false;
+
+    QBluetoothDeviceInfo m_deviceInfo; /*! \brief A QBluetoothDeviceInfo reference to the Qt bluetooth class.*/
+    bool m_active = false; /*! \brief A boolean reference to indicate whether or not this device is active.*/
 
 signals:
+    /*! \brief This signal fires when a new QBluetoothDeviceInfo class is set.*/
     void deviceInfoChanged();
+    /*! \brief This signal fires when when this device changes it's active boolean.*/
     void activeChanged();
 
 public slots:

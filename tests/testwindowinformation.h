@@ -22,20 +22,11 @@
 
 #include <QtTest/QtTest>
 
-#ifdef Q_OS_WIN32
-#include <windows.h>
-#include "../OpenGestureControl/windowscallbackhandler.h"
-#endif
+#include "../OpenGestureControl/windowinformation.h"
 
-#ifdef Q_OS_LINUX
-    #include "../OpenGestureControl/linuxcallbackhandler.h"
-#endif
-
-class TestCallbackHandler : public QObject
+class TestWindowInformation : public QObject
 {
     Q_OBJECT
 private slots:
-    void GetCorrectOptionsFromLua();
-    void HandleOptionChoiceCorrectly();
-    //void HandleOptionChoiceIncorrectly();
+    void getCorrectWindowTitle();
 };

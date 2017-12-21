@@ -21,7 +21,6 @@
 */
 
 #include "bluetoothmanager.h"
-#include <QDebug>
 
 BluetoothManager::BluetoothManager(QObject *parent) : QObject(parent)
 {

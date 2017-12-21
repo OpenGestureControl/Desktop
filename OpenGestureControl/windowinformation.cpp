@@ -2,8 +2,18 @@
 
 WindowInformation::WindowInformation(QObject *parent) : QObject(parent)
 {
-
+    errorThrown = false;
 }
+
+#ifdef Q_OS_LINUX
+// XLib fatal error catcher
+int catcher( Display *disp, XErrorEvent *xe )
+{
+        qWarning() << "Bad window error, probably from Qt window on foreground" << endl;
+        errorThrown = true;
+        return 0;
+}
+#endif // Q_OS_LINUX
 
 QString WindowInformation::GetWindowTitle()
 {
@@ -11,6 +21,9 @@ QString WindowInformation::GetWindowTitle()
     WindowInformation::GetWindowInformation();
 
 #ifdef Q_OS_LINUX
+    // Set error handler
+    XSetErrorHandler(catcher);
+
     // Obtain the X11 display.
     Display *XDisplay = XOpenDisplay(0);
     if(XDisplay == NULL) {
@@ -20,7 +33,12 @@ QString WindowInformation::GetWindowTitle()
     // Retrieve window name //
     XClassHint classProp;
     XGetClassHint(XDisplay, (FocusWindow -1), &classProp); // -1 required because Linux is weird like that, -1 will cause error for Qt itself but w/e
+    if(errorThrown == true) {
+        XGetClassHint(XDisplay, (FocusWindow), &classProp);
+        errorThrown = false;
+    }
     windowTitle = classProp.res_class;
+    qWarning() << "Title:" << windowTitle << endl;
 
     XCloseDisplay(XDisplay); // Close link to X display server
 #endif // Q_OS_LINUX
@@ -38,11 +56,11 @@ QString WindowInformation::GetWindowTitle()
 void WindowInformation::RestoreWindow()
 {
 #ifdef Q_OS_LINUX
-    if(FocusWindow == NULL) {
+    if(FocusWindow == 0) {
         // TODO
     }
 
-    FocusWindow = NULL;
+    FocusWindow = 0;
 #endif // Q_OS_LINUX
 #ifdef Q_OS_WIN32
     if(FocusWindow == NULL) {
@@ -65,9 +83,6 @@ void WindowInformation::GetWindowInformation()
     Display *XDisplay = XOpenDisplay(0);
     if(XDisplay == NULL)
         qWarning() << "No X server connection established!" << endl;
-
-    // Get the root window for the current display.
-    //WinRoot = XDefaultRootWindow(XDisplay);
 
     // Find the window which has the current keyboard focus.
     int revert = 0;

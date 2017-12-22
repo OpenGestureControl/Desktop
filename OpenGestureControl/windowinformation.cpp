@@ -9,9 +9,11 @@ WindowInformation::WindowInformation(QObject *parent) : QObject(parent)
 // XLib fatal error catcher
 int catcher( Display *disp, XErrorEvent *xe )
 {
-        qWarning() << "Bad window error, probably from Qt window on foreground" << endl;
+    if(xe->error_code == 3) {
+        qWarning() << "Bad window error, probably from Qt window on foreground";
         errorThrown = true;
-        return 0;
+    }
+    return 0;
 }
 #endif // Q_OS_LINUX
 
@@ -21,6 +23,7 @@ QString WindowInformation::GetWindowTitle()
     WindowInformation::GetWindowInformation();
 
 #ifdef Q_OS_LINUX
+    qWarning() << "Into errorhandler" << endl;
     // Set error handler
     XSetErrorHandler(catcher);
 
@@ -38,7 +41,6 @@ QString WindowInformation::GetWindowTitle()
         errorThrown = false;
     }
     windowTitle = classProp.res_class;
-    qWarning() << "Title:" << windowTitle << endl;
 
     XCloseDisplay(XDisplay); // Close link to X display server
 #endif // Q_OS_LINUX

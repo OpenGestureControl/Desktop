@@ -24,33 +24,28 @@
 
 void TestCallbackHandler::GetCorrectOptionsFromLua() {
 
+    QDir *dir = new QDir("../tests/Test-module");
     // Arrange
 #ifdef Q_OS_LINUX
-    LinuxCallbackHandler *handler = new LinuxCallbackHandler();
+    LinuxCallbackHandler *handler = new LinuxCallbackHandler(*dir);
 #endif
 #ifdef Q_OS_WIN32
-    WindowsCallbackHandler *handler = new WindowsCallbackHandler();
+    WindowsCallbackHandler *handler = new WindowsCallbackHandler(*dir);
 #endif
-    QDir *dir = new QDir("/home");
-    handler->init(&dir);
 
     ModuleOptionsListModel * result;
-    ModuleOption *first, *second, *third, *fourth, *fifth;
+    ModuleOption *first, *second, *third;
 
     // Act
     result = handler->getOptions();
     first = result->get(0);
     second = result->get(1);
     third = result->get(2);
-    fourth = result->get(3);
-    fifth = result->get(4);
 
     // Assert
-    QVERIFY(first->name() == QString("Open"));
-    QVERIFY(second->name() == QString("Forward"));
-    QVERIFY(third->name() == QString("Close"));
-    QVERIFY(fourth->name() == QString("Refresh"));
-    QVERIFY(fifth->name() == QString("Back"));
+    QVERIFY(first->name() == QString("Test1"));
+    QVERIFY(second->name() == QString("Test2"));
+    QVERIFY(third->name() == QString("Test3"));
 
 }
 

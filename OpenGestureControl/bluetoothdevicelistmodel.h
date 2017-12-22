@@ -78,7 +78,7 @@ signals:
 
 protected:
     /*! \brief This function creates and returns a hashmap with rolenames required by Qt to work.*/
-    QHash<int, QByteArray> roleNames() const;
+    QHash<int, QByteArray> roleNames() const override;
 
 private:
     QList<BluetoothDevice*> m_data; /*!< \brief An QList reference to the menu options pointers from the piemenu. */

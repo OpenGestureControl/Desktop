@@ -46,6 +46,7 @@ ModuleOptionsListModel *AbstractCallbackHandler::getOptions()
     const char* key;
     const char* value;
     ModuleOption* moduleOption;
+    qWarning() << "iconDirpath" << this->modulePath;
     QDir iconDir = this->modulePath;
     iconDir.cd("icons");
 
@@ -87,16 +88,13 @@ ModuleOptionsListModel *AbstractCallbackHandler::getOptions()
                 } else {
                     qWarning() << "Value was not a valid type (expected string, got " << luatypename << ")";
                 }
-
                 lua_pop(L, 1);
             }
         }
-
         moduleOptions->addOption(moduleOption);
 
         lua_pop(L, 1);
     }
-
     lua_pop(L, 1);  /* Take the returned value out of the stack */
 
     return moduleOptions;

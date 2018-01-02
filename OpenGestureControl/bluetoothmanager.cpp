@@ -286,10 +286,11 @@ void BluetoothManager::buttonDataChanged(QLowEnergyCharacteristic characteristic
         qWarning() << "Not the characteristic we want for button, ignoring";
         return;
     }
-    qWarning() << "Button:" << data;
-    if (data == "\x00") {
+    QString data2 = QString(data);
+    qWarning() << "Button:" << data2;
+    if (data2 == "\x00") {
         emit buttonReleased();
-    } else if (data == "\x01") {
+    } else if (data2 == "\x01") {
         emit buttonPressed();
     }
 }

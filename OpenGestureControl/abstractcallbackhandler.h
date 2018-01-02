@@ -16,6 +16,7 @@
 #include <functional>
 #include <sstream>
 
+#include "modulemanager.h"
 #include "moduleoptionslistmodel.h"
 #include "moduleoption.h"
 
@@ -38,6 +39,9 @@ public:
      */
     explicit AbstractCallbackHandler(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
 
+    /*! \brief This function initializes the callbackhandler for usage of Lua. */
+    bool init(QDir modulePath);
+
     /*! \brief This function handles a selected piemenu option.
      *
      *  This function is called when an option in the piemenu is selected.
@@ -50,9 +54,9 @@ public:
     /*! \brief This function returns all options defined within the active Lua module.*/
     ModuleOptionsListModel* getOptions();
 
+    bool initialized = false;           /*!< A boolean stating if the callbackhandler initialized correctly. */
     QString exeTitle;                   /*!< A QString reference to the name of the last application executable on the foreground. */
-    QString filename;                   /*!< A QString reference to the name of the Lua file which needs to be loaded in. */
-    ModuleOptionsListModel *moduleOptions;  /*!< A ModuleOptionsModel pointer to the model containing all piemenu options. */
+    QDir modulePath;                    /*!< A QDir reference to the path of module. */
     lua_State *L;                       /*!< A lua_State pointer to the menu options pointers from the piemenu. */
 
 protected:

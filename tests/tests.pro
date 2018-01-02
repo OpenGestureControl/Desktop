@@ -37,8 +37,10 @@ HEADERS += ../OpenGestureControl/piemenu.h \
     ../OpenGestureControl/bluetoothmanager.h \
     ../OpenGestureControl/bluetoothdevice.h \
     ../OpenGestureControl/bluetoothdevicelistmodel.h \
+    ../OpenGestureControl/modulemanager.h \
     ../OpenGestureControl/moduleoptionslistmodel.h \
-    ../OpenGestureControl/moduleoption.h \ # End of main project headers
+    ../OpenGestureControl/moduleoption.h \
+    ../OpenGestureControl/windowinformation.h \ # End of main project headers
     testbluetoothdevicelistmodel.h \
     testmoduleoptionsmodel.h \
     testcallbackhandler.h
@@ -52,8 +54,10 @@ SOURCES += ../OpenGestureControl/piemenu.cpp \
     ../OpenGestureControl/bluetoothmanager.cpp \
     ../OpenGestureControl/bluetoothdevice.cpp \
     ../OpenGestureControl/bluetoothdevicelistmodel.cpp \
+    ../OpenGestureControl/modulemanager.cpp \
     ../OpenGestureControl/moduleoptionslistmodel.cpp \
-    ../OpenGestureControl/moduleoption.cpp \ # End of main project sources
+    ../OpenGestureControl/moduleoption.cpp \
+    ../OpenGestureControl/windowinformation.cpp \ # End of main project sources
     testbluetoothdevicelistmodel.cpp \
     testcallbackhandler.cpp \
     main.cpp \

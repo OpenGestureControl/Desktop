@@ -41,14 +41,25 @@ bool PieMenu::isOpen()
 
 void PieMenu::open()
 {
+    if (isOpen())
+        return;
+
     if(this->callbackHandler) {
         delete this->callbackHandler;
     }
+
+    this->moduleManager = new ModuleManager();
+    QDir modulePath = this->moduleManager->getModule();
+    if (!this->moduleManager->errorString().isEmpty()) {
+        emit couldntOpenMenu(this->moduleManager->errorString());
+        return;
+    }
+
 #ifdef Q_OS_WIN32
-    this->callbackHandler = new WindowsCallbackHandler();
+    this->callbackHandler = new WindowsCallbackHandler(modulePath);
 #endif // Q_OS_WIN32
 #ifdef Q_OS_LINUX
-    this->callbackHandler = new LinuxCallbackHandler();
+    this->callbackHandler = new LinuxCallbackHandler(modulePath);
 #endif // Q_OS_LINUX
 
     if (this->activeCallbackConnection) {
@@ -56,7 +67,14 @@ void PieMenu::open()
     }
     //this->activeCallbackConnection = connect(this->window, SIGNAL(optionSelected(QString)), callbackHandler, SLOT(handle(QString)));
 
+    this->engine.rootContext()->setContextProperty("moduleOptions", this->moduleOptions);
     this->moduleOptions = this->callbackHandler->getOptions();
+    if (this->moduleOptions->rowCount() == 0) {
+        QString noOptionsMessage = QObject::tr("Could not find any actions for the active window. This may be a bug in the active module.");
+        emit couldntOpenMenu(noOptionsMessage);
+        return;
+    }
+
     this->engine.rootContext()->setContextProperty("moduleOptions", this->moduleOptions);
 
     this->window->setProperty("visible", true);

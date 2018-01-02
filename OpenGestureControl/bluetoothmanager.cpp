@@ -31,10 +31,7 @@ BluetoothManager::BluetoothManager(QObject *parent) : QObject(parent)
     this->engine.load(QUrl(QStringLiteral("qrc:/bluetoothManager.qml")));
     this->window = this->engine.rootObjects()[0];
 
-    this->pieMenu = new PieMenu();
-
     this->lowEnergyController = NULL;
-
     this->bluetoothDeviceDiscoveryAgent = new QBluetoothDeviceDiscoveryAgent();
     this->bluetoothDeviceDiscoveryAgent->setLowEnergyDiscoveryTimeout(5000);
 
@@ -200,7 +197,7 @@ void BluetoothManager::accelerometerDataChanged(QLowEnergyCharacteristic charact
     qreal pitch = qAtan(qreal(-x) / (qreal(y)*qSin(roll) + qreal(z)*qCos(roll)));
 
     int degrees = (int) ((360*pitch) / (2*M_PI));
-    pieMenu->setActive(degrees);
+    emit degreesMoved(degrees);
     return;
 
     int updown = 0;
@@ -221,34 +218,34 @@ void BluetoothManager::accelerometerDataChanged(QLowEnergyCharacteristic charact
     if (updown == 1) {
         if (leftright == -1) {
             qWarning() << "Up left";
-            //pieMenu->setActive(315);
+            //emit degreesMoved(315);
         } else if (leftright == 0) {
             qWarning() << "Up";
-            //pieMenu->setActive(0);
+            //emit degreesMoved(0);
         } else if (leftright == 1) {
             qWarning() << "Up right";
-            //pieMenu->setActive(45);
+            //emit degreesMoved(45);
         }
     } else if (updown == 0) {
         if (leftright == -1) {
             qWarning() << "Left";
-            //pieMenu->setActive(270);
+            //emit degreesMoved(270);
         } else if (leftright == 0) {
             qWarning() << "Center";
         } else if (leftright == 1) {
             qWarning() << "Right";
-            //pieMenu->setActive(90);
+            //emit degreesMoved(90);
         }
     } else if (updown == -1) {
         if (leftright == -1) {
             qWarning() << "Down left";
-            //pieMenu->setActive(225);
+            //emit degreesMoved(225);
         } else if (leftright == 0) {
             qWarning() << "Down";
-            //pieMenu->setActive(180);
+            //emit degreesMoved(180);
         } else if (leftright == 1) {
             qWarning() << "Down right";
-            //pieMenu->setActive(135);
+            //emit degreesMoved(135);
         }
     }
 }
@@ -290,12 +287,10 @@ void BluetoothManager::buttonDataChanged(QLowEnergyCharacteristic characteristic
         return;
     }
     qWarning() << "Button:" << data;
-    if (data == "\x01") {
-        if (this->pieMenu->isOpen()) {
-            this->pieMenu->close();
-        } else {
-            this->pieMenu->open();
-        }
+    if (data == "\x00") {
+        emit buttonReleased();
+    } else if (data == "\x01") {
+        emit buttonPressed();
     }
 }
 

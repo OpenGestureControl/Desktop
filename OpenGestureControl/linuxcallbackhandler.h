@@ -41,7 +41,7 @@ class LinuxCallbackHandler : public AbstractCallbackHandler
 {
     Q_OBJECT
 public:
-    explicit LinuxCallbackHandler(QObject *parent = 0);
+    explicit LinuxCallbackHandler(QDir modulePath, QObject *parent = 0);
 
     /*! \brief This function handles a selected piemenu option.
      *

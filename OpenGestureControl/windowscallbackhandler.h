@@ -36,7 +36,7 @@ class WindowsCallbackHandler : public AbstractCallbackHandler
 {
     Q_OBJECT
 public:
-    explicit WindowsCallbackHandler(QObject *parent = 0);
+    explicit WindowsCallbackHandler(QDir modulepath, QObject *parent = 0);
 
     /*! \brief This function handles a selected piemenu option.
      *

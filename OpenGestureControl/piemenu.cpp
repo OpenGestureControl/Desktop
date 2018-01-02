@@ -92,7 +92,9 @@ void PieMenu::setActive(int degrees)
 void PieMenu::close()
 {
     int activeId = this->window->property("activeEntry").toInt();
-    QString activeName = moduleOptions->get(activeId)->name();
-    this->callbackHandler->handle(activeName);
+    if (activeId != -1) {
+        QString activeName = moduleOptions->get(activeId)->name();
+        this->callbackHandler->handle(activeName);
+    }
     this->window->setProperty("visible", false);
 }

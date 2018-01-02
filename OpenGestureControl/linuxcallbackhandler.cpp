@@ -122,6 +122,11 @@ void LinuxCallbackHandler::parseKey(QStringList hotkey)
     }
 }
 
+bool LinuxCallbackHandler::handleKeyPress(QString optionName)
+{
+    return LinuxCallbackHandler::handle(optionName);
+}
+
 bool LinuxCallbackHandler::handle(QString optionName)
 {
     qWarning() << optionName;

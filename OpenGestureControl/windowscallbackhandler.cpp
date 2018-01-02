@@ -119,6 +119,11 @@ void WindowsCallbackHandler::parseKey(QStringList hotkey)
     WindowsCallbackHandler::parseKey(hotkey);
 }
 
+bool WindowsCallbackHandler::handleKeyPress(QString optionName)
+{
+    return WindowsCallbackHandler::handle(optionName);
+}
+
 bool WindowsCallbackHandler::handle(QString optionName)
 {
     qWarning() << optionName;

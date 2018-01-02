@@ -42,22 +42,24 @@ Window {
 
     onOptionSelected: closeRequest()
 
+    property int activeEntry: -1;
+
     function setActiveEntry(degrees) {
         var optionSize = 360 / moduleOptions.count;
         var currentPlace = 0;
         for (var i = 0; i < moduleOptions.count; i++) {
             if (degrees >= currentPlace && degrees <= currentPlace + optionSize) {
-                pieMenuOptions.activeEntry = i;
+                root.activeEntry = i;
                 return;
             }
+            currentPlace += optionSize;
         }
+        root.activeEntry = -1;
     }
 
     ListView {
         id: pieMenuOptions
         objectName: "pieMenuOptions"
-
-        property int activeEntry: -1;
 
         model: moduleOptions
 
@@ -70,7 +72,7 @@ Window {
                 width: 200
                 style: ButtonStyle {
                     background: Rectangle {
-                        color: pieMenuOptions.activeEntry == thisIndex ? "green" : "red"
+                        color: root.activeEntry + 1 == thisIndex ? "green" : "red"
                         radius: 99999999
                     }
                 }

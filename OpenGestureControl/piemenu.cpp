@@ -21,6 +21,7 @@
 */
 
 #include "piemenu.h"
+#include <QDebug>
 
 PieMenu::PieMenu(QObject *parent) : QObject(parent)
 {
@@ -53,9 +54,10 @@ void PieMenu::open()
     if (this->activeCallbackConnection) {
         disconnect(this->activeCallbackConnection);
     }
-    this->activeCallbackConnection = connect(this->window, SIGNAL(optionSelected(QString)), callbackHandler, SLOT(handle(QString)));
+    //this->activeCallbackConnection = connect(this->window, SIGNAL(optionSelected(QString)), callbackHandler, SLOT(handle(QString)));
 
-    this->engine.rootContext()->setContextProperty("moduleOptions", this->callbackHandler->getOptions());
+    this->moduleOptions = this->callbackHandler->getOptions();
+    this->engine.rootContext()->setContextProperty("moduleOptions", this->moduleOptions);
 
     this->window->setProperty("visible", true);
     ((QWindow*) this->window)->requestActivate();
@@ -71,7 +73,8 @@ void PieMenu::setActive(int degrees)
 
 void PieMenu::close()
 {
+    int activeId = this->window->property("activeEntry").toInt();
+    QString activeName = moduleOptions->get(activeId)->name();
+    this->callbackHandler->handle(activeName);
     this->window->setProperty("visible", false);
-    // This needs to be delayed until the handle function is done
-    //callbackHandler->close();
 }

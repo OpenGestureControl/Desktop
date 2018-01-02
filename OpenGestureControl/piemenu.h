@@ -27,6 +27,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QMap>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQmlPropertyMap>
@@ -82,6 +83,7 @@ private:
     QQmlApplicationEngine engine; /*!< A QQmlApplicationEngine reference to a QML creator engine. */
     QMetaObject::Connection activeCallbackConnection; /*!< A QMetaObject reference between a QML Signal and pieMenu slot */
     AbstractCallbackHandler *callbackHandler; /*!< A CallbackHandler pointer to a callback handler. */
+    ModuleOptionsListModel *moduleOptions; /*!< The list of displayed options. */
 
 signals:
 

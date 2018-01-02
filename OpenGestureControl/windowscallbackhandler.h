@@ -38,6 +38,15 @@ class WindowsCallbackHandler : public AbstractCallbackHandler
 public:
     explicit WindowsCallbackHandler(QObject *parent = 0);
 
+    /*! \brief This function handles a selected piemenu option.
+     *
+     *  This function is called when an option in the piemenu is selected.
+     *  It retrieves the action to execute from the Lua module with the given option name.
+     *  It retrieves the last application on the foreground, brings it to back to the foreground and executes the action on it.
+     *  It return true when successful.
+     */
+    virtual bool handle(QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/);
+
 private:
     /*! \brief This function translates a keyname to the Windows OS representation.*/
     static WORD lookupKey(QString keyname /*!< A QString reference to the keyname to be found. */);
@@ -60,14 +69,8 @@ protected:
     void restoreFocusWindow() override;
 
 public slots:
-    /*! \brief This function handles a selected piemenu option.
-     *
-     *  This function is called when an option in the piemenu is selected.
-     *  It retrieves the action to execute from the Lua module with the given option name.
-     *  It retrieves the last application on the foreground, brings it to back to the foreground and executes the action on it.
-     *  It return true when successful.
-     */
-    virtual bool handle(QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/);
+    /*! \brief A simple slot wrapper for the handle function to simplify using this both on a slot and out of it. */
+    virtual bool handleKeyPress(QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/);
 };
 #endif // Q_OS_WIN32
 

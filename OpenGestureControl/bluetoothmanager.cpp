@@ -177,44 +177,52 @@ void BluetoothManager::accelerometerDataChanged(QLowEnergyCharacteristic charact
         qWarning() << "Not the characteristic we want for accelerometer, ignoring";
         return;
     }
+
+    qWarning() << "Data: " << data;
+    qWarning() << "Data count: " << data.count();
+
     QDataStream ds(data);
-    short x;
-    ds >> x;
-    short y;
-    ds >> y;
-    short z;
-    ds >> z;
+    //ds.setByteOrder(QDataStream::LittleEndian);
+    char x[2];
+    ds.readRawData(x, 2);
+    char y[2];
+    ds.readRawData(y, 2);
+    char z[2];
+    ds.readRawData(z, 2);
 
-    int threshold = 20000;
+    short xData = shortFromLittleEndianBytes(x);
+    short yData = shortFromLittleEndianBytes(y);
+    short zData = shortFromLittleEndianBytes(z);
 
-    //qWarning() << "Accelerometer:" << x/1000 << y/1000 << z/1000;
-    if (!(x > threshold || x < -threshold || y > threshold || y < -threshold))
-        return;
+    accelInput[0] = xData/(float)1000;
+    accelInput[1] = yData/(float)1000;
+    accelInput[2] = zData/(float)1000;
 
-    // See https://github.com/lancaster-university/microbit-dal/blob/5fa55812c7be1e428d9b255ca31b21cd66c72e4a/source/drivers/MicroBitAccelerometer.cpp
-    double calcX = y;
-    double calcY = -x;
-    double calcZ = -z;
+    //qWarning() << "xData: " << accelInput[0] << endl << "yData: " << accelInput[1] << endl << "zData: " << accelInput[2];
 
-    qreal roll = qAtan2(qreal(y), qreal(z));
+    lowPass(accelInput, accelOutput);
+    qWarning() << "xData: " << accelOutput[0] << endl << "yData: " << accelOutput[1] << endl << "zData: " << accelOutput[2];
+
+    /*qreal roll = qAtan2(qreal(y), qreal(z));
     qreal pitch = qAtan(qreal(-x) / (qreal(y)*qSin(roll) + qreal(z)*qCos(roll)));
 
     int degrees = (int) ((360*pitch) / (2*M_PI));
     pieMenu->setActive(degrees);
-    return;
+    return;*/
 
+    float threshold = 0.2;
     int updown = 0;
     int leftright = 0;
 
-    if (x > threshold) {
+    if (accelInput[0] > threshold) {
         leftright = -1;
-    } else if (x < -threshold) {
+    } else if (accelInput[0] < -threshold) {
         leftright = 1;
     }
 
-    if (y > threshold) {
+    if (accelInput[1] < -threshold) {
         updown = 1;
-    } else if (y < -threshold) {
+    } else if (accelInput[1] > threshold) {
         updown = -1;
     }
 
@@ -250,6 +258,28 @@ void BluetoothManager::accelerometerDataChanged(QLowEnergyCharacteristic charact
             qWarning() << "Down right";
             //pieMenu->setActive(135);
         }
+    }
+}
+
+short BluetoothManager::shortFromLittleEndianBytes(char bytes[]) {
+
+    if (bytes == nullptr ) {
+        return 0;
+    }
+
+    short result=0;
+    result = (short) (((bytes[1]  & 0xff ) << 8) + (bytes[0] & 0xff));
+    if ((result | 0x8000) == 0x8000 ) {
+        result = (short) (result * -1);
+    }
+    return result;
+}
+
+void BluetoothManager::lowPass(float input[], float output[]) {
+    if ( output == nullptr ) return;
+
+    for ( int i=0; i < 3; i++ ) {
+        output[i] = output[i] +  ALPHA * (input[i] - output[i]);
     }
 }
 

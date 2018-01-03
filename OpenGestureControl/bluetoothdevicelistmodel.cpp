@@ -35,7 +35,7 @@ QHash<int, QByteArray> BluetoothDeviceListModel::roleNames() const {
     return roles;
 }
 
-QVariant BluetoothDeviceListModel::data(const QModelIndex &index, int role) const
+QVariant BluetoothDeviceListModel::data(const QModelIndex &index, const int role) const
 {
     if (!index.isValid() || index.row() < 0 || index.row() >= rowCount())
         return QVariant();

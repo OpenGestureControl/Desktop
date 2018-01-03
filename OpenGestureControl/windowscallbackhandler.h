@@ -45,7 +45,7 @@ public:
      *  It retrieves the last application on the foreground, brings it to back to the foreground and executes the action on it.
      *  It return true when successful.
      */
-    virtual bool handle(QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/);
+    virtual bool handle(const QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/) const override;
 
 private:
     /*! \brief This function translates a keyname to the Windows OS representation.*/
@@ -66,11 +66,11 @@ private:
 
 protected:
     void retrieveFocusWindowInfo() override;
-    void restoreFocusWindow() override;
+    void restoreFocusWindow() const override;
 
 public slots:
     /*! \brief A simple slot wrapper for the handle function to simplify using this both on a slot and out of it. */
-    virtual bool handleKeyPress(QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/);
+    virtual bool handleKeyPress(const QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/) const;
 };
 #endif // Q_OS_WIN32
 

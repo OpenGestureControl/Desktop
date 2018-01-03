@@ -46,7 +46,7 @@ QDir ModuleManager::getModule() {
     return QDir();
 }
 
-QString ModuleManager::errorString()
+QString ModuleManager::errorString() const
 {
     return this->eString;
 }

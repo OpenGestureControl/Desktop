@@ -58,26 +58,26 @@ public:
      *
      *  This function is required to be implemented in order to inherit from QAbstractListModel.
      */
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QVariant data(const QModelIndex &index, const int role = Qt::DisplayRole) const override;
 
     /*! \brief This function returns the piemenu option at the given index.*/
-    Q_INVOKABLE ModuleOption* get(int index /*!< [in] parameter, an integer reference to the requested index.*/) const { return m_data.at(index); }
+    Q_INVOKABLE ModuleOption* get(const int index /*!< [in] parameter, an integer reference to the requested index.*/) const { return m_data.at(index); }
 
     /*! \brief This function adds an ModuleOption object to the list of options.
      *
      *  This function first checks if the option to add already exists. If it does it will add it to the data list of the class.
      */
-    bool addOption(ModuleOption* option /*!< [in] parameter, a ModuleOption pointer to the ModuleOption to add.*/);
+    bool addOption(ModuleOption *option /*!< [in] parameter, a ModuleOption pointer to the ModuleOption to add.*/);
     /*! \brief This function removes all ModuleOption objects from the list of options.*/
     void clear();
 
 signals:
     /*! \brief This signal fires when addoption is finished (does not fire atm).*/
-    void countChanged(int c /*!< [in] parameter, an integer reference to the new amount.*/);
+    void countChanged(const int c /*!< [in] parameter, an integer reference to the new amount.*/) const;
 
 protected:
     /*! \brief This function creates and returns a hashmap with rolenames.*/
-    QHash<int, QByteArray> roleNames() const;
+    QHash<int, QByteArray> roleNames() const override;
 
 private:
     QList<ModuleOption*> m_data; /*!< An QList reference to the menu options pointers from the piemenu. */

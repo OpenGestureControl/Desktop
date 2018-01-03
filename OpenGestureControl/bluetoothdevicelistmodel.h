@@ -43,7 +43,7 @@ public:
     explicit BluetoothDeviceListModel(QObject *parent = 0);
 
     int rowCount(const QModelIndex & = QModelIndex()) const override { return m_data.count(); }
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QVariant data(const QModelIndex &index, const int role = Qt::DisplayRole) const override;
 
     Q_INVOKABLE BluetoothDevice* get(const int index) const { return m_data.at(index); }
     BluetoothDevice* getDevice(const QString deviceAddress);
@@ -56,7 +56,7 @@ signals:
     void countChanged(int c);
 
 protected:
-    QHash<int, QByteArray> roleNames() const;
+    QHash<int, QByteArray> roleNames() const override;
 
 private:
     QList<BluetoothDevice*> m_data;

@@ -13,17 +13,17 @@ SystemTray::SystemTray(QObject *parent) : QObject(parent)
     this->tray->setContextMenu(this->trayMenu);
 }
 
-void SystemTray::show()
+void SystemTray::show() const
 {
     this->tray->show();
 }
 
-void SystemTray::showMessage(QString message)
+void SystemTray::showMessage(const QString message) const
 {
     this->tray->showMessage(tr("OpenGestureControl"), message);
 }
 
-void SystemTray::menuActionClicked(QAction *action)
+void SystemTray::menuActionClicked(const QAction *action) const
 {
     if (action->text() == tr("Open menu")) {
         emit menuOpenClicked();

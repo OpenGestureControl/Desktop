@@ -18,8 +18,6 @@ QDir ModuleManager::getModule() {
         this->eString = tr("Couldn't cd into modules directory");
         return QDir();
     }
-    qWarning() << dir << endl;
-    qWarning() << windowTitle << endl;
     QDirIterator iterator(dir.canonicalPath(), QDir::Dirs | QDir::NoDotAndDotDot);
     while (iterator.hasNext()) {
         QString moduleDir = iterator.next();

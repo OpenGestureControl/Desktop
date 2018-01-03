@@ -153,10 +153,8 @@ void LinuxCallbackHandler::retrieveFocusWindowInfo()
 
     // Retrieve window name //
     XClassHint classProp;
-    XGetClassHint(XDisplay, (LastProcess), &classProp); // -1 required because Linux is weird like that, -1 will cause error for Qt itself but w/e
+    XGetClassHint(XDisplay, (LastProcess), &classProp);
     this->exeTitle = classProp.res_class;
-
-    qWarning() << classProp.res_class << " : " << classProp.res_name << endl;
 }
 
 void LinuxCallbackHandler::restoreFocusWindow()

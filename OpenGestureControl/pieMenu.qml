@@ -35,7 +35,8 @@ Window {
 
     flags: Qt.FramelessWindowHint | Qt.WA_TranslucentBackground | Qt.WindowStaysOnTopHint
 
-    color: Qt.rgba(0, 0, 0, 0.9)
+    color: "black"
+    opacity: 0.75
 
     signal optionSelected(string optionName)
     signal closeRequest()
@@ -72,7 +73,7 @@ Window {
                 width: 200
                 style: ButtonStyle {
                     background: Rectangle {
-                        color: root.activeEntry + 1 == thisIndex ? "green" : "red"
+                        color: root.activeEntry + 1 == thisIndex ? "green" : "white"
                         radius: 99999999
                     }
                 }

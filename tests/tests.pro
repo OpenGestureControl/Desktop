@@ -73,5 +73,5 @@ win32:DEPENDPATH += $$PWD/../OpenGestureControl/libs
 win32:LIBS += -lpsapi -L$$PWD/../OpenGestureControl/libs/ -llua53
 
 unix:INCLUDEPATH += /usr/include/lua5.3
-unix:LIBS += -llua5.3 -lm -ldl -lX11
-#unix:LIBS += -llua -lm -ldl -lX11
+#unix:LIBS += -llua5.3 -lm -ldl -lX11
+unix:LIBS += -llua -lm -ldl -lX11

@@ -174,79 +174,100 @@ void BluetoothManager::accelerometerDataChanged(QLowEnergyCharacteristic charact
         qWarning() << "Not the characteristic we want for accelerometer, ignoring";
         return;
     }
+
+    qWarning() << "Data: " << data;
+    qWarning() << "Data count: " << data.count();
+
     QDataStream ds(data);
-    short x;
-    ds >> x;
-    short y;
-    ds >> y;
-    short z;
-    ds >> z;
+    char x[2];
+    ds.readRawData(x, 2);
+    char y[2];
+    ds.readRawData(y, 2);
+    char z[2];
+    ds.readRawData(z, 2);
 
-    int threshold = 20000;
+    short xData = shortFromLittleEndianBytes(x);
+    short yData = shortFromLittleEndianBytes(y);
+    short zData = shortFromLittleEndianBytes(z);
 
-    //qWarning() << "Accelerometer:" << x/1000 << y/1000 << z/1000;
-    if (!(x > threshold || x < -threshold || y > threshold || y < -threshold))
-        return;
+    accelInput[0] = xData/(float)1000;
+    accelInput[1] = yData/(float)1000;
+    accelInput[2] = zData/(float)1000;
 
-    // See https://github.com/lancaster-university/microbit-dal/blob/5fa55812c7be1e428d9b255ca31b21cd66c72e4a/source/drivers/MicroBitAccelerometer.cpp
-    double calcX = y;
-    double calcY = -x;
-    double calcZ = -z;
+    lowPass(accelInput, accelOutput);
+    qWarning() << "xData: " << accelOutput[0] << endl << "yData: " << accelOutput[1] << endl << "zData: " << accelOutput[2];
 
-    qreal roll = qAtan2(qreal(y), qreal(z));
-    qreal pitch = qAtan(qreal(-x) / (qreal(y)*qSin(roll) + qreal(z)*qCos(roll)));
-
-    int degrees = (int) ((360*pitch) / (2*M_PI));
-    emit degreesMoved(degrees);
-    return;
-
+    float threshold = 0.2;
     int updown = 0;
     int leftright = 0;
 
-    if (x > threshold) {
+    if (accelInput[0] > threshold) {
         leftright = -1;
-    } else if (x < -threshold) {
+    } else if (accelInput[0] < -threshold) {
         leftright = 1;
     }
 
-    if (y > threshold) {
+    if (accelInput[1] < -threshold) {
         updown = 1;
-    } else if (y < -threshold) {
+    } else if (accelInput[1] > threshold) {
         updown = -1;
     }
 
     if (updown == 1) {
         if (leftright == -1) {
             qWarning() << "Up left";
-            //emit degreesMoved(315);
+            emit degreesMoved(315);
         } else if (leftright == 0) {
             qWarning() << "Up";
-            //emit degreesMoved(0);
+            emit degreesMoved(0);
         } else if (leftright == 1) {
             qWarning() << "Up right";
-            //emit degreesMoved(45);
+            emit degreesMoved(45);
         }
     } else if (updown == 0) {
         if (leftright == -1) {
             qWarning() << "Left";
-            //emit degreesMoved(270);
+            emit degreesMoved(270);
         } else if (leftright == 0) {
             qWarning() << "Center";
+            emit degreesMoved(-1);
         } else if (leftright == 1) {
             qWarning() << "Right";
-            //emit degreesMoved(90);
+            emit degreesMoved(90);
         }
     } else if (updown == -1) {
         if (leftright == -1) {
             qWarning() << "Down left";
-            //emit degreesMoved(225);
+            emit degreesMoved(225);
         } else if (leftright == 0) {
             qWarning() << "Down";
-            //emit degreesMoved(180);
+            emit degreesMoved(180);
         } else if (leftright == 1) {
             qWarning() << "Down right";
-            //emit degreesMoved(135);
+            emit degreesMoved(135);
         }
+    }
+}
+
+short BluetoothManager::shortFromLittleEndianBytes(char bytes[]) {
+
+    if (bytes == nullptr ) {
+        return 0;
+    }
+
+    short result=0;
+    result = (short) (((bytes[1]  & 0xff ) << 8) + (bytes[0] & 0xff));
+    if ((result | 0x8000) == 0x8000 ) {
+        result = (short) (result * -1);
+    }
+    return result;
+}
+
+void BluetoothManager::lowPass(float input[], float output[]) {
+    if ( output == nullptr ) return;
+
+    for ( int i=0; i < 3; i++ ) {
+        output[i] = output[i] +  ALPHA * (input[i] - output[i]);
     }
 }
 

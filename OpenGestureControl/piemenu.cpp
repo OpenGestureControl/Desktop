@@ -62,12 +62,6 @@ void PieMenu::open()
     this->callbackHandler = new LinuxCallbackHandler(modulePath);
 #endif // Q_OS_LINUX
 
-    if (this->activeCallbackConnection) {
-        disconnect(this->activeCallbackConnection);
-    }
-    //this->activeCallbackConnection = connect(this->window, SIGNAL(optionSelected(QString)), callbackHandler, SLOT(handle(QString)));
-
-    this->engine.rootContext()->setContextProperty("moduleOptions", this->moduleOptions);
     this->moduleOptions = this->callbackHandler->getOptions();
     if (this->moduleOptions->rowCount() == 0) {
         QString noOptionsMessage = QObject::tr("Could not find any actions for the active window. This may be a bug in the active module.");

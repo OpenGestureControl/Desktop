@@ -52,6 +52,8 @@ public:
     void closeUI();
 
     bool isUIOpen();
+    short shortFromLittleEndianBytes(char bytes[]);
+    void lowPass(float input[], float output[]);
 
 private:
     QBluetoothDeviceDiscoveryAgent *bluetoothDeviceDiscoveryAgent;
@@ -62,6 +64,10 @@ private:
     BluetoothDeviceListModel *bluetoothDevices;
     int connectionProgress;
     BluetoothDevice *connectingTo;
+
+    float accelInput[3];
+    float accelOutput[3];
+    const float ALPHA = 0.15f;
 
 signals:
     void buttonPressed();

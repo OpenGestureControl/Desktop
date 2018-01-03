@@ -68,7 +68,6 @@ private:
     QObject *window; /*!< A QObject pointer to a QML view object. */
     QString appPath; /*!< A QString reference path to the active Lua module. */
     QQmlApplicationEngine engine; /*!< A QQmlApplicationEngine reference to a QML creator engine. */
-    QMetaObject::Connection activeCallbackConnection; /*!< A QMetaObject reference between a QML Signal and pieMenu slot */
     AbstractCallbackHandler *callbackHandler; /*!< A CallbackHandler pointer to a callback handler. */
     ModuleOptionsListModel *moduleOptions; /*!< The list of displayed options. */
     ModuleManager * moduleManager;

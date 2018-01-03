@@ -56,7 +56,7 @@ QVariant BluetoothDeviceListModel::data(const QModelIndex &index, int role) cons
     }
 }
 
-BluetoothDevice* BluetoothDeviceListModel::getDevice(QString deviceAddress)
+BluetoothDevice* BluetoothDeviceListModel::getDevice(const QString deviceAddress)
 {
     for (int i = 0; i < m_data.size(); i++)
     {

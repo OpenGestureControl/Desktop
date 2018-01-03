@@ -45,10 +45,10 @@ public:
     int rowCount(const QModelIndex & = QModelIndex()) const override { return m_data.count(); }
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-    Q_INVOKABLE BluetoothDevice* get(int index) const { return m_data.at(index); }
-    BluetoothDevice* getDevice(QString deviceAddress);
+    Q_INVOKABLE BluetoothDevice* get(const int index) const { return m_data.at(index); }
+    BluetoothDevice* getDevice(const QString deviceAddress);
 
-    bool addDevice(BluetoothDevice* device);
+    bool addDevice(BluetoothDevice *device);
     void clear();
 
 

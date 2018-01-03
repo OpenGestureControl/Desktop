@@ -8,5 +8,8 @@ OpenGestureControl Desktop is an application for Linux which interacts with the 
 ## How to use
 Ensure you have at least one module (see [our GitHub org](https://github.com/OpenGestureControl/)) in ``~/.config/opengesturecontrol/modules/<module_name>``. Flash our firmware onto a micro:bit (repo coming soon) and connect the micro:bit using the Bluetooth dialog. Hold button A to open the pie menu. At this point, move your microbit in the direction of the option you want to select. Release button A to close the pie menu.
 
+## Module development
+See [MODULE_DEVELOPMENT.md](MODULE_DEVELOPMENT.md).
+
 ## License
 MIT

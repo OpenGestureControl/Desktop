@@ -5,7 +5,7 @@ AbstractCallbackHandler::AbstractCallbackHandler(QObject *parent) : QObject(pare
 
 }
 
-bool AbstractCallbackHandler::init(QDir modulePath)
+bool AbstractCallbackHandler::init(const QDir modulePath)
 {
     this->modulePath = modulePath;
 
@@ -24,7 +24,7 @@ bool AbstractCallbackHandler::init(QDir modulePath)
     return true;
 }
 
-ModuleOptionsListModel *AbstractCallbackHandler::getOptions()
+ModuleOptionsListModel *AbstractCallbackHandler::getOptions() const
 {
     ModuleOptionsListModel *moduleOptions = new ModuleOptionsListModel();
 
@@ -102,7 +102,7 @@ ModuleOptionsListModel *AbstractCallbackHandler::getOptions()
     return moduleOptions;
 }
 
-void AbstractCallbackHandler::close()
+void AbstractCallbackHandler::close() const
 {
     lua_close(L);           // Close Lua
 }

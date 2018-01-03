@@ -25,8 +25,6 @@
 
 PieMenu::PieMenu(QObject *parent) : QObject(parent)
 {
-    this->appPath = appPath;
-    this->engine.rootContext()->setContextProperty("applicationPath", "file://" + this->appPath + "/");
     this->engine.load(QUrl(QStringLiteral("qrc:/pieMenu.qml")));
     this->window = this->engine.rootObjects()[0];
 
@@ -34,7 +32,7 @@ PieMenu::PieMenu(QObject *parent) : QObject(parent)
     this->callbackHandler = NULL;
 }
 
-bool PieMenu::isOpen()
+bool PieMenu::isOpen() const
 {
     return this->window->property("visible").toBool();
 }
@@ -75,7 +73,7 @@ void PieMenu::open()
     ((QWindow*) this->window)->requestActivate();
 }
 
-void PieMenu::setActive(int degrees)
+void PieMenu::setActive(const int degrees) const
 {
     qWarning() << degrees;
     QMetaObject::invokeMethod(this->window,
@@ -83,7 +81,7 @@ void PieMenu::setActive(int degrees)
             Q_ARG(QVariant, degrees));
 }
 
-void PieMenu::close()
+void PieMenu::close() const
 {
     int activeId = this->window->property("activeEntry").toInt();
     if (activeId != -1) {

@@ -62,11 +62,10 @@ public:
      *
      *  This function check if the QML view is visible for the user and returns a boolean indicating if visible (true) or not (false).
      */
-    bool isOpen();
+    bool isOpen() const;
 
 private:
     QObject *window; /*!< A QObject pointer to a QML view object. */
-    QString appPath; /*!< A QString reference path to the active Lua module. */
     QQmlApplicationEngine engine; /*!< A QQmlApplicationEngine reference to a QML creator engine. */
     AbstractCallbackHandler *callbackHandler; /*!< A CallbackHandler pointer to a callback handler. */
     ModuleOptionsListModel *moduleOptions; /*!< The list of displayed options. */
@@ -74,7 +73,7 @@ private:
 
 signals:
     /*! \brief This signal fires when something went wrong with opening the pie menu */
-    void couldntOpenMenu(QString reason);
+    void couldntOpenMenu(const QString reason) const;
 
 public slots:
     /*! \brief This function translates the mouse position to an option entry.
@@ -82,7 +81,7 @@ public slots:
      *  This function recieves a mouse/hand position and calculates which option the mouse/hand hovering over.
      *  It then highlights this position in the view for visual feedback for the user.
      */
-    void setActive(int degrees /*!< [in] parameter, an integer reference to the position of the mouse/hand expressed in degrees*/);
+    void setActive(const int degrees /*!< [in] parameter, an integer reference to the position of the mouse/hand expressed in degrees*/) const;
 
     /*! \brief This function opens the QML.
      *
@@ -96,7 +95,7 @@ public slots:
      *  This function sets the visible property of the QML view object on false.
      * It does not destroy the QML view object
      */
-    void close();
+    void close() const;
 };
 
 #endif // PIEMENU_H

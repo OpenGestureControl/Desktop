@@ -73,11 +73,11 @@ private:
 
 signals:
     /*! \brief This signal fires when the m_name variable is changed via setName.*/
-    void nameChanged();
+    void nameChanged() const;
     /*! \brief This signal fires when the m_icon variable is changed via setIcon.*/
-    void iconChanged();
+    void iconChanged() const;
     /*! \brief This signal fires when the m_index variable is changed via setIndex.*/
-    void indexChanged();
+    void indexChanged() const;
 
 public slots:
 };

@@ -33,61 +33,62 @@
 #include <QString>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QDebug>
 
 #include "bluetoothdevicelistmodel.h"
 #include "piemenu.h"
 
 /*! \brief A class which manages all known Bluetooth devices.
  *
- *  Doesn't do much yet.
+ *  This class retains a list of previously connected Bluetooth devices for easy managing.
  */
-//This class retains a list of previously connected Bluetooth devices for easy managing.
+
 class BluetoothManager : public QObject
 {
     Q_OBJECT
 
 public:
     explicit BluetoothManager(QObject *parent = 0);
-    void openUI();
-    void closeUI();
+    void openUI() const;
+    void closeUI() const;
 
-    bool isUIOpen();
-    short shortFromLittleEndianBytes(char bytes[]);
-    void lowPass(float input[], float output[]);
+    bool isUIOpen() const;
+    short shortFromLittleEndianBytes(const char bytes[]) const;
+    void lowPass(const float input[], float output[]) const;
 
 private:
     QBluetoothDeviceDiscoveryAgent *bluetoothDeviceDiscoveryAgent;
+    QQmlApplicationEngine engine;
     QLowEnergyService *accelerometer, *button;
+    BluetoothDeviceListModel *bluetoothDevices;
+    BluetoothDevice *connectingTo;
     QLowEnergyController *lowEnergyController;
     QObject *window;
-    QQmlApplicationEngine engine;
-    BluetoothDeviceListModel *bluetoothDevices;
     int connectionProgress;
-    BluetoothDevice *connectingTo;
 
     float accelInput[3];
     float accelOutput[3];
     const float ALPHA = 0.15f;
 
 signals:
-    void buttonPressed();
-    void buttonReleased();
-    void degreesMoved(int degrees);
+    void buttonPressed() const;
+    void buttonReleased() const;
+    void degreesMoved(const int degrees) const;
 
 public slots:
     void scanForDevices();
-    void connectToDevice(QString deviceAddress);
-    void forgetDevice(QString deviceAddress);
-    void connected();
+    void connectToDevice(const QString deviceAddress);
+    void forgetDevice(const QString deviceAddress);
+    void connected() const;
     void disconnected();
-    void error(QLowEnergyController::Error error);
-    void deviceDiscovered(QBluetoothDeviceInfo deviceInfo);
-    void scanFinished();
+    void error(const QLowEnergyController::Error error);
+    void deviceDiscovered(const QBluetoothDeviceInfo deviceInfo) const;
+    void scanFinished() const;
     void discoveryFinished();
-    void accelerometerServiceStateChanged(QLowEnergyService::ServiceState state);
-    void accelerometerDataChanged(QLowEnergyCharacteristic characteristic, QByteArray data);
-    void buttonServiceStateChanged(QLowEnergyService::ServiceState state);
-    void buttonDataChanged(QLowEnergyCharacteristic characteristic, QByteArray data);
+    void accelerometerServiceStateChanged(const QLowEnergyService::ServiceState state);
+    void accelerometerDataChanged(const QLowEnergyCharacteristic characteristic, QByteArray data);
+    void buttonServiceStateChanged(const QLowEnergyService::ServiceState state);
+    void buttonDataChanged(const QLowEnergyCharacteristic characteristic, const QByteArray data) const;
 };
 
 #endif // BLUETOOTHMANAGER_H

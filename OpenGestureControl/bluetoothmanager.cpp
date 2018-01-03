@@ -21,9 +21,8 @@
 */
 
 #include "bluetoothmanager.h"
-#include <QDebug>
 
-BluetoothManager::BluetoothManager(QObject *parent) : QObject(parent)
+BluetoothManager::BluetoothManager(QObject *parent) : QObject(parent), bluetoothDeviceDiscoveryAgent()
 {
     this->bluetoothDevices = new BluetoothDeviceListModel();
     this->engine.rootContext()->setContextProperty("bluetoothDevices", this->bluetoothDevices);
@@ -43,17 +42,17 @@ BluetoothManager::BluetoothManager(QObject *parent) : QObject(parent)
     connect(this->window, SIGNAL(forgetRequest(QString)), this, SLOT(forgetDevice(QString)));
 }
 
-bool BluetoothManager::isUIOpen()
+bool BluetoothManager::isUIOpen() const
 {
     return this->window->property("visible").toBool();
 }
 
-void BluetoothManager::openUI()
+void BluetoothManager::openUI() const
 {
     this->window->setProperty("visible", true);
 }
 
-void BluetoothManager::closeUI()
+void BluetoothManager::closeUI() const
 {
     this->window->setProperty("visible", false);
 }
@@ -71,7 +70,7 @@ void BluetoothManager::scanForDevices()
     this->bluetoothDeviceDiscoveryAgent->start();
 }
 
-void BluetoothManager::connectToDevice(QString deviceAddress)
+void BluetoothManager::connectToDevice(const QString deviceAddress)
 {
     qWarning() << "Disconnect existing device";
     if (this->lowEnergyController) {
@@ -88,6 +87,7 @@ void BluetoothManager::connectToDevice(QString deviceAddress)
     this->lowEnergyController = QLowEnergyController::createCentral(this->connectingTo->deviceInfo());
     qWarning() << "Workaround for failing to connect";
     lowEnergyController->setRemoteAddressType(QLowEnergyController::RandomAddress);
+
     qWarning() << "Preparing connecting to device";
     connect(lowEnergyController, SIGNAL(connected()),
             this, SLOT(connected()));
@@ -99,7 +99,7 @@ void BluetoothManager::connectToDevice(QString deviceAddress)
     lowEnergyController->connectToDevice();
 }
 
-void BluetoothManager::forgetDevice(QString deviceAddress)
+void BluetoothManager::forgetDevice(const QString deviceAddress)
 {
     bluetoothDevices->getDevice(deviceAddress)->setActive(false);
     this->window->setProperty("status", "IDLE");
@@ -108,7 +108,7 @@ void BluetoothManager::forgetDevice(QString deviceAddress)
     this->scanForDevices();
 }
 
-void BluetoothManager::deviceDiscovered(QBluetoothDeviceInfo deviceInfo)
+void BluetoothManager::deviceDiscovered(const QBluetoothDeviceInfo deviceInfo) const
 {
     bluetoothDevices->addDevice(new BluetoothDevice(deviceInfo));
 }
@@ -138,7 +138,7 @@ void BluetoothManager::discoveryFinished()
      this->button->discoverDetails();
 }
 
-void BluetoothManager::accelerometerServiceStateChanged(QLowEnergyService::ServiceState state)
+void BluetoothManager::accelerometerServiceStateChanged(const QLowEnergyService::ServiceState state)
 {
     qWarning() << state;
     if (state == QLowEnergyService::ServiceDiscovered) {
@@ -167,16 +167,13 @@ void BluetoothManager::accelerometerServiceStateChanged(QLowEnergyService::Servi
     }
 }
 
-void BluetoothManager::accelerometerDataChanged(QLowEnergyCharacteristic characteristic, QByteArray data)
+void BluetoothManager::accelerometerDataChanged(const QLowEnergyCharacteristic characteristic, QByteArray data)
 {
     if (characteristic.uuid() != QBluetoothUuid(QString("{e95dca4b-251d-470a-a062-fa1922dfa9a8}")))
     {
         qWarning() << "Not the characteristic we want for accelerometer, ignoring";
         return;
     }
-
-    qWarning() << "Data: " << data;
-    qWarning() << "Data count: " << data.count();
 
     QDataStream ds(data);
     char x[2];
@@ -194,8 +191,8 @@ void BluetoothManager::accelerometerDataChanged(QLowEnergyCharacteristic charact
     accelInput[1] = yData/(float)1000;
     accelInput[2] = zData/(float)1000;
 
-    lowPass(accelInput, accelOutput);
-    qWarning() << "xData: " << accelOutput[0] << endl << "yData: " << accelOutput[1] << endl << "zData: " << accelOutput[2];
+    this->lowPass(accelInput, accelOutput);
+    //qWarning() << "xData: " << accelOutput[0] << endl << "yData: " << accelOutput[1] << endl << "zData: " << accelOutput[2];
 
     float threshold = 0.2;
     int updown = 0;
@@ -249,7 +246,7 @@ void BluetoothManager::accelerometerDataChanged(QLowEnergyCharacteristic charact
     }
 }
 
-short BluetoothManager::shortFromLittleEndianBytes(char bytes[]) {
+short BluetoothManager::shortFromLittleEndianBytes(const char bytes[]) const {
 
     if (bytes == nullptr ) {
         return 0;
@@ -263,7 +260,7 @@ short BluetoothManager::shortFromLittleEndianBytes(char bytes[]) {
     return result;
 }
 
-void BluetoothManager::lowPass(float input[], float output[]) {
+void BluetoothManager::lowPass(const float input[], float output[]) const {
     if ( output == nullptr ) return;
 
     for ( int i=0; i < 3; i++ ) {
@@ -271,7 +268,7 @@ void BluetoothManager::lowPass(float input[], float output[]) {
     }
 }
 
-void BluetoothManager::buttonServiceStateChanged(QLowEnergyService::ServiceState state)
+void BluetoothManager::buttonServiceStateChanged(const QLowEnergyService::ServiceState state)
 {
     qWarning() << state;
     if (state == QLowEnergyService::ServiceDiscovered) {
@@ -300,7 +297,7 @@ void BluetoothManager::buttonServiceStateChanged(QLowEnergyService::ServiceState
     }
 }
 
-void BluetoothManager::buttonDataChanged(QLowEnergyCharacteristic characteristic, QByteArray data)
+void BluetoothManager::buttonDataChanged(const QLowEnergyCharacteristic characteristic, const QByteArray data) const
 {
     if (characteristic.uuid() != QBluetoothUuid(QString("{e95dda90-251d-470a-a062-fa1922dfa9a8}")))
     {
@@ -316,7 +313,7 @@ void BluetoothManager::buttonDataChanged(QLowEnergyCharacteristic characteristic
     }
 }
 
-void BluetoothManager::connected()
+void BluetoothManager::connected() const
 {
     qWarning() << "Preparing service discovery";
     connect(lowEnergyController, SIGNAL(discoveryFinished()),
@@ -333,7 +330,7 @@ void BluetoothManager::disconnected()
     this->scanForDevices();
 }
 
-void BluetoothManager::error(QLowEnergyController::Error error)
+void BluetoothManager::error(const QLowEnergyController::Error error)
 {
     qWarning() << error;
     this->connectingTo->setActive(false);
@@ -342,7 +339,7 @@ void BluetoothManager::error(QLowEnergyController::Error error)
     this->scanForDevices();
 }
 
-void BluetoothManager::scanFinished()
+void BluetoothManager::scanFinished() const
 {
     if (!this->lowEnergyController || this->lowEnergyController->state() == QLowEnergyController::UnconnectedState)
         this->window->setProperty("status", "IDLE");

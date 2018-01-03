@@ -55,8 +55,8 @@ private:
     bool m_active = false;
 
 signals:
-    void deviceInfoChanged();
-    void activeChanged();
+    void deviceInfoChanged() const;
+    void activeChanged() const;
 
 public slots:
 };

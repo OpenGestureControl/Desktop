@@ -25,6 +25,8 @@
 
 #include <QBluetoothAddress>
 #include <QBluetoothDeviceInfo>
+#include <QBluetoothServiceDiscoveryAgent>
+#include <QLowEnergyController>
 #include <QObject>
 #include <QString>
 #include <QVariant>
@@ -39,7 +41,7 @@ class BluetoothDevice : public QObject
 
 public:
     explicit BluetoothDevice(QObject *parent = 0);
-    explicit BluetoothDevice(const QBluetoothDeviceInfo &deviceInfo, QObject *parent = 0);
+    explicit BluetoothDevice(const QBluetoothDeviceInfo &deviceInfo, QBluetoothDeviceInfo &LEController, QObject *parent = 0);
 
     QBluetoothDeviceInfo deviceInfo() const { return m_deviceInfo; }
     void setDeviceInfo(const QBluetoothDeviceInfo name);
@@ -50,15 +52,29 @@ public:
     bool active() const { return m_active; }
     void setActive(const bool value);
 
+    short shortFromLittleEndianBytes(const char bytes[]) const;
+    void lowPass(const float input[], float output[]) const;
+
 private:
     QBluetoothDeviceInfo m_deviceInfo;
+    QLowEnergyService *accelerometer, *button;
+    QLowEnergyController *lowEnergyController;
     bool m_active = false;
+
+    float accelInput[3];
+    float accelOutput[3];
+    const float ALPHA = 0.15f;
 
 signals:
     void deviceInfoChanged() const;
     void activeChanged() const;
 
 public slots:
+    void accelerometerServiceStateChanged(const QLowEnergyService::ServiceState state);
+    void accelerometerDataChanged(const QLowEnergyCharacteristic characteristic, QByteArray data);
+    void buttonServiceStateChanged(const QLowEnergyService::ServiceState state);
+    void buttonDataChanged(const QLowEnergyCharacteristic characteristic, const QByteArray data) const;
+    void discoveryFinished();
 };
 
 #endif // BLUETOOTHDEVICE_H

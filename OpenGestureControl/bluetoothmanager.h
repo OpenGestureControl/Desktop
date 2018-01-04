@@ -25,7 +25,6 @@
 
 #include <QAbstractItemModel>
 #include <QBluetoothDeviceDiscoveryAgent>
-#include <QBluetoothServiceDiscoveryAgent>
 #include <QLowEnergyController>
 #include <QDataStream>
 #include <QtMath>
@@ -53,22 +52,15 @@ public:
     void closeUI() const;
 
     bool isUIOpen() const;
-    short shortFromLittleEndianBytes(const char bytes[]) const;
-    void lowPass(const float input[], float output[]) const;
 
 private:
     QBluetoothDeviceDiscoveryAgent *bluetoothDeviceDiscoveryAgent;
     QQmlApplicationEngine engine;
-    QLowEnergyService *accelerometer, *button;
     BluetoothDeviceListModel *bluetoothDevices;
     BluetoothDevice *connectingTo;
     QLowEnergyController *lowEnergyController;
     QObject *window;
     int connectionProgress;
-
-    float accelInput[3];
-    float accelOutput[3];
-    const float ALPHA = 0.15f;
 
 signals:
     void buttonPressed() const;
@@ -84,11 +76,6 @@ public slots:
     void error(const QLowEnergyController::Error error);
     void deviceDiscovered(const QBluetoothDeviceInfo deviceInfo) const;
     void scanFinished() const;
-    void discoveryFinished();
-    void accelerometerServiceStateChanged(const QLowEnergyService::ServiceState state);
-    void accelerometerDataChanged(const QLowEnergyCharacteristic characteristic, QByteArray data);
-    void buttonServiceStateChanged(const QLowEnergyService::ServiceState state);
-    void buttonDataChanged(const QLowEnergyCharacteristic characteristic, const QByteArray data) const;
 };
 
 #endif // BLUETOOTHMANAGER_H

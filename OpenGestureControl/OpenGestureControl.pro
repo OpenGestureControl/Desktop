@@ -48,7 +48,7 @@ win32:LIBS += -lpsapi -L$$PWD/libs/ -llua53
 
 unix:INCLUDEPATH += /usr/include/lua5.3
 
-packagesExist(lua) {
+packagesExist(lua) || $$(TRAVIS) {
     unix:LIBS += -llua -lm -ldl -lX11
 } else {
     unix:LIBS += -llua5.3 -lm -ldl -lX11

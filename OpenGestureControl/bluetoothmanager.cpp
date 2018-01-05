@@ -30,7 +30,6 @@ BluetoothManager::BluetoothManager(QObject *parent) : QObject(parent), bluetooth
     this->engine.load(QUrl(QStringLiteral("qrc:/bluetoothManager.qml")));
     this->window = this->engine.rootObjects()[0];
 
-    this->lowEnergyController = NULL;
     this->bluetoothDeviceDiscoveryAgent = new QBluetoothDeviceDiscoveryAgent();
     this->bluetoothDeviceDiscoveryAgent->setLowEnergyDiscoveryTimeout(5000);
 
@@ -59,12 +58,6 @@ void BluetoothManager::closeUI() const
 
 void BluetoothManager::scanForDevices()
 {
-    if(this->lowEnergyController) {
-        this->lowEnergyController->disconnectFromDevice();
-        delete this->lowEnergyController;
-        this->lowEnergyController = nullptr;
-    }
-
     this->window->setProperty("status", "SCANNING");
     this->bluetoothDevices->clear();
     this->bluetoothDeviceDiscoveryAgent->start();
@@ -72,75 +65,71 @@ void BluetoothManager::scanForDevices()
 
 void BluetoothManager::connectToDevice(const QString deviceAddress)
 {
-    qWarning() << "Disconnect existing device";
-    if (this->lowEnergyController) {
-        this->connectingTo->setActive(false);
-        this->lowEnergyController->disconnectFromDevice();
-        delete this->lowEnergyController;
-        this->lowEnergyController = nullptr;
-    }
     qWarning() << deviceAddress;
-    this->connectionProgress = 0;
     this->connectingTo = bluetoothDevices->getDevice(deviceAddress);
-    this->window->setProperty("status", "CONNECTING");
-    qWarning() << "Creating Low Energy Controller";
-    this->lowEnergyController = QLowEnergyController::createCentral(this->connectingTo->deviceInfo());
-    qWarning() << "Workaround for failing to connect";
-    this->lowEnergyController->setRemoteAddressType(QLowEnergyController::RandomAddress);
-
-    qWarning() << "Preparing connecting to device";
-    connect(this->lowEnergyController, SIGNAL(connected()),
+    connect(this->connectingTo, SIGNAL(discoveryFailed(QString)),
+            this, SLOT(error(QString)));
+    connect(this->connectingTo, SIGNAL(characteristicBindingFailed(QString)),
+            this, SLOT(error(QString)));
+    connect(this->connectingTo, SIGNAL(connected()),
             this, SLOT(connected()));
-    connect(this->lowEnergyController, SIGNAL(disconnected()),
+    connect(this->connectingTo, SIGNAL(disconnected()),
             this, SLOT(disconnected()));
-    connect(this->lowEnergyController, SIGNAL(error(QLowEnergyController::Error)),
+    connect(this->connectingTo, SIGNAL(lowEnergyControllerError(QLowEnergyController::Error)),
             this, SLOT(error(QLowEnergyController::Error)));
-    qWarning() << "Connecting to device";
-    this->lowEnergyController->connectToDevice();
+    this->bluetoothDevices->setActive(this->connectingTo);
+    this->window->setProperty("status", "CONNECTING");
 }
 
 void BluetoothManager::forgetDevice(const QString deviceAddress)
 {
-    bluetoothDevices->getDevice(deviceAddress)->setActive(false);
+    this->bluetoothDevices->clearActive();
     this->window->setProperty("status", "IDLE");
-    this->lowEnergyController->disconnectFromDevice();
     // Hack because the Connect/Forget buttons don't work well
     this->scanForDevices();
 }
 
 void BluetoothManager::deviceDiscovered(const QBluetoothDeviceInfo deviceInfo) const
 {
-    bluetoothDevices->addDevice(new BluetoothDevice(deviceInfo, lowEnergyController));
+    bluetoothDevices->addDevice(new BluetoothDevice(deviceInfo));
 }
 
 void BluetoothManager::connected() const
 {
-    qWarning() << "Preparing service discovery";
-    connect(this->lowEnergyController, SIGNAL(discoveryFinished()),
-            this->connectingTo, SLOT(discoveryFinished()));
-    qWarning() << "Starting service discovery";
-    this->lowEnergyController->discoverServices();
+    connect(this->connectingTo, SIGNAL(buttonPressed()),
+            this, SIGNAL(buttonPressed()));
+    connect(this->connectingTo, SIGNAL(buttonReleased()),
+            this, SIGNAL(buttonReleased()));
+    connect(this->connectingTo, SIGNAL(degreesMoved(int)),
+            this, SIGNAL(degreesMoved(int)));
+    this->window->setProperty("status", "CONNECTED");
 }
 
 void BluetoothManager::disconnected()
 {
-    this->connectingTo->setActive(false);
+    this->bluetoothDevices->clearActive();
     this->window->setProperty("status", "IDLE");
     // Hack because the Connect/Forget buttons don't work well
     this->scanForDevices();
 }
 
-void BluetoothManager::error(const QLowEnergyController::Error error)
+void BluetoothManager::error(const QString reason)
 {
-    qWarning() << error;
-    this->connectingTo->setActive(false);
+    qWarning() << reason;
+    this->bluetoothDevices->clearActive();
     this->window->setProperty("status", "IDLE");
     // Hack because the Connect/Forget buttons don't work well
     this->scanForDevices();
+}
+
+void BluetoothManager::error(QLowEnergyController::Error reason)
+{
+    this->error(reason);
 }
 
 void BluetoothManager::scanFinished() const
 {
-    if (!this->lowEnergyController || this->lowEnergyController->state() == QLowEnergyController::UnconnectedState)
+    BluetoothDevice *activeDevice = this->bluetoothDevices->getActive();
+    if (!activeDevice || !activeDevice->isConnected())
         this->window->setProperty("status", "IDLE");
 }

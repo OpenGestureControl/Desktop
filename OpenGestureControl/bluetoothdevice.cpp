@@ -26,10 +26,9 @@ BluetoothDevice::BluetoothDevice(QObject *parent) : QObject(parent)
 {
 }
 
-BluetoothDevice::BluetoothDevice(const QBluetoothDeviceInfo &deviceInfo, QBluetoothDeviceInfo &LEController, QObject *parent)
+BluetoothDevice::BluetoothDevice(const QBluetoothDeviceInfo &deviceInfo, QObject *parent)
     : QObject(parent), m_deviceInfo(deviceInfo)
 {
-    lowEnergyController = LEController;
 }
 
 void BluetoothDevice::setDeviceInfo(const QBluetoothDeviceInfo deviceInfo)
@@ -44,23 +43,51 @@ void BluetoothDevice::setActive(const bool value)
 {
     if (value != this->m_active) {
         this->m_active = value;
+        this->connectionProgress = 0;
         emit activeChanged();
     }
+
+    if (value) {
+        qWarning() << "Creating Low Energy Controller";
+        this->lowEnergyController = QLowEnergyController::createCentral(this->deviceInfo());
+        qWarning() << "Workaround for failing to connect";
+        this->lowEnergyController->setRemoteAddressType(QLowEnergyController::RandomAddress);
+
+        qWarning() << "Preparing connecting to device";
+        connect(this->lowEnergyController, SIGNAL(connected()),
+                this, SLOT(lowEnergyControllerConnected()));
+        connect(this->lowEnergyController, SIGNAL(disconnected()),
+                this, SIGNAL(disconnected()));
+        connect(this->lowEnergyController, SIGNAL(error(QLowEnergyController::Error)),
+                this, SIGNAL(lowEnergyControllerError(QLowEnergyController::Error)));
+        qWarning() << "Connecting to device";
+        this->lowEnergyController->connectToDevice();
+    } else if (this->lowEnergyController->state() != QLowEnergyController::UnconnectedState) {
+        this->lowEnergyController->disconnectFromDevice();
+    }
+}
+
+void BluetoothDevice::lowEnergyControllerConnected() const
+{
+    qWarning() << "Preparing service discovery";
+    connect(this->lowEnergyController, SIGNAL(discoveryFinished()),
+            this, SLOT(discoveryFinished()));
+    qWarning() << "Starting service discovery";
+    this->lowEnergyController->discoverServices();
 }
 
 void BluetoothDevice::discoveryFinished()
 {
      qWarning() << "Discovery finished";
      qWarning() << "Preparing services we want";
-     if (!(this->accelerometer = lowEnergyController->createServiceObject(QBluetoothUuid(QString("{e95d0753-251d-470a-a062-fa1922dfa9a8}"))))) {
+     if (!(this->accelerometer = this->lowEnergyController->createServiceObject(QBluetoothUuid(QString("{e95d0753-251d-470a-a062-fa1922dfa9a8}"))))) {
          qWarning() << "Could not find the accelerometer service!";
-         this->window->setProperty("status", "IDLE");
+         emit discoveryFailed("Could not find the accelerometer service");
          return;
      }
 
-     if (!(this->button = lowEnergyController->createServiceObject(QBluetoothUuid(QString("{e95d9882-251d-470a-a062-fa1922dfa9a8}"))))) {
-         qWarning() << "Could not find the button service!";
-         this->window->setProperty("status", "IDLE");
+     if (!(this->button = this->lowEnergyController->createServiceObject(QBluetoothUuid(QString("{e95d9882-251d-470a-a062-fa1922dfa9a8}"))))) {
+         emit discoveryFailed("Could not find the button service");
          return;
      }
 
@@ -82,8 +109,7 @@ void BluetoothDevice::accelerometerServiceStateChanged(const QLowEnergyService::
         QLowEnergyDescriptor notification = accelerometerData.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration);
 
         if (!accelerometerData.isValid()) {
-            qWarning() << "Accelerometer data not valid!";
-            this->window->setProperty("status", "IDLE");
+            emit characteristicBindingFailed("Accelerometer data not valid");
             return;
         }
 
@@ -96,8 +122,7 @@ void BluetoothDevice::accelerometerServiceStateChanged(const QLowEnergyService::
         this->connectionProgress++;
 
         if (this->connectionProgress == 2) {
-            this->connectingTo->setActive(true);
-            this->window->setProperty("status", "CONNECTED");
+            emit connected();
         }
     }
 }
@@ -190,8 +215,7 @@ void BluetoothDevice::buttonServiceStateChanged(const QLowEnergyService::Service
         QLowEnergyDescriptor notification = buttonData.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration);
 
         if (!buttonData.isValid()) {
-            qWarning() << "Button data not valid!";
-            this->window->setProperty("status", "IDLE");
+            emit characteristicBindingFailed("Button data not valid");
             return;
         }
 
@@ -204,8 +228,7 @@ void BluetoothDevice::buttonServiceStateChanged(const QLowEnergyService::Service
         this->connectionProgress++;
 
         if (this->connectionProgress == 2) {
-            this->connectingTo->setActive(true);
-            this->window->setProperty("status", "CONNECTED");
+            emit connected();
         }
     }
 }

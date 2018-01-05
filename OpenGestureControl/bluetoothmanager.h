@@ -58,9 +58,7 @@ private:
     QQmlApplicationEngine engine;
     BluetoothDeviceListModel *bluetoothDevices;
     BluetoothDevice *connectingTo;
-    QLowEnergyController *lowEnergyController;
     QObject *window;
-    int connectionProgress;
 
 signals:
     void buttonPressed() const;
@@ -73,7 +71,8 @@ public slots:
     void forgetDevice(const QString deviceAddress);
     void connected() const;
     void disconnected();
-    void error(const QLowEnergyController::Error error);
+    void error(const QString reason);
+    void error(QLowEnergyController::Error reason);
     void deviceDiscovered(const QBluetoothDeviceInfo deviceInfo) const;
     void scanFinished() const;
 };

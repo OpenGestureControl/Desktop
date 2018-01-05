@@ -50,13 +50,16 @@ public:
 
     bool addDevice(BluetoothDevice *device);
     void clear();
-
+    void setActive(BluetoothDevice *device);
+    void clearActive();
+    BluetoothDevice* getActive();
 
 signals:
     void countChanged(int c);
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
+    BluetoothDevice *activeDevice = nullptr;
 
 private:
     QList<BluetoothDevice*> m_data;

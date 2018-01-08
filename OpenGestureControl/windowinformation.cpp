@@ -28,18 +28,14 @@ QString WindowInformation::GetWindowTitle()
     XSetErrorHandler(catcher);
 
     // Obtain the X11 display.
-    Display *XDisplay = XOpenDisplay(0);
+    Display *XDisplay = XOpenDisplay(NULL);
     if(XDisplay == NULL) {
         qWarning() << "No X server connection established!" << endl;
     }
 
     // Retrieve window name //
     XClassHint classProp;
-    XGetClassHint(XDisplay, (FocusWindow -1), &classProp); // -1 required because Linux is weird like that, -1 will cause error for Qt itself but w/e
-    if(errorThrown == true) {
-        XGetClassHint(XDisplay, (FocusWindow), &classProp);
-        errorThrown = false;
-    }
+    XGetClassHint(XDisplay, FocusWindow, &classProp);
     windowTitle = classProp.res_class;
 
     XCloseDisplay(XDisplay); // Close link to X display server
@@ -82,13 +78,36 @@ void WindowInformation::GetWindowInformation()
 {
 #ifdef Q_OS_LINUX
     // Obtain the X11 display.
-    Display *XDisplay = XOpenDisplay(0);
+    Display *XDisplay = XOpenDisplay(NULL);
     if(XDisplay == NULL)
         qWarning() << "No X server connection established!" << endl;
 
     // Find the window which has the current keyboard focus.
-    int revert = 0;
-    XGetInputFocus(XDisplay, &FocusWindow, &revert);
+    // Based on xdotool under BSD-3: https://github.com/jordansissel/xdotool/blob/master/COPYRIGHT
+    Atom request;
+    Window root;
+
+    request = XInternAtom(XDisplay, "_NET_ACTIVE_WINDOW", False);
+    root = XDefaultRootWindow(XDisplay);
+
+    Atom actual_type;
+    int actual_format;
+    unsigned long nitems;
+    /*unsigned long nbytes;*/
+    unsigned long bytes_after; /* unused */
+    unsigned char *prop;
+    int status;
+
+    status = XGetWindowProperty(XDisplay, root, request, 0, (~0L),
+                                False, AnyPropertyType, &actual_type,
+                                &actual_format, &nitems, &bytes_after,
+                                &prop);
+
+    if (nitems > 0) {
+      FocusWindow = *((Window*)prop);
+    } else {
+      FocusWindow = 0;
+    }
 
     XCloseDisplay(XDisplay); // Close link to X display server
 #endif // Q_OS_LINUX

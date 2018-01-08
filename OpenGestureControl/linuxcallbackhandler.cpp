@@ -137,7 +137,7 @@ bool LinuxCallbackHandler::handle(const QString optionName) const
 void LinuxCallbackHandler::retrieveFocusWindowInfo()
 {
     // Obtain the X11 display.
-    XDisplay = XOpenDisplay(0);
+    XDisplay = XOpenDisplay(NULL);
     if(XDisplay == NULL)
         qWarning() << "No X server connection established!";
 

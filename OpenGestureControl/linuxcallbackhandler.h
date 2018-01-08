@@ -43,12 +43,21 @@ class LinuxCallbackHandler : public AbstractCallbackHandler
 public:
     explicit LinuxCallbackHandler(QDir modulePath, QObject *parent = 0);
 
+    /*! \brief This function handles a selected piemenu option.
+     *
+     *  This function is called when an option in the piemenu is selected.
+     *  It retrieves the action to execute from the Lua module with the given option name.
+     *  It retrieves the last application on the foreground, brings it to back to the foreground and executes the action on it.
+     *  It return true when successful.
+     */
+    bool handle(const QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/) const override;
+
 private:
     /*! \brief This function translates a keyname to the Linux OS representation.*/
-    static int lookupKey(QString keyname /*!< A QString reference to the keyname to be found. */);
+    static int lookupKey(const QString keyname /*!< A QString reference to the keyname to be found. */);
 
     /*! \brief This function creates a fake keypressevent and send it.*/
-    static void parseKey(QStringList hotkey);
+    static void parseKey(const QStringList hotkey);
 
     /*! \brief This function allows the Lua module to send a key sequence to the OS.
      *
@@ -62,20 +71,13 @@ protected:
     /*! \brief This function retrieves all info from the current active window.*/
     void retrieveFocusWindowInfo() override;
     /*! \brief This function returns the previously active window to the foreground.*/
-    void restoreFocusWindow() override;
+    void restoreFocusWindow() const override;
     /*! \brief This function closes the Lua interpreter.*/
-    void close() override;
+    void close() const override;
 
 public slots:
-    /*! \brief This function handles a selected piemenu option.
-     *
-     *  This function is called when an option in the piemenu is selected.
-     *  It retrieves the action to execute from the Lua module with the given option name.
-     *  It retrieves the last application on the foreground, brings it to back to the foreground and executes the action on it.
-     *  It return true when successful.
-     */
-    virtual bool handle(QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/);
-
+    /*! \brief A simple slot wrapper for the handle function to simplify using this both on a slot and out of it. */
+    virtual bool handleKeyPress(const QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/) const;
 };
 
 #endif // Q_OS_LINUX

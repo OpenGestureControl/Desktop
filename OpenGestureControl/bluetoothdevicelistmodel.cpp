@@ -35,7 +35,7 @@ QHash<int, QByteArray> BluetoothDeviceListModel::roleNames() const {
     return roles;
 }
 
-QVariant BluetoothDeviceListModel::data(const QModelIndex &index, int role) const
+QVariant BluetoothDeviceListModel::data(const QModelIndex &index, const int role) const
 {
     if (!index.isValid() || index.row() < 0 || index.row() >= rowCount())
         return QVariant();
@@ -56,7 +56,7 @@ QVariant BluetoothDeviceListModel::data(const QModelIndex &index, int role) cons
     }
 }
 
-BluetoothDevice* BluetoothDeviceListModel::getDevice(QString deviceAddress)
+BluetoothDevice* BluetoothDeviceListModel::getDevice(const QString deviceAddress)
 {
     for (int i = 0; i < m_data.size(); i++)
     {
@@ -84,9 +84,37 @@ bool BluetoothDeviceListModel::addDevice(BluetoothDevice *device)
 
 void BluetoothDeviceListModel::clear()
 {
+    this->clearActive();
+
     beginRemoveRows(QModelIndex(), 0, m_data.size());
 
     m_data.clear();
 
     endRemoveRows();
+}
+
+void BluetoothDeviceListModel::setActive(BluetoothDevice *device)
+{
+    if (this->activeDevice) {
+        this->activeDevice->setActive(false);
+    }
+
+    device->setActive(true);
+    this->activeDevice = device;
+}
+
+void BluetoothDeviceListModel::clearActive()
+{
+    if (this->activeDevice) {
+        this->activeDevice->setActive(false);
+    }
+}
+
+BluetoothDevice* BluetoothDeviceListModel::getActive()
+{
+    if (this->activeDevice) {
+        return this->activeDevice;
+    }
+
+    return nullptr;
 }

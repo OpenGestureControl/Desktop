@@ -40,10 +40,19 @@ public:
     explicit AbstractCallbackHandler(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
 
     /*! \brief This function initializes the callbackhandler for usage of Lua. */
-    bool init(QDir modulePath);
+    bool init(const QDir modulePath);
+
+    /*! \brief This function handles a selected piemenu option.
+     *
+     *  This function is called when an option in the piemenu is selected.
+     *  It retrieves the action to execute from the Lua module with the given option name.
+     *  It retrieves the last application on the foreground, brings it to back to the foreground and executes the action on it.
+     *  It return true when successful.
+     */
+    virtual bool handle(const QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/) const = 0;
 
     /*! \brief This function returns all options defined within the active Lua module.*/
-    ModuleOptionsListModel* getOptions();
+    ModuleOptionsListModel* getOptions() const;
 
     bool initialized = false;   /*!< A boolean stating if the callbackhandler initialized correctly. */
     QString exeTitle;           /*!< A QString reference to the name of the last application executable on the foreground. */
@@ -54,9 +63,9 @@ protected:
     /*! \brief This function retrieves all info from the current active window.*/
     virtual void retrieveFocusWindowInfo() = 0;
     /*! \brief This function returns the previously active window to the foreground.*/
-    virtual void restoreFocusWindow() = 0;
+    virtual void restoreFocusWindow() const = 0;
     /*! \brief This function closes the Lua interpreter.*/
-    virtual void close();
+    virtual void close() const;
 };
 
 #endif // ABSTRACTCALLBACKHANDLER_H

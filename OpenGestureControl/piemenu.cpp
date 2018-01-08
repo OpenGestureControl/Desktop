@@ -21,10 +21,10 @@
 */
 
 #include "piemenu.h"
+#include <QDebug>
 
 PieMenu::PieMenu(QObject *parent) : QObject(parent)
 {
-    this->engine.rootContext()->setContextProperty("applicationPath", "file://" + this->appPath + "/");
     this->engine.load(QUrl(QStringLiteral("qrc:/pieMenu.qml")));
     this->window = this->engine.rootObjects()[0];
 
@@ -32,7 +32,7 @@ PieMenu::PieMenu(QObject *parent) : QObject(parent)
     this->callbackHandler = NULL;
 }
 
-bool PieMenu::isOpen()
+bool PieMenu::isOpen() const
 {
     return this->window->property("visible").toBool();
 }
@@ -60,32 +60,33 @@ void PieMenu::open()
     this->callbackHandler = new LinuxCallbackHandler(modulePath);
 #endif // Q_OS_LINUX
 
-    if (this->activeCallbackConnection) {
-        disconnect(this->activeCallbackConnection);
-    }
-    this->activeCallbackConnection = connect(this->window, SIGNAL(optionSelected(QString)), callbackHandler, SLOT(handle(QString)));
-
-    ModuleOptionsListModel *moduleOptions = this->callbackHandler->getOptions();
-    if (moduleOptions->rowCount() == 0) {
+    this->moduleOptions = this->callbackHandler->getOptions();
+    if (this->moduleOptions->rowCount() == 0) {
         QString noOptionsMessage = QObject::tr("Could not find any actions for the active window. This may be a bug in the active module.");
         emit couldntOpenMenu(noOptionsMessage);
         return;
     }
 
-    this->engine.rootContext()->setContextProperty("moduleOptions", this->callbackHandler->getOptions());
+    this->engine.rootContext()->setContextProperty("moduleOptions", this->moduleOptions);
 
     this->window->setProperty("visible", true);
     ((QWindow*) this->window)->requestActivate();
 }
 
-void PieMenu::setActive(int degrees)
+void PieMenu::setActive(const int degrees) const
 {
+    qWarning() << degrees;
     QMetaObject::invokeMethod(this->window,
             "setActiveEntry",
             Q_ARG(QVariant, degrees));
 }
 
-void PieMenu::close()
+void PieMenu::close() const
 {
+    int activeId = this->window->property("activeEntry").toInt();
+    if (activeId != -1) {
+        QString activeName = moduleOptions->get(activeId)->name();
+        this->callbackHandler->handle(activeName);
+    }
     this->window->setProperty("visible", false);
 }

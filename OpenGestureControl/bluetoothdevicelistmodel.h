@@ -52,16 +52,17 @@ public:
 
     /*! \brief This function returns the amount of BluetoothDevice found after scanning.*/
     int rowCount(const QModelIndex & = QModelIndex()) const override { return m_data.count(); }
+
     /*! \brief This function returns the data stored under the given role for the item referred to by the index.
      *
      *  This function is required to be implemented in order to inherit from QAbstractListModel.
      */
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QVariant data(const QModelIndex &index, const int role = Qt::DisplayRole) const override;
 
     /*! \brief This function returns the BluetoothDevice entry at the given index.*/
-    Q_INVOKABLE BluetoothDevice* get(int index) const { return m_data.at(index); }
+    Q_INVOKABLE BluetoothDevice* get(const int index) const { return m_data.at(index); }
     /*! \brief This function returns the BluetoothDevice referred to by the device adress.*/
-    BluetoothDevice* getDevice(QString deviceAddress);
+    BluetoothDevice* getDevice(const QString deviceAddress);
 
     /*! \brief This function adds an BluetoothDevice object to the list of device.
      *
@@ -71,6 +72,9 @@ public:
     /*! \brief This function removes all BluetoothDevice objects from the list.*/
     void clear();
 
+    void setActive(BluetoothDevice *device);
+    void clearActive();
+    BluetoothDevice* getActive();
 
 signals:
     /*! \brief This signal fires when addDevice is finished.*/
@@ -79,6 +83,7 @@ signals:
 protected:
     /*! \brief This function creates and returns a hashmap with rolenames required by Qt to work.*/
     QHash<int, QByteArray> roleNames() const override;
+    BluetoothDevice *activeDevice = nullptr;
 
 private:
     QList<BluetoothDevice*> m_data; /*!< \brief An QList reference to the menu options pointers from the piemenu. */

@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
     BluetoothManager *bluetoothManager = new BluetoothManager();
     pieMenu->connect(bluetoothManager, SIGNAL(buttonPressed()), pieMenu, SLOT(open()));
     pieMenu->connect(bluetoothManager, SIGNAL(buttonReleased()), pieMenu, SLOT(close()));
+    pieMenu->connect(bluetoothManager, SIGNAL(degreesMoved(int)), pieMenu, SLOT(setActive(int)));
 
 #ifdef Q_OS_WIN32
     KeyBoardInput keyboardinput(&pieMenu);

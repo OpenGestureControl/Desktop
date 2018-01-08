@@ -37,7 +37,7 @@ LinuxCallbackHandler::LinuxCallbackHandler(QDir modulePath, QObject *parent) : A
     }
 }
 
-extern "C" int LinuxCallbackHandler::ModuleHelperSendKeyboardKey(lua_State* L)
+extern "C" int LinuxCallbackHandler::ModuleHelperSendKeyboardKey(lua_State *L)
 {
   const char *hotkey = lua_tostring(L, 1); // First argument
   std::string hotkeystring(hotkey);
@@ -57,7 +57,7 @@ extern "C" int LinuxCallbackHandler::ModuleHelperSendKeyboardKey(lua_State* L)
   return 0; // Count of returned values
 }
 
-void LinuxCallbackHandler::parseKey(QStringList hotkey)
+void LinuxCallbackHandler::parseKey(const QStringList hotkey)
 {
     XKeyEvent event;
 
@@ -103,7 +103,12 @@ void LinuxCallbackHandler::parseKey(QStringList hotkey)
     }
 }
 
-bool LinuxCallbackHandler::handle(QString optionName)
+bool LinuxCallbackHandler::handleKeyPress(const QString optionName) const
+{
+    return LinuxCallbackHandler::handle(optionName);
+}
+
+bool LinuxCallbackHandler::handle(const QString optionName) const
 {
     qWarning() << optionName;
 
@@ -125,7 +130,6 @@ bool LinuxCallbackHandler::handle(QString optionName)
         return false;
     }
 
-    // TODO change this
     LinuxCallbackHandler::close();
     return true;
 }
@@ -148,20 +152,20 @@ void LinuxCallbackHandler::retrieveFocusWindowInfo()
 
     // Retrieve window name //
     XClassHint classProp;
-    XGetClassHint(XDisplay, (LastProcess -1), &classProp); // -1 required because Linux is weird like that, -1 will cause error for Qt itself but w/e
+    XGetClassHint(XDisplay, (LastProcess -1), &classProp); // -1 required because Ubuntu is weird like that, -1 will cause error for Qt itself but w/e
     this->exeTitle = classProp.res_class;
 
     qWarning() << classProp.res_class << " : " << classProp.res_name << endl;
 }
 
-void LinuxCallbackHandler::restoreFocusWindow()
+void LinuxCallbackHandler::restoreFocusWindow() const
 {
     //XRaiseWindow(XDisplay, LastProcess); // currently does not work
     int revert = 0;
     XSetInputFocus(XDisplay, LastProcess, revert, CurrentTime);
 }
 
-void LinuxCallbackHandler::close()
+void LinuxCallbackHandler::close() const
 {
     AbstractCallbackHandler::close();
     XCloseDisplay(XDisplay); // Close link to X display server

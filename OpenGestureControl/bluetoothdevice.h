@@ -25,6 +25,9 @@
 
 #include <QBluetoothAddress>
 #include <QBluetoothDeviceInfo>
+#include <QBluetoothServiceDiscoveryAgent>
+#include <QDataStream>
+#include <QLowEnergyController>
 #include <QObject>
 #include <QString>
 #include <QVariant>
@@ -67,18 +70,46 @@ public:
     /*! \brief A setter function to set the device active.*/
     void setActive(const bool value);
 
-private:
+    bool isConnected() const { return this->lowEnergyController->state() == QLowEnergyController::ConnectedState; }
 
+    short shortFromLittleEndianBytes(const char bytes[]) const;
+    void lowPass(const float input[], float output[]) const;
+
+private:
     QBluetoothDeviceInfo m_deviceInfo; /*! \brief A QBluetoothDeviceInfo reference to the Qt bluetooth class.*/
+    QLowEnergyService *accelerometer, *button;
+    QLowEnergyController *lowEnergyController;
     bool m_active = false; /*! \brief A boolean reference to indicate whether or not this device is active.*/
+    int connectionProgress = 0;
+
+    float accelInput[3];
+    float accelOutput[3];
+    const float ALPHA = 0.15f;
 
 signals:
     /*! \brief This signal fires when a new QBluetoothDeviceInfo class is set.*/
-    void deviceInfoChanged();
+    void deviceInfoChanged() const;
     /*! \brief This signal fires when when this device changes it's active boolean.*/
-    void activeChanged();
+    void activeChanged() const;
+    void discoveryFailed(const QString reason) const;
+    void characteristicBindingFailed(const QString reason) const;
+
+    void connected() const;
+    void disconnected() const;
+
+    void buttonPressed() const;
+    void buttonReleased() const;
+    void degreesMoved(const int degrees) const;
+
+    void lowEnergyControllerError(const QLowEnergyController::Error error) const;
 
 public slots:
+    void lowEnergyControllerConnected() const;
+    void discoveryFinished();
+    void accelerometerServiceStateChanged(const QLowEnergyService::ServiceState state);
+    void accelerometerDataChanged(const QLowEnergyCharacteristic characteristic, QByteArray data);
+    void buttonServiceStateChanged(const QLowEnergyService::ServiceState state);
+    void buttonDataChanged(const QLowEnergyCharacteristic characteristic, const QByteArray data) const;
 };
 
 #endif // BLUETOOTHDEVICE_H

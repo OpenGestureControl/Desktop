@@ -13,20 +13,20 @@ class SystemTray : public QObject
 
 public:
     explicit SystemTray(QObject *parent = 0);
-    void show();
+    void show() const;
 
 private:
     QSystemTrayIcon *tray;
     QMenu *trayMenu;
 
 signals:
-    void menuOpenClicked();
+    void menuOpenClicked() const;
 
 public slots:
-    void showMessage(QString message);
+    void showMessage(const QString message) const;
 
 private slots:
-    void menuActionClicked(QAction* action);
+    void menuActionClicked(const QAction* action) const;
 };
 
 #endif // SYSTEMTRAY_H

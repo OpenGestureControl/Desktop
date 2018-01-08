@@ -22,7 +22,7 @@
 
 #include "bluetoothmanager.h"
 
-BluetoothManager::BluetoothManager(QObject *parent) : QObject(parent)
+BluetoothManager::BluetoothManager(QObject *parent) : QObject(parent), bluetoothDeviceDiscoveryAgent()
 {
     this->bluetoothDevices = new BluetoothDeviceListModel();
     this->engine.rootContext()->setContextProperty("bluetoothDevices", this->bluetoothDevices);
@@ -41,219 +41,95 @@ BluetoothManager::BluetoothManager(QObject *parent) : QObject(parent)
     connect(this->window, SIGNAL(forgetRequest(QString)), this, SLOT(forgetDevice(QString)));
 }
 
-bool BluetoothManager::isUIOpen()
+bool BluetoothManager::isUIOpen() const
 {
     return this->window->property("visible").toBool();
 }
 
-void BluetoothManager::openUI()
+void BluetoothManager::openUI() const
 {
     this->window->setProperty("visible", true);
 }
 
-void BluetoothManager::closeUI()
+void BluetoothManager::closeUI() const
 {
     this->window->setProperty("visible", false);
 }
 
 void BluetoothManager::scanForDevices()
 {
-    if(this->lowEnergyController) {
-        this->lowEnergyController->disconnectFromDevice();
-        delete this->lowEnergyController;
-        this->lowEnergyController = nullptr;
-    }
-
     this->window->setProperty("status", "SCANNING");
     this->bluetoothDevices->clear();
     this->bluetoothDeviceDiscoveryAgent->start();
 }
 
-void BluetoothManager::connectToDevice(QString deviceAddress)
+void BluetoothManager::connectToDevice(const QString deviceAddress)
 {
-    qWarning() << "Disconnect existing device";
-    if (this->lowEnergyController) {
-        this->connectingTo->setActive(false);
-        this->lowEnergyController->disconnectFromDevice();
-        delete this->lowEnergyController;
-        this->lowEnergyController = nullptr;
-    }
     qWarning() << deviceAddress;
-    this->connectionProgress = 0;
     this->connectingTo = bluetoothDevices->getDevice(deviceAddress);
-    this->window->setProperty("status", "CONNECTING");
-    qWarning() << "Creating Low Energy Controller";
-    this->lowEnergyController = QLowEnergyController::createCentral(this->connectingTo->deviceInfo());
-    qWarning() << "Workaround for failing to connect";
-    lowEnergyController->setRemoteAddressType(QLowEnergyController::RandomAddress);
-    qWarning() << "Preparing connecting to device";
-    connect(lowEnergyController, SIGNAL(connected()),
+    connect(this->connectingTo, SIGNAL(discoveryFailed(QString)),
+            this, SLOT(error(QString)));
+    connect(this->connectingTo, SIGNAL(characteristicBindingFailed(QString)),
+            this, SLOT(error(QString)));
+    connect(this->connectingTo, SIGNAL(connected()),
             this, SLOT(connected()));
-    connect(lowEnergyController, SIGNAL(disconnected()),
+    connect(this->connectingTo, SIGNAL(disconnected()),
             this, SLOT(disconnected()));
-    connect(lowEnergyController, SIGNAL(error(QLowEnergyController::Error)),
+    connect(this->connectingTo, SIGNAL(lowEnergyControllerError(QLowEnergyController::Error)),
             this, SLOT(error(QLowEnergyController::Error)));
-    qWarning() << "Connecting to device";
-    lowEnergyController->connectToDevice();
+    this->bluetoothDevices->setActive(this->connectingTo);
+    this->window->setProperty("status", "CONNECTING");
 }
 
-void BluetoothManager::forgetDevice(QString deviceAddress)
+void BluetoothManager::forgetDevice(const QString deviceAddress)
 {
-    bluetoothDevices->getDevice(deviceAddress)->setActive(false);
+    this->bluetoothDevices->clearActive();
     this->window->setProperty("status", "IDLE");
-    lowEnergyController->disconnectFromDevice();
     // Hack because the Connect/Forget buttons don't work well
     this->scanForDevices();
 }
 
-void BluetoothManager::deviceDiscovered(QBluetoothDeviceInfo deviceInfo)
+void BluetoothManager::deviceDiscovered(const QBluetoothDeviceInfo deviceInfo) const
 {
     bluetoothDevices->addDevice(new BluetoothDevice(deviceInfo));
 }
 
-void BluetoothManager::discoveryFinished()
+void BluetoothManager::connected() const
 {
-     qWarning() << "Discovery finished";
-     qWarning() << "Preparing services we want";
-     if (!(this->accelerometer = lowEnergyController->createServiceObject(QBluetoothUuid(QString("{e95d0753-251d-470a-a062-fa1922dfa9a8}"))))) {
-         qWarning() << "Could not find the accelerometer service!";
-         this->window->setProperty("status", "IDLE");
-         return;
-     }
-
-     if (!(this->button = lowEnergyController->createServiceObject(QBluetoothUuid(QString("{e95d9882-251d-470a-a062-fa1922dfa9a8}"))))) {
-         qWarning() << "Could not find the button service!";
-         this->window->setProperty("status", "IDLE");
-         return;
-     }
-
-     connect(this->accelerometer, SIGNAL(stateChanged(QLowEnergyService::ServiceState)),
-            this, SLOT(accelerometerServiceStateChanged(QLowEnergyService::ServiceState)));
-     connect(this->button, SIGNAL(stateChanged(QLowEnergyService::ServiceState)),
-             this, SLOT(buttonServiceStateChanged(QLowEnergyService::ServiceState)));
-
-     this->accelerometer->discoverDetails();
-     this->button->discoverDetails();
-}
-
-void BluetoothManager::accelerometerServiceStateChanged(QLowEnergyService::ServiceState state)
-{
-    qWarning() << state;
-    if (state == QLowEnergyService::ServiceDiscovered) {
-        qWarning() << "Accelerometer service is ready";
-        QLowEnergyCharacteristic accelerometerData = this->accelerometer->characteristic(QBluetoothUuid(QString("{e95dca4b-251d-470a-a062-fa1922dfa9a8}")));
-        QLowEnergyDescriptor notification = accelerometerData.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration);
-
-        if (!accelerometerData.isValid()) {
-            qWarning() << "Accelerometer data not valid!";
-            this->window->setProperty("status", "IDLE");
-            return;
-        }
-
-        connect(this->accelerometer, SIGNAL(characteristicChanged(QLowEnergyCharacteristic, QByteArray)),
-                this, SLOT(accelerometerDataChanged(QLowEnergyCharacteristic, QByteArray)));
-
-        // Enable notification
-        this->accelerometer->writeDescriptor(notification, QByteArray::fromHex("0100"));
-
-        this->connectionProgress++;
-
-        if (this->connectionProgress == 2) {
-            this->connectingTo->setActive(true);
-            this->window->setProperty("status", "CONNECTED");
-        }
-    }
-}
-
-void BluetoothManager::accelerometerDataChanged(QLowEnergyCharacteristic characteristic, QByteArray data)
-{
-    if (characteristic.uuid() != QBluetoothUuid(QString("{e95dca4b-251d-470a-a062-fa1922dfa9a8}")))
-    {
-        qWarning() << "Not the characteristic we want for accelerometer, ignoring";
-        return;
-    }
-    QDataStream ds(data);
-    short x;
-    ds >> x;
-    short y;
-    ds >> y;
-    short z;
-    ds >> z;
-    qWarning() << "Accelerometer:" << x/1000 << y/1000 << z/1000;
-}
-
-void BluetoothManager::buttonServiceStateChanged(QLowEnergyService::ServiceState state)
-{
-    qWarning() << state;
-    if (state == QLowEnergyService::ServiceDiscovered) {
-        qWarning() << "Button service is ready";
-        QLowEnergyCharacteristic buttonData = this->button->characteristic(QBluetoothUuid(QString("{e95dda90-251d-470a-a062-fa1922dfa9a8}")));
-        QLowEnergyDescriptor notification = buttonData.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration);
-
-        if (!buttonData.isValid()) {
-            qWarning() << "Button data not valid!";
-            this->window->setProperty("status", "IDLE");
-            return;
-        }
-
-        connect(this->button, SIGNAL(characteristicChanged(QLowEnergyCharacteristic, QByteArray)),
-                this, SLOT(buttonDataChanged(QLowEnergyCharacteristic, QByteArray)));
-
-        // Enable notification
-        this->button->writeDescriptor(notification, QByteArray::fromHex("0100"));
-
-        this->connectionProgress++;
-
-        if (this->connectionProgress == 2) {
-            this->connectingTo->setActive(true);
-            this->window->setProperty("status", "CONNECTED");
-        }
-    }
-}
-
-void BluetoothManager::buttonDataChanged(QLowEnergyCharacteristic characteristic, QByteArray data)
-{
-    if (characteristic.uuid() != QBluetoothUuid(QString("{e95dda90-251d-470a-a062-fa1922dfa9a8}")))
-    {
-        qWarning() << "Not the characteristic we want for button, ignoring";
-        return;
-    }
-    qWarning() << "Button:" << data;
-    if (data == "\x00") {
-        emit buttonReleased();
-    } else if (data == "\x01") {
-        emit buttonPressed();
-    }
-}
-
-void BluetoothManager::connected()
-{
-    qWarning() << "Preparing service discovery";
-    connect(lowEnergyController, SIGNAL(discoveryFinished()),
-            this, SLOT(discoveryFinished()));
-    qWarning() << "Starting service discovery";
-    lowEnergyController->discoverServices();
+    connect(this->connectingTo, SIGNAL(buttonPressed()),
+            this, SIGNAL(buttonPressed()));
+    connect(this->connectingTo, SIGNAL(buttonReleased()),
+            this, SIGNAL(buttonReleased()));
+    connect(this->connectingTo, SIGNAL(degreesMoved(int)),
+            this, SIGNAL(degreesMoved(int)));
+    this->window->setProperty("status", "CONNECTED");
 }
 
 void BluetoothManager::disconnected()
 {
-    this->connectingTo->setActive(false);
+    this->bluetoothDevices->clearActive();
     this->window->setProperty("status", "IDLE");
     // Hack because the Connect/Forget buttons don't work well
     this->scanForDevices();
 }
 
-void BluetoothManager::error(QLowEnergyController::Error error)
+void BluetoothManager::error(const QString reason)
 {
-    qWarning() << error;
-    this->connectingTo->setActive(false);
+    qWarning() << reason;
+    this->bluetoothDevices->clearActive();
     this->window->setProperty("status", "IDLE");
     // Hack because the Connect/Forget buttons don't work well
     this->scanForDevices();
 }
 
-void BluetoothManager::scanFinished()
+void BluetoothManager::error(QLowEnergyController::Error reason)
 {
-    if (!this->lowEnergyController || this->lowEnergyController->state() == QLowEnergyController::UnconnectedState)
+    this->error(reason);
+}
+
+void BluetoothManager::scanFinished() const
+{
+    BluetoothDevice *activeDevice = this->bluetoothDevices->getActive();
+    if (!activeDevice || !activeDevice->isConnected())
         this->window->setProperty("status", "IDLE");
 }

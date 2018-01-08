@@ -25,9 +25,9 @@
 
 #include <QAbstractItemModel>
 #include <QBluetoothDeviceDiscoveryAgent>
-#include <QBluetoothServiceDiscoveryAgent>
 #include <QLowEnergyController>
 #include <QDataStream>
+#include <QtMath>
 #include <QObject>
 #include <QString>
 #include <QQmlApplicationEngine>
@@ -39,48 +39,42 @@
 
 /*! \brief A class which manages all known Bluetooth devices.
  *
- *  Doesn't do much yet.
+ *  This class retains a list of previously connected Bluetooth devices for easy managing.
  */
-//This class retains a list of previously connected Bluetooth devices for easy managing.
+
 class BluetoothManager : public QObject
 {
     Q_OBJECT
 
 public:
     explicit BluetoothManager(QObject *parent = 0);
-    void openUI();
-    void closeUI();
+    void openUI() const;
+    void closeUI() const;
 
-    bool isUIOpen();
+    bool isUIOpen() const;
 
 private:
     QBluetoothDeviceDiscoveryAgent *bluetoothDeviceDiscoveryAgent;
-    QLowEnergyService *accelerometer, *button;
-    QLowEnergyController *lowEnergyController;
-    QObject *window;
     QQmlApplicationEngine engine;
     BluetoothDeviceListModel *bluetoothDevices;
-    int connectionProgress;
     BluetoothDevice *connectingTo;
+    QObject *window;
 
 signals:
-    void buttonPressed();
-    void buttonReleased();
+    void buttonPressed() const;
+    void buttonReleased() const;
+    void degreesMoved(const int degrees) const;
 
 public slots:
     void scanForDevices();
-    void connectToDevice(QString deviceAddress);
-    void forgetDevice(QString deviceAddress);
-    void connected();
+    void connectToDevice(const QString deviceAddress);
+    void forgetDevice(const QString deviceAddress);
+    void connected() const;
     void disconnected();
-    void error(QLowEnergyController::Error error);
-    void deviceDiscovered(QBluetoothDeviceInfo deviceInfo);
-    void scanFinished();
-    void discoveryFinished();
-    void accelerometerServiceStateChanged(QLowEnergyService::ServiceState state);
-    void accelerometerDataChanged(QLowEnergyCharacteristic characteristic, QByteArray data);
-    void buttonServiceStateChanged(QLowEnergyService::ServiceState state);
-    void buttonDataChanged(QLowEnergyCharacteristic characteristic, QByteArray data);
+    void error(const QString reason);
+    void error(QLowEnergyController::Error reason);
+    void deviceDiscovered(const QBluetoothDeviceInfo deviceInfo) const;
+    void scanFinished() const;
 };
 
 #endif // BLUETOOTHMANAGER_H

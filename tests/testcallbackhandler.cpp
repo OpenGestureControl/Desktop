@@ -24,7 +24,8 @@
 
 void TestCallbackHandler::GetCorrectOptionsFromLua() {
 
-    QDir *dir = new QDir("../tests/Test-module");
+    QDir *dir = new QDir(QDir::current());
+    dir->cd("Test-module");
     // Arrange
 #ifdef Q_OS_LINUX
     LinuxCallbackHandler *handler = new LinuxCallbackHandler(*dir);

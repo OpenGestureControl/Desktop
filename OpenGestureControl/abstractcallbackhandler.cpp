@@ -16,7 +16,7 @@ bool AbstractCallbackHandler::init(const QDir modulePath)
     qWarning() << "Return lua values";
     int status = luaL_dofile(L, modulePath.filePath("main.lua").toStdString().c_str());
     if (status) {
-        fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
+        qWarning() << "Couldn't load file: " << lua_tostring(L, -1);
         return false;
     }
 
@@ -37,7 +37,7 @@ ModuleOptionsListModel *AbstractCallbackHandler::getOptions() const
     // Call return_options
     int result = lua_pcall(L, 0, 1, 0);
     if (result) {
-        fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
+        qWarning() << "Failed to run script" << lua_tostring(L, -1);
         return moduleOptions;
     }
 

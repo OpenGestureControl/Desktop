@@ -51,38 +51,41 @@ void TestCallbackHandler::GetCorrectOptionsFromLua() {
 }
 
 void TestCallbackHandler::HandleOptionChoiceCorrectly() {
-/*
     // Arrange
+    QDir *dir = new QDir(QDir::current());
+    dir->cd("Test-module");
+
 #ifdef Q_OS_LINUX
-    LinuxCallbackHandler *handler = new LinuxCallbackHandler();
+    LinuxCallbackHandler *handler = new LinuxCallbackHandler(*dir);
 #endif
 #ifdef Q_OS_WIN32
-    WindowsCallbackHandler *handler = new WindowsCallbackHandler();
+    WindowsCallbackHandler *handler = new WindowsCallbackHandler(*dir);
 #endif
     bool result;
 
     // Act
-    result = handler->handle(QString("Open"));
+    result = handler->handle(QString("Test1"));
 
     // Assert
     QVERIFY(result == true);
 }
 
 void TestCallbackHandler::HandleOptionChoiceIncorrectly() {
-
     // Arrange
+    QDir *dir = new QDir(QDir::current());
+    dir->cd("Test-module");
+
 #ifdef Q_OS_LINUX
-    LinuxCallbackHandler *handler = new LinuxCallbackHandler();
+    LinuxCallbackHandler *handler = new LinuxCallbackHandler(*dir);
 #endif
 #ifdef Q_OS_WIN32
-    WindowsCallbackHandler *handler = new WindowsCallbackHandler();
+    WindowsCallbackHandler *handler = new WindowsCallbackHandler(*dir);
 #endif
     bool result;
 
     // Act
-    result = handler->handle(QString("incorrect"));
+    result = handler->handle(QString("nonexistant"));
 
     // Assert
     QVERIFY(result == false);
-*/
 }

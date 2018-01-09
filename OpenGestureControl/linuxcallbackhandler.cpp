@@ -126,7 +126,7 @@ bool LinuxCallbackHandler::handle(const QString optionName) const
     // Call return_options
     int result = lua_pcall(L, 1, 0, 0);
     if (result) {
-        fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
+        qWarning() << "Failed to run script" << lua_tostring(L, -1);
         return false;
     }
 

@@ -38,4 +38,5 @@ private slots:
     void GetCorrectOptionsFromLua();
     void HandleOptionChoiceCorrectly();
     void HandleOptionChoiceIncorrectly();
+    void ParseBadModule();
 };

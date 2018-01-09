@@ -23,10 +23,10 @@
 #include "testcallbackhandler.h"
 
 void TestCallbackHandler::GetCorrectOptionsFromLua() {
-
+    // Arrange
     QDir *dir = new QDir(QDir::current());
     dir->cd("Test-module");
-    // Arrange
+
 #ifdef Q_OS_LINUX
     LinuxCallbackHandler *handler = new LinuxCallbackHandler(*dir);
 #endif
@@ -88,4 +88,25 @@ void TestCallbackHandler::HandleOptionChoiceIncorrectly() {
 
     // Assert
     QVERIFY(result == false);
+}
+
+void TestCallbackHandler::ParseBadModule() {
+    // Arrange
+    QDir *dir = new QDir(QDir::current());
+    dir->cd("Test-bad-module");
+
+#ifdef Q_OS_LINUX
+    LinuxCallbackHandler *handler = new LinuxCallbackHandler(*dir);
+#endif
+#ifdef Q_OS_WIN32
+    WindowsCallbackHandler *handler = new WindowsCallbackHandler(*dir);
+#endif
+
+    ModuleOptionsListModel * result;
+
+    // Act
+    result = handler->getOptions();
+
+    // Assert
+    QVERIFY(result->children().length() == 0);
 }

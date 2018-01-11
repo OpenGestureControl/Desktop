@@ -9,10 +9,8 @@ WindowInformation::WindowInformation(QObject *parent) : QObject(parent)
 // XLib fatal error catcher
 int catcher( Display *disp, XErrorEvent *xe )
 {
-    if(xe->error_code == 3) {
-        qWarning() << "Bad window error, probably from Qt window on foreground";
-        errorThrown = true;
-    }
+    qWarning() << "Error in X:" << xe->error_code;
+    errorThrown = true;
     return 0;
 }
 #endif // Q_OS_LINUX

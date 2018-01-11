@@ -44,6 +44,7 @@ void PieMenu::open()
 
     if(this->callbackHandler) {
         delete this->callbackHandler;
+        this->callbackHandler = NULL;
     }
 
     this->moduleManager = new ModuleManager();
@@ -86,7 +87,8 @@ void PieMenu::close() const
     int activeId = this->window->property("activeEntry").toInt();
     if (activeId != -1) {
         QString activeName = moduleOptions->get(activeId)->name();
-        this->callbackHandler->handle(activeName);
+        if (this->callbackHandler)
+            this->callbackHandler->handle(activeName);
     }
     this->window->setProperty("visible", false);
 }

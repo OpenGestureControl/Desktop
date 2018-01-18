@@ -6,7 +6,7 @@ The OpenGestureControl project is made possible by [ICT Group](https://ict.eu/).
 OpenGestureControl Desktop is an application for Linux which interacts with the BBC micro:bit to give handprothesis users the ability to control their desktop computer using gestures.
 
 ## How to use
-Ensure you have at least one module (see [our GitHub org](https://github.com/OpenGestureControl/)) in ``~/.config/opengesturecontrol/modules/<module_name>``. Flash our firmware onto a micro:bit (repo coming soon) and connect the micro:bit using the Bluetooth dialog. Hold button A to open the pie menu. At this point, move your microbit in the direction of the option you want to select. Release button A to close the pie menu.
+Ensure you have at least one module (see [our GitHub org](https://github.com/OpenGestureControl/)) in ``~/.config/opengesturecontrol/modules/<module_name>``. Flash [our firmware](https://github.com/OpenGestureControl/micro-bit) onto a micro:bit and connect the micro:bit using the Bluetooth dialog. Hold button A to open the pie menu. At this point, move your microbit in the direction of the option you want to select. Release button A to close the pie menu.
 
 ## Module development
 See [MODULE_DEVELOPMENT.md](MODULE_DEVELOPMENT.md).

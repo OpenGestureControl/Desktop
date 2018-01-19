@@ -36,7 +36,7 @@ private:
 #endif // Q_OS_LINUX
 #ifdef Q_OS_WIN32
     HWND FocusWindow; /*!< A HWND (A Windows window handle) reference to the last foreground application. */
-    HANDLE HProcess;
+    HANDLE HProcess; /*!< A HANDLE (A Windows process handle) reference to the last foreground process. */
 #endif // Q_OS_WIN32
 
 signals:

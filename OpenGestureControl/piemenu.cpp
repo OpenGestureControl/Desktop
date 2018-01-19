@@ -47,6 +47,8 @@ void PieMenu::open()
         this->callbackHandler = NULL;
     }
 
+    if(this->moduleManager)
+        delete this->moduleManager;
     this->moduleManager = new ModuleManager();
     QDir modulePath = this->moduleManager->getModule();
     if (!this->moduleManager->errorString().isEmpty()) {

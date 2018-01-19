@@ -76,9 +76,9 @@ public:
     void lowPass(const float input[], float output[]) const;
 
 private:
-    QBluetoothDeviceInfo m_deviceInfo; /*! \brief A QBluetoothDeviceInfo reference to the Qt bluetooth class.*/
+    QBluetoothDeviceInfo m_deviceInfo = QBluetoothDeviceInfo(); /*! \brief A QBluetoothDeviceInfo reference to the Qt bluetooth class.*/
     QLowEnergyService *accelerometer, *button;
-    QLowEnergyController *lowEnergyController;
+    QLowEnergyController *lowEnergyController = nullptr;
     bool m_active = false; /*! \brief A boolean reference to indicate whether or not this device is active.*/
     int connectionProgress = 0;
 

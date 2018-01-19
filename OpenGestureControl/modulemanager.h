@@ -25,6 +25,7 @@ public:
 
 private:
     QString eString;
+    WindowInformation *windowInformation = new WindowInformation();
 
 signals:
 

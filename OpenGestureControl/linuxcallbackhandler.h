@@ -67,6 +67,8 @@ private:
      */
     static int ModuleHelperSendKeyboardKey(lua_State* L /*!< An lua_State pointer to the active Lua instance (the module, the interpreter etc). */);
 
+    XClassHint *classProp = XAllocClassHint(); /*!<A variable to store the window information in */
+
 protected:
     /*! \brief This function retrieves all info from the current active window.*/
     void retrieveFocusWindowInfo() override;

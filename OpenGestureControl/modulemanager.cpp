@@ -6,12 +6,8 @@ ModuleManager::ModuleManager(QObject *parent) : QObject(parent)
 }
 
 QDir ModuleManager::getModule() {
-    QString windowTitle = WindowInformation().GetWindowTitle();
+    QString windowTitle = windowInformation->GetWindowTitle();
 
-    // TODO
-    // Check all files in modules map in config map
-    // Retrieve from each module the metadata file with applicable apps name in it
-    // Check title against each applicable apps name
     QDir dir = QDir::home();
     dir.mkpath(".config/opengesturecontrol/modules"); // Ensure module directory exists
     if (!dir.cd(".config/opengesturecontrol/modules")) {

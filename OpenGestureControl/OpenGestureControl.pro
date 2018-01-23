@@ -38,7 +38,8 @@ SOURCES += main.cpp \
     moduleoptionslistmodel.cpp \
     modulemanager.cpp \
     windowinformation.cpp \
-    systemtray.cpp
+    systemtray.cpp \
+    appswitcher.cpp
 
 RESOURCES += qml.qrc
 
@@ -92,7 +93,8 @@ HEADERS += \
     moduleoptionslistmodel.h \
     modulemanager.h \
     windowinformation.h \
-    systemtray.h
+    systemtray.h \
+    appswitcher.h
 
 DISTFILES += \
     browser.lua \

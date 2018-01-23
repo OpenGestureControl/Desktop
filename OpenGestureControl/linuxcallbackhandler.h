@@ -33,6 +33,9 @@
 #include <X11/Xutil.h>
 #undef Bool // Needed because of weird Xlib C library
 
+// TODO: Use boost::any or C++17 to make retrieveFocusWindowInfo() return all values, so they don't have to be defined like this
+// TODO: This class is unclean, many things shouldn't be static, but Lua seems to need it. Find a better way.
+
 static Display *XDisplay;  /*!< A Display (An Xlib X server handle) pointer to the Xlib X server. */
 static Window WinRoot;     /*!< A Window (An Xlib window handle) reference to the root window of the application. */
 static Window LastProcess; /*!< A Window (An Xlib window handle) reference to the last foreground application. */
@@ -41,6 +44,8 @@ class LinuxCallbackHandler : public AbstractCallbackHandler
 {
     Q_OBJECT
 public:
+    explicit LinuxCallbackHandler(QObject *parent = 0);
+
     explicit LinuxCallbackHandler(QDir modulePath, QObject *parent = 0);
 
     /*! \brief This function handles a selected piemenu option.
@@ -52,12 +57,12 @@ public:
      */
     bool handle(const QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/) const override;
 
-private:
-    /*! \brief This function translates a keyname to the Linux OS representation.*/
-    static int lookupKey(const QString keyname /*!< A QString reference to the keyname to be found. */);
+    /*! \brief This function handles a list of key combinations. */
+    static void sendKey(const QStringList hotkey);
 
-    /*! \brief This function creates a fake keypressevent and send it.*/
-    static void parseKey(const QStringList hotkey);
+private:
+    /*! \brief This function translates a keyname to the X11 representation.*/
+    static KeySym lookupKey(const QString keyname /*!< A QString reference to the keyname to be found. */);
 
     /*! \brief This function allows the Lua module to send a key sequence to the OS.
      *

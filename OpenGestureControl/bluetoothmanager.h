@@ -61,8 +61,12 @@ private:
     QObject *window;
 
 signals:
-    void buttonPressed() const;
-    void buttonReleased() const;
+    void buttonAPressed() const;
+    void buttonAReleased() const;
+    void buttonAHeld() const;
+    void buttonBPressed() const;
+    void buttonBReleased() const;
+    void buttonBHeld() const;
     void degreesMoved(const int degrees) const;
 
 public slots:

@@ -23,6 +23,11 @@
 #include "linuxcallbackhandler.h"
 
 #ifdef Q_OS_LINUX
+LinuxCallbackHandler::LinuxCallbackHandler(QObject *parent) : AbstractCallbackHandler(parent)
+{
+    LinuxCallbackHandler::retrieveFocusWindowInfo();
+}
+
 LinuxCallbackHandler::LinuxCallbackHandler(QDir modulePath, QObject *parent) : AbstractCallbackHandler(parent)
 {
     LinuxCallbackHandler::retrieveFocusWindowInfo();
@@ -53,12 +58,12 @@ extern "C" int LinuxCallbackHandler::ModuleHelperSendKeyboardKey(lua_State *L)
       stringList.append(QString(temp.c_str()));
   }
 
-  LinuxCallbackHandler::parseKey(stringList);
+  LinuxCallbackHandler::sendKey(stringList);
 
   return 0; // Count of returned values
 }
 
-void LinuxCallbackHandler::parseKey(const QStringList hotkey)
+void LinuxCallbackHandler::sendKey(const QStringList hotkey)
 {
     XKeyEvent event;
 
@@ -73,7 +78,6 @@ void LinuxCallbackHandler::parseKey(const QStringList hotkey)
     event.y_root      = 1;           // Coordinates relative to root
     event.same_screen = True;        // Same screen flag
     event.keycode     = 0;           // Which key to send
-    event.state       = 0;           // Key or button mask
     event.type        = KeyPress;    // Key press of release
     event.state       = 0;           // Modifier keys
 
@@ -139,8 +143,6 @@ void LinuxCallbackHandler::retrieveFocusWindowInfo()
 {
     // Obtain the X11 display.
     XDisplay = XOpenDisplay(NULL);
-    if(XDisplay == NULL)
-        qWarning() << "No X server connection established!";
 
     // Get the root window for the current display.
     WinRoot = XDefaultRootWindow(XDisplay);
@@ -172,9 +174,9 @@ void LinuxCallbackHandler::close() const
     XCloseDisplay(XDisplay); // Close link to X display server
 }
 
-int LinuxCallbackHandler::lookupKey(QString keyname)
+KeySym LinuxCallbackHandler::lookupKey(QString keyname)
 {
-    QMap<QString, int> lookupMap;
+    QMap<QString, KeySym> lookupMap;
     lookupMap["0"] = XK_0;
     lookupMap["1"] = XK_1;
     lookupMap["2"] = XK_2;

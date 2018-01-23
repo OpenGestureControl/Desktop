@@ -20,46 +20,35 @@
    SOFTWARE.
 */
 
-#include "testbluetoothdevicelistmodel.cpp"
-#include "testmoduleoptionslistmodel.cpp"
-#include "testcallbackhandler.h"
-#include "testpiemenu.h"
-#include "testwindowinformation.h"
-#include "testappswitcher.h"
+#ifndef APPSWITCHER_H
+#define APPSWITCHER_H
 
-int main(int argc, char **argv)
+#include <QObject>
+
+#include "windowscallbackhandler.h"
+#include "linuxcallbackhandler.h"
+
+class AppSwitcher : public QObject
 {
-   int status = 0;
+    Q_OBJECT
 
-   {
-      TestBluetoothDeviceListModel tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
+public:
+    /*! \brief The constructor.
+     *
+     *  This constructor instantiates this class.
+     */
+    explicit AppSwitcher(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
 
-   {
-      TestModuleOptionsModel tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
+public slots:
+    /*! \brief This function opens the appswitcher. */
+    void open() const;
 
-   {
-      TestCallbackHandler tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
+    /*! \brief This function closes the appswitcher. */
+    void close() const;
 
-   {
-      TestPieMenu tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
+    /*! \brief This function switches app. */
+    void switchApp() const;
 
-   {
-      TestWindowInformation tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
+};
 
-   {
-       TestAppSwitcher tc;
-       status |= QTest::qExec(&tc, argc, argv);
-   }
-
-   return status;
-}
+#endif // APPSWITCHER_H

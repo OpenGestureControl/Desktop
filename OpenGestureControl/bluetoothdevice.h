@@ -97,8 +97,12 @@ signals:
     void connected() const;
     void disconnected() const;
 
-    void buttonPressed() const;
-    void buttonReleased() const;
+    void buttonAPressed() const;
+    void buttonAReleased() const;
+    void buttonAHeld() const;
+    void buttonBPressed() const;
+    void buttonBReleased() const;
+    void buttonBHeld() const;
     void degreesMoved(const int degrees) const;
 
     void lowEnergyControllerError(const QLowEnergyController::Error error) const;

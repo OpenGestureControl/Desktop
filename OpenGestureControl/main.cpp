@@ -30,6 +30,7 @@
 #include "bluetoothmanager.h"
 #include "piemenu.h"
 #include "systemtray.h"
+#include "appswitcher.h"
 
 #ifdef Q_OS_WIN32
     #include "keyboardinput.h"
@@ -51,12 +52,18 @@ int main(int argc, char *argv[])
 
     PieMenu *pieMenu = new PieMenu();
     pieMenu->connect(pieMenu, SIGNAL(couldntOpenMenu(QString)), tray, SLOT(showMessage(QString)));
-    tray->connect(tray, SIGNAL(menuOpenClicked()), pieMenu, SLOT(open()));
+
+    AppSwitcher *appSwitcher = new AppSwitcher();
 
     BluetoothManager *bluetoothManager = new BluetoothManager();
-    pieMenu->connect(bluetoothManager, SIGNAL(buttonPressed()), pieMenu, SLOT(open()));
-    pieMenu->connect(bluetoothManager, SIGNAL(buttonReleased()), pieMenu, SLOT(close()));
+
+    pieMenu->connect(bluetoothManager, SIGNAL(buttonAPressed()), pieMenu, SLOT(open()));
+    pieMenu->connect(bluetoothManager, SIGNAL(buttonAReleased()), pieMenu, SLOT(close()));
     pieMenu->connect(bluetoothManager, SIGNAL(degreesMoved(int)), pieMenu, SLOT(setActive(int)));
+
+    appSwitcher->connect(bluetoothManager, SIGNAL(buttonBPressed()), appSwitcher, SLOT(open()));
+    appSwitcher->connect(bluetoothManager, SIGNAL(buttonBReleased()), appSwitcher, SLOT(close()));
+    appSwitcher->connect(bluetoothManager, SIGNAL(buttonBHeld()), appSwitcher, SLOT(switchApp()));
 
 #ifdef Q_OS_WIN32
     KeyBoardInput keyboardinput(&pieMenu);

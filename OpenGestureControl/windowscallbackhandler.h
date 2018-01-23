@@ -47,12 +47,12 @@ public:
      */
     virtual bool handle(const QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/) const override;
 
+    /*! \brief This function handles a list of key combinations. */
+    static void sendKey(QStringList hotkey);
+
 private:
     /*! \brief This function translates a keyname to the Windows OS representation.*/
     static WORD lookupKey(QString keyname /*!< A QString reference to the keyname to be found. */);
-
-    /*! \brief This function creates a fake keypressevent and send it.*/
-    static void parseKey(QStringList hotkey);
 
     /*! \brief This function allows the Lua module to send a key sequence to the OS.
      *

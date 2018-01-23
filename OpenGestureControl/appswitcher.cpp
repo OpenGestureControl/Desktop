@@ -20,46 +20,36 @@
    SOFTWARE.
 */
 
-#include "testbluetoothdevicelistmodel.cpp"
-#include "testmoduleoptionslistmodel.cpp"
-#include "testcallbackhandler.h"
-#include "testpiemenu.h"
-#include "testwindowinformation.h"
-#include "testappswitcher.h"
+#include "appswitcher.h"
 
-int main(int argc, char **argv)
+AppSwitcher::AppSwitcher(QObject *parent) : QObject(parent)
 {
-   int status = 0;
+}
 
-   {
-      TestBluetoothDeviceListModel tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
+void AppSwitcher::open() const
+{
+    QStringList stringList;
+    stringList.append(QString("alt"));
+#ifdef Q_OS_LINUX
+    LinuxCallbackHandler().sendKey(stringList);
+#endif // Q_OS_LINUX
+}
 
-   {
-      TestModuleOptionsModel tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
+void AppSwitcher::close() const
+{
+    QStringList stringList;
+    stringList.append(QString("alt"));
+#ifdef Q_OS_LINUX
+    LinuxCallbackHandler().sendKey(stringList);
+#endif // Q_OS_LINUX
+}
 
-   {
-      TestCallbackHandler tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
-
-   {
-      TestPieMenu tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
-
-   {
-      TestWindowInformation tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
-
-   {
-       TestAppSwitcher tc;
-       status |= QTest::qExec(&tc, argc, argv);
-   }
-
-   return status;
+void AppSwitcher::switchApp() const
+{
+    QStringList stringList;
+    stringList.append(QString("alt"));
+    stringList.append(QString("tab"));
+#ifdef Q_OS_LINUX
+    LinuxCallbackHandler().sendKey(stringList);
+#endif // Q_OS_LINUX
 }

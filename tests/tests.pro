@@ -40,12 +40,14 @@ HEADERS += ../OpenGestureControl/piemenu.h \
     ../OpenGestureControl/modulemanager.h \
     ../OpenGestureControl/moduleoptionslistmodel.h \
     ../OpenGestureControl/moduleoption.h \
-    ../OpenGestureControl/windowinformation.h \ # End of main project headers
+    ../OpenGestureControl/windowinformation.h \
+    ../OpenGestureControl/appswitcher.h \ # End of main project headers
     testbluetoothdevicelistmodel.h \
     testmoduleoptionsmodel.h \
     testcallbackhandler.h \
     testpiemenu.h \
-    testwindowinformation.h
+    testwindowinformation.h \
+    testappswitcher.h
 
 
 SOURCES += ../OpenGestureControl/piemenu.cpp \
@@ -59,13 +61,15 @@ SOURCES += ../OpenGestureControl/piemenu.cpp \
     ../OpenGestureControl/modulemanager.cpp \
     ../OpenGestureControl/moduleoptionslistmodel.cpp \
     ../OpenGestureControl/moduleoption.cpp \
-    ../OpenGestureControl/windowinformation.cpp \ # End of main project sources
+    ../OpenGestureControl/windowinformation.cpp \
+    ../OpenGestureControl/appswitcher.cpp \ # End of main project sources
     testbluetoothdevicelistmodel.cpp \
     testcallbackhandler.cpp \
     main.cpp \
     testmoduleoptionslistmodel.cpp \
     testpiemenu.cpp \
-    testwindowinformation.cpp
+    testwindowinformation.cpp \
+    testappswitcher.cpp
 
 # Lua
 win32:INCLUDEPATH += $$PWD/../OpenGestureControl/libs $$PWD/../OpenGestureControl/libs/include

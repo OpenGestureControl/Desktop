@@ -53,12 +53,12 @@ extern "C" int WindowsCallbackHandler::ModuleHelperSendKeyboardKey(lua_State* L)
       stringList.append(QString(temp.c_str()));
   }
 
-  WindowsCallbackHandler::parseKey(stringList);
+  WindowsCallbackHandler::sendKey(stringList);
 
   return 0; // Count of returned values
 }
 
-void WindowsCallbackHandler::parseKey(QStringList hotkey)
+void WindowsCallbackHandler::sendKey(QStringList hotkey)
 {
     if (hotkey.isEmpty())
         return;
@@ -70,21 +70,21 @@ void WindowsCallbackHandler::parseKey(QStringList hotkey)
     if (QString::compare(tempkey, "ctrl", Qt::CaseInsensitive) == 0) { // Check if the Control key needs to be pressed
         qWarning() << "Control pressed";
         keybd_event(VK_LCONTROL, 0, 0, 0);
-        WindowsCallbackHandler::parseKey(hotkey);
+        WindowsCallbackHandler::sendKey(hotkey);
         hotkey.pop_front();
         keybd_event(VK_LCONTROL, 0, KEYEVENTF_KEYUP, 0);
     }
     else if (QString::compare(tempkey, "alt", Qt::CaseInsensitive) == 0) { // Check if the Alt key needs to be pressed
         qWarning() << "Alt pressed";
         keybd_event(VK_LMENU, 0, 0, 0);
-        WindowsCallbackHandler::parseKey(hotkey);
+        WindowsCallbackHandler::sendKey(hotkey);
         hotkey.pop_front();
         keybd_event(VK_LMENU, 0, KEYEVENTF_KEYUP, 0);
     }
     else if (QString::compare(tempkey, "shift", Qt::CaseInsensitive) == 0) { // Check if the Shift key needs to be pressed
         qWarning() << "Shift pressed";
         keybd_event(VK_LSHIFT, 0, 0, 0);
-        WindowsCallbackHandler::parseKey(hotkey);
+        WindowsCallbackHandler::sendKey(hotkey);
         hotkey.pop_front();
         keybd_event(VK_LSHIFT, 0, KEYEVENTF_KEYUP, 0);
     }
@@ -98,7 +98,7 @@ void WindowsCallbackHandler::parseKey(QStringList hotkey)
         }
     }
 
-    WindowsCallbackHandler::parseKey(hotkey);
+    WindowsCallbackHandler::sendKey(hotkey);
 }
 
 bool WindowsCallbackHandler::handleKeyPress(QString optionName)

@@ -245,9 +245,11 @@ void BluetoothDevice::buttonDataChanged(const QLowEnergyCharacteristic character
         arrayData = QString(data);
         qWarning() << "Button A";
         if (arrayData == "\x00") {
-            emit buttonReleased();
+            emit buttonAReleased();
         } else if (arrayData == "\x01") {
-            emit buttonPressed();
+            emit buttonAPressed();
+        } else if (arrayData == "\x02") {
+            emit buttonAHeld();
         }
     }
     else if (characteristic.uuid() == QBluetoothUuid(QString("{e95dda91-251d-470a-a062-fa1922dfa9a8}"))) {
@@ -255,10 +257,13 @@ void BluetoothDevice::buttonDataChanged(const QLowEnergyCharacteristic character
         qWarning() << "Button B";
         if (arrayData == "\x00") {
             qWarning() << "Button B released";
-            // TODO: emit buttonReleased
+            emit buttonBReleased();
         } else if (arrayData == "\x01") {
             qWarning() << "Button B pressed";
-            // TODO: emit buttonPressed();
+            emit buttonBPressed();
+        } else if (arrayData == "\x02") {
+            qWarning() << "Button B held";
+            emit buttonBHeld();
         }
     }
     else {

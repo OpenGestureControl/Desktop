@@ -96,10 +96,18 @@ void BluetoothManager::deviceDiscovered(const QBluetoothDeviceInfo deviceInfo) c
 
 void BluetoothManager::connected() const
 {
-    connect(this->connectingTo, SIGNAL(buttonPressed()),
-            this, SIGNAL(buttonPressed()));
-    connect(this->connectingTo, SIGNAL(buttonReleased()),
-            this, SIGNAL(buttonReleased()));
+    connect(this->connectingTo, SIGNAL(buttonAPressed()),
+            this, SIGNAL(buttonAPressed()));
+    connect(this->connectingTo, SIGNAL(buttonAReleased()),
+            this, SIGNAL(buttonAReleased()));
+    connect(this->connectingTo, SIGNAL(buttonAHeld()),
+            this, SIGNAL(buttonAHeld()));
+    connect(this->connectingTo, SIGNAL(buttonBPressed()),
+            this, SIGNAL(buttonBPressed()));
+    connect(this->connectingTo, SIGNAL(buttonBReleased()),
+            this, SIGNAL(buttonBReleased()));
+    connect(this->connectingTo, SIGNAL(buttonBHeld()),
+            this, SIGNAL(buttonBHeld()));
     connect(this->connectingTo, SIGNAL(degreesMoved(int)),
             this, SIGNAL(degreesMoved(int)));
     this->window->setProperty("status", "CONNECTED");

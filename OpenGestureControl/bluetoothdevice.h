@@ -31,6 +31,7 @@
 #include <QObject>
 #include <QString>
 #include <QVariant>
+#include <math.h>
 
 /*! \brief A class which represents a found bluetooth device.*/
 

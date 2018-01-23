@@ -211,10 +211,13 @@ void BluetoothDevice::buttonServiceStateChanged(const QLowEnergyService::Service
     qWarning() << state;
     if (state == QLowEnergyService::ServiceDiscovered) {
         qWarning() << "Button service is ready";
-        QLowEnergyCharacteristic buttonData = this->button->characteristic(QBluetoothUuid(QString("{e95dda90-251d-470a-a062-fa1922dfa9a8}")));
-        QLowEnergyDescriptor notification = buttonData.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration);
+        QLowEnergyCharacteristic buttonDataA = this->button->characteristic(QBluetoothUuid(QString("{e95dda90-251d-470a-a062-fa1922dfa9a8}")));
+        QLowEnergyDescriptor notificationA = buttonDataA.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration);
 
-        if (!buttonData.isValid()) {
+        QLowEnergyCharacteristic buttonDataB = this->button->characteristic(QBluetoothUuid(QString("{e95dda91-251d-470a-a062-fa1922dfa9a8}")));
+        QLowEnergyDescriptor notificationB = buttonDataB.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration);
+
+        if (!buttonDataA.isValid() || !buttonDataB.isValid()) {
             emit characteristicBindingFailed("Button data not valid");
             return;
         }
@@ -223,7 +226,8 @@ void BluetoothDevice::buttonServiceStateChanged(const QLowEnergyService::Service
                 this, SLOT(buttonDataChanged(QLowEnergyCharacteristic, QByteArray)));
 
         // Enable notification
-        this->button->writeDescriptor(notification, QByteArray::fromHex("0100"));
+        this->button->writeDescriptor(notificationA, QByteArray::fromHex("0100"));
+        this->button->writeDescriptor(notificationB, QByteArray::fromHex("0100"));
 
         this->connectionProgress++;
 
@@ -235,17 +239,30 @@ void BluetoothDevice::buttonServiceStateChanged(const QLowEnergyService::Service
 
 void BluetoothDevice::buttonDataChanged(const QLowEnergyCharacteristic characteristic, const QByteArray data) const
 {
-    if (characteristic.uuid() != QBluetoothUuid(QString("{e95dda90-251d-470a-a062-fa1922dfa9a8}")))
+    QString arrayData;
+    if (characteristic.uuid() == QBluetoothUuid(QString("{e95dda90-251d-470a-a062-fa1922dfa9a8}")))
     {
-        qWarning() << "Not the characteristic we want for button, ignoring";
-        return;
+        arrayData = QString(data);
+        qWarning() << "Button A";
+        if (arrayData == "\x00") {
+            emit buttonReleased();
+        } else if (arrayData == "\x01") {
+            emit buttonPressed();
+        }
     }
-    QString data2 = QString(data);
-    qWarning() << "Button:" << data2;
-    if (data2 == "\x00") {
-        emit buttonReleased();
-    } else if (data2 == "\x01") {
-        emit buttonPressed();
+    else if (characteristic.uuid() == QBluetoothUuid(QString("{e95dda91-251d-470a-a062-fa1922dfa9a8}"))) {
+        arrayData = QString(data);
+        qWarning() << "Button B";
+        if (arrayData == "\x00") {
+            qWarning() << "Button B released";
+            // TODO: emit buttonReleased
+        } else if (arrayData == "\x01") {
+            qWarning() << "Button B pressed";
+            // TODO: emit buttonPressed();
+        }
+    }
+    else {
+        qWarning() << "Not the characteristic we want for button, ignoring";
     }
 }
 

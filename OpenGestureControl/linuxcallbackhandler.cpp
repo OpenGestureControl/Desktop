@@ -119,7 +119,7 @@ bool LinuxCallbackHandler::handle(const QString optionName) const
     const char *optionNameChar = optionNameByteArray.data();
 
     // Set return_options on stack to call
-    lua_getglobal(L, "handle"); /* function to be called */
+    lua_getglobal(L, "handle"); // function to be called
     lua_pushstring(L, optionNameChar);
 
     LinuxCallbackHandler::restoreFocusWindow();
@@ -137,21 +137,21 @@ bool LinuxCallbackHandler::handle(const QString optionName) const
 
 void LinuxCallbackHandler::retrieveFocusWindowInfo()
 {
-    // Obtain the X11 display.
+    // Obtain the X11 display
     XDisplay = XOpenDisplay(NULL);
     if(XDisplay == NULL)
         qWarning() << "No X server connection established!";
 
-    // Get the root window for the current display.
+    // Get the root window for the current display
     WinRoot = XDefaultRootWindow(XDisplay);
     qWarning() << "Winroot: " << WinRoot;
 
-    // Find the window which has the current keyboard focus.
+    // Find the window which has the current keyboard focus
     int revert = 0;
     XGetInputFocus(XDisplay, &LastProcess, &revert);
     qWarning() << "lastProcess: " << LastProcess;
 
-    // Retrieve window name //
+    // Retrieve window name
     XGetClassHint(XDisplay, LastProcess, this->classProp);
     this->exeTitle = this->classProp->res_class;
 
@@ -161,7 +161,7 @@ void LinuxCallbackHandler::retrieveFocusWindowInfo()
 
 void LinuxCallbackHandler::restoreFocusWindow() const
 {
-    //XRaiseWindow(XDisplay, LastProcess); // currently does not work
+    //XRaiseWindow(XDisplay, LastProcess); // TODO: Currently does not work
     int revert = 0;
     XSetInputFocus(XDisplay, LastProcess, revert, CurrentTime);
 }

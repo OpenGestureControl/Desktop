@@ -47,7 +47,7 @@ void BluetoothDevice::setActive(const bool value)
         emit activeChanged();
     }
 
-    if (value) {
+    if (value && this->deviceInfo().isValid()) {
         qWarning() << "Creating Low Energy Controller";
         this->lowEnergyController = QLowEnergyController::createCentral(this->deviceInfo());
         qWarning() << "Workaround for failing to connect";

@@ -31,7 +31,7 @@ WindowInformation::WindowInformation(QObject *parent) : QObject(parent)
 // XLib fatal error catcher
 int catcher( Display *disp, XErrorEvent *xe )
 {
-    qWarning() << "Error in X:" << xe->error_code;
+    qWarning() << "Error in X:" << xe->error_code << "(display" << disp << ")";
     errorThrown = true;
     return 0;
 }
@@ -54,9 +54,10 @@ QString WindowInformation::GetWindowTitle()
     }
 
     // Retrieve window name //
-    XClassHint classProp;
-    XGetClassHint(XDisplay, FocusWindow, &classProp);
-    windowTitle = classProp.res_class;
+    XGetClassHint(XDisplay, FocusWindow, this->classProp);
+    windowTitle = this->classProp->res_class;
+    XFree(this->classProp->res_class);
+    XFree(this->classProp->res_name);
 
     XCloseDisplay(XDisplay); // Close link to X display server
 #endif // Q_OS_LINUX
@@ -128,6 +129,8 @@ void WindowInformation::GetWindowInformation()
     } else {
       FocusWindow = 0;
     }
+
+    XFree(prop);
 
     XCloseDisplay(XDisplay); // Close link to X display server
 #endif // Q_OS_LINUX

@@ -55,6 +55,7 @@ private:
 
 #ifdef Q_OS_LINUX
     Window FocusWindow; /*!< A Window (An Xlib window handle) reference to the last foreground application. */
+    XClassHint *classProp = XAllocClassHint(); /*!< A place to store all the class properties. */
 #endif // Q_OS_LINUX
 #ifdef Q_OS_WIN32
     HWND FocusWindow; /*!< A HWND (A Windows window handle) reference to the last foreground application. */

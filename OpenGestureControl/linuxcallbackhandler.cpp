@@ -152,9 +152,11 @@ void LinuxCallbackHandler::retrieveFocusWindowInfo()
     qWarning() << "lastProcess: " << LastProcess;
 
     // Retrieve window name //
-    XClassHint classProp;
-    XGetClassHint(XDisplay, LastProcess, &classProp);
-    this->exeTitle = classProp.res_class;
+    XGetClassHint(XDisplay, LastProcess, this->classProp);
+    this->exeTitle = this->classProp->res_class;
+
+    XFree(this->classProp->res_class);
+    XFree(this->classProp->res_name);
 }
 
 void LinuxCallbackHandler::restoreFocusWindow() const

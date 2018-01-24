@@ -66,7 +66,7 @@ public:
 
 private:
     QObject *window = nullptr; /*!< A QObject pointer to a QML view object. */
-    QQmlApplicationEngine engine; /*!< A QQmlApplicationEngine reference to a QML creator engine. */
+    QQmlApplicationEngine engine; /*!< A QQmlApplicationEngine value to a QML creator engine. */
     AbstractCallbackHandler *callbackHandler = nullptr; /*!< A CallbackHandler pointer to a callback handler. */
     ModuleOptionsListModel *moduleOptions = nullptr; /*!< The list of displayed options. */
     ModuleManager *moduleManager = nullptr; /*!< A ModuleManager pointer. */

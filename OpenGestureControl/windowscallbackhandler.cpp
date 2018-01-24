@@ -19,6 +19,7 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 */
+
 #include "windowscallbackhandler.h"
 
 #ifdef Q_OS_WIN32

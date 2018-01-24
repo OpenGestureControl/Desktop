@@ -25,6 +25,7 @@
 
 PieMenu::PieMenu(QObject *parent) : QObject(parent)
 {
+    this->engine.rootContext()->setContextProperty("moduleOptions", new ModuleOptionsListModel());
     this->engine.load(QUrl(QStringLiteral("qrc:/pieMenu.qml")));
     this->window = this->engine.rootObjects()[0];
 
@@ -47,6 +48,8 @@ void PieMenu::open()
         this->callbackHandler = NULL;
     }
 
+    if(this->moduleManager)
+        delete this->moduleManager;
     this->moduleManager = new ModuleManager();
     QDir modulePath = this->moduleManager->getModule();
     if (!this->moduleManager->errorString().isEmpty()) {
@@ -76,6 +79,9 @@ void PieMenu::open()
 
 void PieMenu::setActive(const int degrees) const
 {
+    if (!isOpen())
+        return;
+
     qWarning() << degrees;
     QMetaObject::invokeMethod(this->window,
             "setActiveEntry",

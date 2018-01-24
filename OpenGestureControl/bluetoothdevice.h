@@ -83,7 +83,8 @@ public:
 private:
     QBluetoothDeviceInfo m_deviceInfo; /*! \brief A QBluetoothDeviceInfo reference to the Qt bluetooth class.*/
     QLowEnergyService *accelerometer, *button; /*! \brief A QLowEnergyService pointer which represents a Bluetooth LE Service.*/
-    QLowEnergyController *lowEnergyController; /*! \brief A QLowEnergyController pointer which handles the Bluetooth LE Services.*/
+    QLowEnergyController *lowEnergyController = nullptr; /*! \brief A QLowEnergyController pointer which handles the Bluetooth LE Services.*/
+
     bool m_active = false; /*! \brief A boolean reference to indicate whether or not this device is active.*/
     int connectionProgress = 0; /*! \brief An integer reference to indicate the connection status of this Bluetooth device.*/
 

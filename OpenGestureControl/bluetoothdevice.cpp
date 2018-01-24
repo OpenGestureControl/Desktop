@@ -47,7 +47,7 @@ void BluetoothDevice::setActive(const bool value)
         emit activeChanged();
     }
 
-    if (value) {
+    if (value && this->deviceInfo().isValid()) {
         qWarning() << "Creating Low Energy Controller";
         this->lowEnergyController = QLowEnergyController::createCentral(this->deviceInfo());
         qWarning() << "Workaround for failing to connect";
@@ -152,12 +152,12 @@ void BluetoothDevice::accelerometerDataChanged(const QLowEnergyCharacteristic ch
     accelInput[2] = zData/(float)1000;
 
     this->lowPass(accelInput, accelOutput);
-    //qWarning() << "xData: " << accelOutput[0] << endl << "yData: " << accelOutput[1] << endl << "zData: " << accelOutput[2];
 
     float threshold = 0.2;
     int updown = 0;
     int leftright = 0;
 
+    // TODO: Actually calculate the degrees, instead of a few hardcoded positions
     if (accelInput[0] > threshold) {
         leftright = -1;
     } else if (accelInput[0] < -threshold) {

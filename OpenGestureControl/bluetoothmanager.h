@@ -62,16 +62,11 @@ public:
     bool isUIOpen() const;
 
 private:
-    /*! \brief A QBluetoothDeviceDiscoveryAgent pointer which can discover services of found Bluetooth devices.*/
-    QBluetoothDeviceDiscoveryAgent *bluetoothDeviceDiscoveryAgent;
-    /*! \brief A QQmlApplicationEngine value variable.*/
-    QQmlApplicationEngine engine;
-    /*! \brief A BluetoothDeviceListModel pointer which holds all found Bluetooth devices.*/
-    BluetoothDeviceListModel *bluetoothDevices;
-    /*! \brief A BluetoothDevice pointer which points to the Bluetooth device to which it is currently connecting to.*/
-    BluetoothDevice *connectingTo;
-    /*! \brief A QObject pointer which points to the piemenu UI.*/
-    QObject *window;
+    QBluetoothDeviceDiscoveryAgent *bluetoothDeviceDiscoveryAgent; /*! A QBluetoothDeviceDiscoveryAgent pointer which can discover services of found Bluetooth devices.*/
+    QQmlApplicationEngine engine; /*! A QQmlApplicationEngine value variable.*/
+    BluetoothDeviceListModel *bluetoothDevices; /*! A BluetoothDeviceListModel pointer which holds all found Bluetooth devices.*/
+    BluetoothDevice *connectingTo; /*! A BluetoothDevice pointer which points to the Bluetooth device to which it is currently connecting to.*/
+    QObject *window; /*! A QObject pointer which points to the piemenu UI.*/
 
 signals:
     /*! \brief This signal fires when the 'A' button of the Micro:bit is pressed.*/

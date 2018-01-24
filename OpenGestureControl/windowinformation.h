@@ -42,15 +42,26 @@
 
 static bool errorThrown;
 
+/*! \brief A helper class which retrieves information about the currently active windows on both Linux and Windows.
+ *
+ *  This class retrieves the vital information required to retrieve modules and send keys to the different programs.
+ */
 class WindowInformation : public QObject
 {
     Q_OBJECT
 public:
-    explicit WindowInformation(QObject *parent = nullptr);
+    /*! \brief The constructor.
+     *
+     *  This constructor instantiates this class.
+     */
+    explicit WindowInformation(QObject *parent = nullptr /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
+    /*! \brief This function returns the name of the window or prcess currently running on the foreground.*/
     QString GetWindowTitle();
+    /*! \brief This function restores a window to the foreground if it isn't there anymore.*/
     void RestoreWindow();
 
 private:
+    /*! \brief This function gets a required information about the currently running foreground process.*/
     void GetWindowInformation();
 
 #ifdef Q_OS_LINUX

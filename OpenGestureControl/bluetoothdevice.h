@@ -81,16 +81,16 @@ public:
                  float output[] /*!< [in] parameter, a float array pointer with the previously smoothed accelerometer data.*/) const;
 
 private:
-    QBluetoothDeviceInfo m_deviceInfo; /*! \brief A QBluetoothDeviceInfo reference to the Qt bluetooth class.*/
-    QLowEnergyService *accelerometer, *button; /*! \brief A QLowEnergyService pointer which represents a Bluetooth LE Service.*/
-    QLowEnergyController *lowEnergyController = nullptr; /*! \brief A QLowEnergyController pointer which handles the Bluetooth LE Services.*/
+    QBluetoothDeviceInfo m_deviceInfo; /*! A QBluetoothDeviceInfo value to the Qt bluetooth class.*/
+    QLowEnergyService *accelerometer, *button; /*! A QLowEnergyService pointer which represents a Bluetooth LE Service.*/
+    QLowEnergyController *lowEnergyController = nullptr; /*! A QLowEnergyController pointer which handles the Bluetooth LE Services.*/
 
-    bool m_active = false; /*! \brief A boolean reference to indicate whether or not this device is active.*/
-    int connectionProgress = 0; /*! \brief An integer reference to indicate the connection status of this Bluetooth device.*/
+    bool m_active = false; /*! A boolean value to indicate whether or not this device is active.*/
+    int connectionProgress = 0; /*! An integer value to indicate the connection status of this Bluetooth device.*/
 
-    float accelInput[3]; /*! \brief A float array pointer to hold new accelerometer data from the lowPass filter.*/
-    float accelOutput[3]; /*! \brief A float array pointer to hold previous accelerometer smoothing data from the lowPass filter.*/
-    const float ALPHA = 0.15f; /*! \brief A float reference which is used by the lowPass smoothing function to set how much smoothing is required.*/
+    float accelInput[3]; /*! A float array pointer to hold new accelerometer data from the lowPass filter.*/
+    float accelOutput[3]; /*! A float array pointer to hold previous accelerometer smoothing data from the lowPass filter.*/
+    const float ALPHA = 0.15f; /*! A float value which is used by the lowPass smoothing function to set how much smoothing is required.*/
 
 signals:
     /*! \brief This signal fires when a new QBluetoothDeviceInfo class is set.*/

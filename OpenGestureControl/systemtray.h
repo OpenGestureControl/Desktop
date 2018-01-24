@@ -29,23 +29,31 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 
+/*! \brief A class which manages the System Tray Menu and Icon.*/
 class SystemTray : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit SystemTray(QObject *parent = 0);
+    /*! \brief The constructor.
+     *
+     *  This constructor instantiates this class.
+     */
+    explicit SystemTray(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
+    /*! \brief This function opens the tray menu.*/
     void show() const;
 
 private:
-    QSystemTrayIcon *tray;
-    QMenu *trayMenu;
+    QSystemTrayIcon *tray; /*!< A QSystemTrayIcon pointer holding the Tray icon.*/
+    QMenu *trayMenu; /*!< A QMenu pointer holding all menu options of the Tray Menu.*/
 
 signals:
+    /*! \brief This signal links the buttonclick with the opening of the Tray Menu.*/
     void menuOpenClicked() const;
 
 public slots:
-    void showMessage(const QString message) const;
+    /*! \brief This slot shows a message from the System Tray.*/
+    void showMessage(const QString message /*!< [in] parameter, a QString value containing the message to be send.*/) const;
 };
 
 #endif // SYSTEMTRAY_H

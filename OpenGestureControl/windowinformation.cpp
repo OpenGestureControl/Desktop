@@ -74,13 +74,7 @@ QString WindowInformation::GetWindowTitle()
 
 void WindowInformation::RestoreWindow()
 {
-#ifdef Q_OS_LINUX
-    if(FocusWindow == 0) {
-        // TODO
-    }
 
-    FocusWindow = 0;
-#endif // Q_OS_LINUX
 #ifdef Q_OS_WIN32
     if(FocusWindow == NULL) {
         // if minimized

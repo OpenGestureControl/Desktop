@@ -172,35 +172,35 @@ void BluetoothDevice::accelerometerDataChanged(const QLowEnergyCharacteristic ch
 
     if (updown == 1) {
         if (leftright == -1) {
-            qWarning() << "Up left";
+            //qWarning() << "Up left";
             emit degreesMoved(315);
         } else if (leftright == 0) {
-            qWarning() << "Up";
+            //qWarning() << "Up";
             emit degreesMoved(0);
         } else if (leftright == 1) {
-            qWarning() << "Up right";
+            //qWarning() << "Up right";
             emit degreesMoved(45);
         }
     } else if (updown == 0) {
         if (leftright == -1) {
-            qWarning() << "Left";
+            //qWarning() << "Left";
             emit degreesMoved(270);
         } else if (leftright == 0) {
-            qWarning() << "Center";
+            //qWarning() << "Center";
             emit degreesMoved(-1);
         } else if (leftright == 1) {
-            qWarning() << "Right";
+            //qWarning() << "Right";
             emit degreesMoved(90);
         }
     } else if (updown == -1) {
         if (leftright == -1) {
-            qWarning() << "Down left";
+            //qWarning() << "Down left";
             emit degreesMoved(225);
         } else if (leftright == 0) {
-            qWarning() << "Down";
+            //qWarning() << "Down";
             emit degreesMoved(180);
         } else if (leftright == 1) {
-            qWarning() << "Down right";
+            //qWarning() << "Down right";
             emit degreesMoved(135);
         }
     }

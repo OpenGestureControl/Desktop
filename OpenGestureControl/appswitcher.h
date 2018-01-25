@@ -28,6 +28,13 @@
 #include "windowscallbackhandler.h"
 #include "linuxcallbackhandler.h"
 
+#ifdef Q_OS_LINUX
+#include <X11/Xlib.h>
+#include <X11/keysym.h>
+#include <X11/Xutil.h>
+#undef Bool // Needed because of weird Xlib C library
+#endif // Q_OS_LINUX
+
 class AppSwitcher : public QObject
 {
     Q_OBJECT
@@ -39,15 +46,20 @@ public:
      */
     explicit AppSwitcher(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
 
+private:
+    quint32 *windowList;
+    int currentwindow = 0;
+    unsigned long numItems;
+
 public slots:
     /*! \brief This function opens the appswitcher. */
-    void open() const;
+    void open();
 
     /*! \brief This function closes the appswitcher. */
     void close() const;
 
     /*! \brief This function switches app. */
-    void switchApp() const;
+    void switchApp();
 
 };
 

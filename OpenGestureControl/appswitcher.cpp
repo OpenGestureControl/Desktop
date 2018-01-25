@@ -26,13 +26,40 @@ AppSwitcher::AppSwitcher(QObject *parent) : QObject(parent)
 {
 }
 
-void AppSwitcher::open() const
+void AppSwitcher::open()
 {
-    QStringList stringList;
-    stringList.append(QString("alt"));
-#ifdef Q_OS_LINUX
-    LinuxCallbackHandler().sendKey(stringList);
-#endif // Q_OS_LINUX
+    Display *XDisplay = XOpenDisplay(NULL);
+    if(XDisplay == NULL) {
+        qWarning() << "No X server connection established!" << endl;
+        return;
+    }
+
+    Atom a = XInternAtom(XDisplay, "_NET_CLIENT_LIST" , true);
+    Atom actualType;
+    int format;
+    unsigned long bytesAfter;
+    unsigned char *data =0;
+    Window root = XDefaultRootWindow(XDisplay);
+    int status = XGetWindowProperty(XDisplay,
+                                root,
+                                a,
+                                0L,
+                                (~0L),
+                                false,
+                                AnyPropertyType,
+                                &actualType,
+                                &format,
+                                &numItems,
+                                &bytesAfter,
+                                &data);
+
+    if (status >= Success && numItems)
+    {
+        // success - we have data: Format should always be 32:
+        Q_ASSERT(format == 32);
+        // cast to proper format, and iterate through values:
+        windowList = (quint32*) data;
+    }
 }
 
 void AppSwitcher::close() const
@@ -44,12 +71,20 @@ void AppSwitcher::close() const
 #endif // Q_OS_LINUX
 }
 
-void AppSwitcher::switchApp() const
+void AppSwitcher::switchApp()
 {
-    QStringList stringList;
-    stringList.append(QString("alt"));
-    stringList.append(QString("tab"));
-#ifdef Q_OS_LINUX
-    LinuxCallbackHandler().sendKey(stringList);
-#endif // Q_OS_LINUX
+    if(currentwindow >= numItems) currentwindow = 0;
+    qWarning() << "currposition" << currentwindow;
+
+    Display *XDisplay = XOpenDisplay(NULL);
+    if(XDisplay == NULL) {
+        qWarning() << "No X server connection established!" << endl;
+        return;
+    }
+
+    XRaiseWindow(XDisplay, (Window) windowList[currentwindow]);
+    currentwindow++;
+    //XSetInputFocus(XDisplay, FocusWindow, RevertToNone, CurrentTime);
+    //XRaiseWindow(XDisplay, FocusWindow);
+    //XFree(data);
 }

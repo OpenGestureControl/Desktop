@@ -47,13 +47,13 @@ QString WindowInformation::GetWindowTitle()
     // Set error handler
     XSetErrorHandler(catcher);
 
-    // Obtain the X11 display.
+    // Obtain the X11 display
     Display *XDisplay = XOpenDisplay(NULL);
     if(XDisplay == NULL) {
         qWarning() << "No X server connection established!" << endl;
     }
 
-    // Retrieve window name //
+    // Retrieve window name
     XGetClassHint(XDisplay, FocusWindow, this->classProp);
     windowTitle = this->classProp->res_class;
     XFree(this->classProp->res_class);
@@ -92,7 +92,7 @@ void WindowInformation::RestoreWindow()
 void WindowInformation::GetWindowInformation()
 {
 #ifdef Q_OS_LINUX
-    // Obtain the X11 display.
+    // Obtain the X11 display
     Display *XDisplay = XOpenDisplay(NULL);
     if(XDisplay == NULL)
         qWarning() << "No X server connection established!" << endl;
@@ -108,7 +108,6 @@ void WindowInformation::GetWindowInformation()
     Atom actual_type;
     int actual_format;
     unsigned long nitems;
-    /*unsigned long nbytes;*/
     unsigned long bytes_after; /* unused */
     unsigned char *prop;
     int status;

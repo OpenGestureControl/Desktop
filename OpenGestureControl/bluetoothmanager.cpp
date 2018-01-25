@@ -85,7 +85,7 @@ void BluetoothManager::forgetDevice(const QString deviceAddress)
 {
     this->bluetoothDevices->clearActive();
     this->window->setProperty("status", "IDLE");
-    // Hack because the Connect/Forget buttons don't work well
+    // TODO: Remove hack because the Connect/Forget buttons don't work well
     this->scanForDevices();
 }
 
@@ -117,7 +117,7 @@ void BluetoothManager::disconnected()
 {
     this->bluetoothDevices->clearActive();
     this->window->setProperty("status", "IDLE");
-    // Hack because the Connect/Forget buttons don't work well
+    // TODO: Remove hack because the Connect/Forget buttons don't work well
     this->scanForDevices();
 }
 
@@ -126,7 +126,7 @@ void BluetoothManager::error(const QString reason)
     qWarning() << reason;
     this->bluetoothDevices->clearActive();
     this->window->setProperty("status", "IDLE");
-    // Hack because the Connect/Forget buttons don't work well
+    // TODO: Remove hack because the Connect/Forget buttons don't work well
     this->scanForDevices();
 }
 

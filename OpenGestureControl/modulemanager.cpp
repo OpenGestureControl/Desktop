@@ -28,6 +28,7 @@ ModuleManager::ModuleManager(QObject *parent) : QObject(parent)
 }
 
 QDir ModuleManager::getModule() {
+    // TODO: When Windows gets working bluetooth, also make these checks function for Windows
     QString windowTitle = windowInformation->GetWindowTitle();
 
     QDir dir = QDir::home();

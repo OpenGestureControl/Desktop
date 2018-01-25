@@ -46,9 +46,6 @@ signals:
 
 public slots:
     void showMessage(const QString message) const;
-
-private slots:
-    void menuActionClicked(const QAction* action) const;
 };
 
 #endif // SYSTEMTRAY_H

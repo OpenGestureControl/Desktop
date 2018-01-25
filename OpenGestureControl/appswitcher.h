@@ -49,8 +49,8 @@ public:
 
 private:
     QTimer *switchTimer = new QTimer(this);
-    quint32 *windowList;
-    quint32 currentwindow;
+    long *windowList;
+    long currentwindow;
     unsigned long numItems;
     Display *XDisplay;
 

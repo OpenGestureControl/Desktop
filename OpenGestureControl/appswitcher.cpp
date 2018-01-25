@@ -58,13 +58,13 @@ void AppSwitcher::open()
         // success - we have data: Format should always be 32:
         Q_ASSERT(format == 32);
         // cast to proper format, and iterate through values:
-        windowList = (quint32*) data;
+        windowList = (long*) data;
     }
 
     currentwindow = numItems - 1;
 
     connect(switchTimer, SIGNAL(timeout()), this, SLOT(switchApp()));
-    switchTimer->start(250);
+    switchTimer->start(500);
 }
 
 void AppSwitcher::close() const

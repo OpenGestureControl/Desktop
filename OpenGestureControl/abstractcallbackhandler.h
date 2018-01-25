@@ -76,9 +76,9 @@ public:
     /*! \brief This function returns all options defined within the active Lua module.*/
     ModuleOptionsListModel* getOptions() const;
 
-    bool initialized = false;   /*!< A boolean stating if the callbackhandler initialized correctly. */
-    QString exeTitle;           /*!< A QString reference to the name of the last application executable on the foreground. */
-    QDir modulePath;            /*!< A QDir reference to the path of module. */
+    bool initialized = false;   /*!< A boolean value stating if the callbackhandler initialized correctly. */
+    QString exeTitle;           /*!< A QString value to the name of the last application executable on the foreground. */
+    QDir modulePath;            /*!< A QDir value to the path of module. */
     lua_State *L;               /*!< A lua_State pointer to the menu options pointers from the piemenu. */
 
 protected:

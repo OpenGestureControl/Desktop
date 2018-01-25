@@ -58,7 +58,8 @@ public:
      *
      *  This function is required to be implemented in order to inherit from QAbstractListModel.
      */
-    QVariant data(const QModelIndex &index, const int role = Qt::DisplayRole) const override;
+    QVariant data(const QModelIndex &index /*!< [in] parameter, a QModelIndex reference to the selected index.*/,
+                  const int role = Qt::DisplayRole /*!< [in] parameter, an integer value to indicate the role (required for the Qml).*/) const override;
 
     /*! \brief This function returns the piemenu option at the given index.*/
     Q_INVOKABLE ModuleOption* get(const int index /*!< [in] parameter, an integer reference to the requested index.*/) const { return m_data.at(index); }
@@ -80,7 +81,7 @@ protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private:
-    QList<ModuleOption*> m_data; /*!< An QList reference to the menu options pointers from the piemenu. */
+    QList<ModuleOption*> m_data; /*!< An QList value to the menu options pointers from the piemenu. */
 };
 
 #endif // MODULEOPTIONSMODEL_H

@@ -45,14 +45,14 @@ public:
      *  It retrieves the last application on the foreground, brings it to back to the foreground and executes the action on it.
      *  It return true when successful.
      */
-    virtual bool handle(const QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/) const override;
+    virtual bool handle(const QString optionName /*!< [in] parameter, a QString value to the option to be executed.*/) const override;
 
 private:
     /*! \brief This function translates a keyname to the Windows OS representation.*/
-    static WORD lookupKey(QString keyname /*!< A QString reference to the keyname to be found. */);
+    static WORD lookupKey(QString keyname /*!< [in] parameter, a QString value to the keyname to be found. */);
 
     /*! \brief This function creates a fake keypressevent and send it.*/
-    static void parseKey(QStringList hotkey);
+    static void parseKey(QStringList hotkey /*!< [in] parameter, a QStringList value holding all keys to be pressed. */);
 
     /*! \brief This function allows the Lua module to send a key sequence to the OS.
      *
@@ -60,7 +60,7 @@ private:
      *  This sequence should be formatted as follows: [modifier] + [keyname].
      *  Examples: "Ctrl+T" or "Ctrl+Shift+T" or "T".
      */
-    static int ModuleHelperSendKeyboardKey(lua_State* L /*!< An lua_State pointer to the active Lua instance (the module, the interpreter etc). */);
+    static int ModuleHelperSendKeyboardKey(lua_State* L /*!< [in] parameter, a lua_State pointer to the active Lua instance (the module, the interpreter etc). */);
 
     HWND lastProcess; /*!< A HWND (A Windows window handle) reference to the last foreground application. */
 
@@ -72,7 +72,7 @@ protected:
 
 public slots:
     /*! \brief A simple slot wrapper for the handle function to simplify using this both on a slot and out of it. */
-    virtual bool handleKeyPress(const QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/) const;
+    virtual bool handleKeyPress(const QString optionName /*!< [in] parameter, a QString value to the option to be executed.*/) const;
 };
 #endif // Q_OS_WIN32
 

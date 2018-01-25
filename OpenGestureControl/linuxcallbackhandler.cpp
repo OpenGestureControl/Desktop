@@ -66,7 +66,6 @@ extern "C" int LinuxCallbackHandler::ModuleHelperSendKeyboardKey(lua_State *L)
 void LinuxCallbackHandler::sendKey(QStringList hotkey)
 
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     if (hotkey.isEmpty())
         return;
 

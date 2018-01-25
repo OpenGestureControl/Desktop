@@ -63,7 +63,6 @@ int main(int argc, char *argv[])
 
     appSwitcher->connect(bluetoothManager, SIGNAL(buttonBPressed()), appSwitcher, SLOT(open()));
     appSwitcher->connect(bluetoothManager, SIGNAL(buttonBReleased()), appSwitcher, SLOT(close()));
-    appSwitcher->connect(bluetoothManager, SIGNAL(buttonBHeld()), appSwitcher, SLOT(switchApp()));
 
 #ifdef Q_OS_WIN32
     KeyBoardInput keyboardinput(&pieMenu);

@@ -35,8 +35,24 @@ void TestAppSwitcher::SwitchApp() {
 #endif
     QString firstWindow = handler->exeTitle;
 
+    appSwitcher->open();
     appSwitcher->switchApp();
-
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    appSwitcher->switchApp();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    appSwitcher->switchApp();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    appSwitcher->switchApp();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    appSwitcher->switchApp();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    appSwitcher->switchApp();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    appSwitcher->switchApp();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    appSwitcher->switchApp();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    appSwitcher->switchApp();
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 #ifdef Q_OS_LINUX

@@ -24,17 +24,17 @@
 
 AppSwitcher::AppSwitcher(QObject *parent) : QObject(parent)
 {
-}
-
-void AppSwitcher::open()
-{
-    Display *XDisplay = XOpenDisplay(NULL);
+    XDisplay = XOpenDisplay(NULL);
     if(XDisplay == NULL) {
         qWarning() << "No X server connection established!" << endl;
         return;
     }
+}
 
-    Atom a = XInternAtom(XDisplay, "_NET_CLIENT_LIST" , true);
+void AppSwitcher::open()
+{
+    // TODO: Filter out bad Windows? We seem to get X errors later
+    Atom a = XInternAtom(XDisplay, "_NET_CLIENT_LIST_STACKING" , true);
     Atom actualType;
     int format;
     unsigned long bytesAfter;
@@ -60,31 +60,34 @@ void AppSwitcher::open()
         // cast to proper format, and iterate through values:
         windowList = (quint32*) data;
     }
+
+    currentwindow = numItems - 1;
+
+    connect(switchTimer, SIGNAL(timeout()), this, SLOT(switchApp()));
+    switchTimer->start(250);
 }
 
 void AppSwitcher::close() const
 {
-    QStringList stringList;
-    stringList.append(QString("alt"));
-#ifdef Q_OS_LINUX
-    LinuxCallbackHandler().sendKey(stringList);
-#endif // Q_OS_LINUX
+    switchTimer->stop();
 }
 
 void AppSwitcher::switchApp()
 {
-    if(currentwindow >= numItems) currentwindow = 0;
-    qWarning() << "currposition" << currentwindow;
-
-    Display *XDisplay = XOpenDisplay(NULL);
-    if(XDisplay == NULL) {
-        qWarning() << "No X server connection established!" << endl;
-        return;
+    // TODO: Make sure it works everywhere
+    // On KDE: Set focus stealing prevention to None
+    // On other desktops: simply doesn't work
+    if (currentwindow == 0) {
+        currentwindow = numItems - 1;
+    } else {
+        currentwindow--;
     }
+    qWarning() << "currposition" << currentwindow;
+    Window newWindow = (Window) windowList[currentwindow];
 
-    XRaiseWindow(XDisplay, (Window) windowList[currentwindow]);
-    currentwindow++;
-    //XSetInputFocus(XDisplay, FocusWindow, RevertToNone, CurrentTime);
-    //XRaiseWindow(XDisplay, FocusWindow);
+    XSetInputFocus(XDisplay, newWindow, RevertToParent, CurrentTime);
+    XFlush(XDisplay);
+    XRaiseWindow(XDisplay, newWindow);
+    XFlush(XDisplay);
     //XFree(data);
 }

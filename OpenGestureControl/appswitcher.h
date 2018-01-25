@@ -24,6 +24,7 @@
 #define APPSWITCHER_H
 
 #include <QObject>
+#include <QTimer>
 
 #include "windowscallbackhandler.h"
 #include "linuxcallbackhandler.h"
@@ -47,9 +48,11 @@ public:
     explicit AppSwitcher(QObject *parent = 0 /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
 
 private:
+    QTimer *switchTimer = new QTimer(this);
     quint32 *windowList;
-    int currentwindow = 0;
+    quint32 currentwindow;
     unsigned long numItems;
+    Display *XDisplay;
 
 public slots:
     /*! \brief This function opens the appswitcher. */

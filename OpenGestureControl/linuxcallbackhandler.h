@@ -27,6 +27,8 @@
 
 #ifdef Q_OS_LINUX
 #include "abstractcallbackhandler.h"
+#include <chrono>
+#include <thread>
 
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
@@ -58,7 +60,7 @@ public:
     bool handle(const QString optionName /*!< [in] parameter, a QString reference to the option to be executed.*/) const override;
 
     /*! \brief This function handles a list of key combinations. */
-    static void sendKey(const QStringList hotkey);
+    static void sendKey(QStringList hotkey);
 
 private:
     /*! \brief This function translates a keyname to the X11 representation.*/

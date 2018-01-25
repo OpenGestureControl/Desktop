@@ -63,8 +63,13 @@ extern "C" int LinuxCallbackHandler::ModuleHelperSendKeyboardKey(lua_State *L)
   return 0; // Count of returned values
 }
 
-void LinuxCallbackHandler::sendKey(const QStringList hotkey)
+void LinuxCallbackHandler::sendKey(QStringList hotkey)
+
 {
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    if (hotkey.isEmpty())
+        return;
+
     XKeyEvent event;
 
     event.display     = XDisplay;    // Server connection
@@ -81,30 +86,46 @@ void LinuxCallbackHandler::sendKey(const QStringList hotkey)
     event.type        = KeyPress;    // Key press of release
     event.state       = 0;           // Modifier keys
 
-    for(int i = 0; i < hotkey.size(); i++) {
-        if (QString::compare(hotkey[i], "ctrl", Qt::CaseInsensitive) == 0) { // Check if the Control key needs to be pressed
-            qWarning() << "Control pressed";
-            event.state += ControlMask;
-        }
-        else if (QString::compare(hotkey[i], "alt", Qt::CaseInsensitive) == 0) { // Check if the Alt key needs to be pressed
-            qWarning() << "Alt pressed";
-            event.state += Mod1Mask;
-        }
-        else if (QString::compare(hotkey[i], "shift", Qt::CaseInsensitive) == 0) { // Check if the Shift key needs to be pressed
-            qWarning() << "Shift pressed";
-            event.state += ShiftMask;
-        }
-        else {
-            qWarning() << "Other key pressed: " << hotkey[i];
-            event.keycode = XKeysymToKeycode(XDisplay, lookupKey(hotkey[i]));
+    QString tempHotkey = hotkey[0];
+    hotkey.pop_front();
+    if (QString::compare(tempHotkey, "ctrl", Qt::CaseInsensitive) == 0) { // Check if the Control key needs to be pressed
+        qWarning() << "Control pressed";
+        event.keycode = XKeysymToKeycode(XDisplay, XK_Control_L);
 
-            // Send a key press event to the window.
-            XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
+        XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
+        sendKey(hotkey);
+        event.type = KeyRelease;
+        XSendEvent(event.display, event.window, True, KeyReleaseMask, (XEvent *)&event);
+    }
+    else if (QString::compare(tempHotkey, "alt", Qt::CaseInsensitive) == 0) { // Check if the Alt key needs to be pressed
+        qWarning() << "Alt pressed";
+        event.keycode = XKeysymToKeycode(XDisplay, XK_Alt_L);
 
-            // Send a key release event to the window.
-            //event = CallbackHandler::createKeyEvent(this->display, this->lastProcess, winRoot, false, XK_T, 0);
-            //XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
-        }
+        XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
+        sendKey(hotkey);
+        event.type = KeyRelease;
+        XSendEvent(event.display, event.window, True, KeyReleaseMask, (XEvent *)&event);
+    }
+    else if (QString::compare(tempHotkey, "shift", Qt::CaseInsensitive) == 0) { // Check if the Shift key needs to be pressed
+        qWarning() << "Shift pressed";
+        event.keycode = XKeysymToKeycode(XDisplay, XK_Shift_L);
+
+        XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
+        sendKey(hotkey);
+        event.type = KeyRelease;
+        XSendEvent(event.display, event.window, True, KeyReleaseMask, (XEvent *)&event);
+    }
+    else {
+        qWarning() << "Other key pressed: " << tempHotkey;
+        event.keycode = XKeysymToKeycode(XDisplay, lookupKey(tempHotkey));
+
+        // Send a key press event to the window.
+        XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
+
+        sendKey(hotkey);
+
+        // Send a key release event to the window.
+        XSendEvent(event.display, event.window, True, KeyReleaseMask, (XEvent *)&event);
     }
 }
 

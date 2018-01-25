@@ -20,46 +20,30 @@
    SOFTWARE.
 */
 
-#include "testbluetoothdevicelistmodel.cpp"
-#include "testmoduleoptionslistmodel.cpp"
-#include "testcallbackhandler.h"
-#include "testpiemenu.h"
-#include "testwindowinformation.h"
 #include "testappswitcher.h"
 
-int main(int argc, char **argv)
-{
-   int status = 0;
+void TestAppSwitcher::SwitchApp() {
+    // TODO: Make sure this also works outset of a specifically set up Travis env
+    // TODO: Fix for Windows
+    // TODO: Depend less on specific internal state
+    // Arrange
+    AppSwitcher *appSwitcher = new AppSwitcher();
 
-   {
-      TestBluetoothDeviceListModel tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
+    // Act
+#ifdef Q_OS_LINUX
+    LinuxCallbackHandler *handler = new LinuxCallbackHandler();
+#endif
+    QString firstWindow = handler->exeTitle;
 
-   {
-      TestModuleOptionsModel tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
+    appSwitcher->switchApp();
 
-   {
-      TestCallbackHandler tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-   {
-      TestPieMenu tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
+#ifdef Q_OS_LINUX
+    LinuxCallbackHandler *handler2 = new LinuxCallbackHandler();
+#endif
+    QString secondWindow = handler2->exeTitle;
 
-   {
-      TestWindowInformation tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
-
-   {
-       TestAppSwitcher tc;
-       status |= QTest::qExec(&tc, argc, argv);
-   }
-
-   return status;
+    // Assert
+    QVERIFY(firstWindow != secondWindow);
 }

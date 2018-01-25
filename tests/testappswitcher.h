@@ -20,46 +20,15 @@
    SOFTWARE.
 */
 
-#include "testbluetoothdevicelistmodel.cpp"
-#include "testmoduleoptionslistmodel.cpp"
-#include "testcallbackhandler.h"
-#include "testpiemenu.h"
-#include "testwindowinformation.h"
-#include "testappswitcher.h"
+#include <QtTest/QtTest>
+#include <chrono>
+#include <thread>
 
-int main(int argc, char **argv)
+#include "../OpenGestureControl/appswitcher.h"
+
+class TestAppSwitcher : public QObject
 {
-   int status = 0;
-
-   {
-      TestBluetoothDeviceListModel tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
-
-   {
-      TestModuleOptionsModel tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
-
-   {
-      TestCallbackHandler tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
-
-   {
-      TestPieMenu tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
-
-   {
-      TestWindowInformation tc;
-      status |= QTest::qExec(&tc, argc, argv);
-   }
-
-   {
-       TestAppSwitcher tc;
-       status |= QTest::qExec(&tc, argc, argv);
-   }
-
-   return status;
-}
+    Q_OBJECT
+private slots:
+    void SwitchApp();
+};

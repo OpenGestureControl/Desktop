@@ -154,56 +154,22 @@ void BluetoothDevice::accelerometerDataChanged(const QLowEnergyCharacteristic ch
     this->lowPass(accelInput, accelOutput);
 
     float threshold = 0.2;
-    int updown = 0;
-    int leftright = 0;
+    int updown = 0, leftright = 0, deg = 0;
 
-    // TODO: Actually calculate the degrees, instead of a few hardcoded positions
-    if (accelInput[0] > threshold) {
-        leftright = -1;
-    } else if (accelInput[0] < -threshold) {
-        leftright = 1;
-    }
+    if (accelInput[1] < -threshold) updown = 1; // User moves up
+    else if (accelInput[1] > threshold) updown = -1; // User moves down
 
-    if (accelInput[1] < -threshold) {
-        updown = 1;
-    } else if (accelInput[1] > threshold) {
-        updown = -1;
-    }
+    if (accelInput[0] > threshold) leftright = -1; // User moves left
+    else if (accelInput[0] < -threshold) leftright = 1; // User moves right
 
-    if (updown == 1) {
-        if (leftright == -1) {
-            //qWarning() << "Up left";
-            emit degreesMoved(315);
-        } else if (leftright == 0) {
-            //qWarning() << "Up";
-            emit degreesMoved(0);
-        } else if (leftright == 1) {
-            //qWarning() << "Up right";
-            emit degreesMoved(45);
-        }
-    } else if (updown == 0) {
-        if (leftright == -1) {
-            //qWarning() << "Left";
-            emit degreesMoved(270);
-        } else if (leftright == 0) {
-            //qWarning() << "Center";
-            emit degreesMoved(-1);
-        } else if (leftright == 1) {
-            //qWarning() << "Right";
-            emit degreesMoved(90);
-        }
-    } else if (updown == -1) {
-        if (leftright == -1) {
-            //qWarning() << "Down left";
-            emit degreesMoved(225);
-        } else if (leftright == 0) {
-            //qWarning() << "Down";
-            emit degreesMoved(180);
-        } else if (leftright == 1) {
-            //qWarning() << "Down right";
-            emit degreesMoved(135);
-        }
+    if (updown == 0 && leftright == 0) deg = -1;    // If no angle is held
+    else {
+        float rad = atan2(leftright, updown);       // Get angle in radians
+        deg = int(rad * (180 / 3.14159));       // Translate to degrees
+        if (deg < 0) deg = 360 + deg;               // Minor correction if degrees are negative
     }
+    qWarning() << "degrees moved: " << deg;
+    emit degreesMoved(deg);
 }
 
 void BluetoothDevice::buttonServiceStateChanged(const QLowEnergyService::ServiceState state)

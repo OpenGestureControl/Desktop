@@ -36,18 +36,27 @@
 
 #include "windowinformation.h"
 
-
+/*! \brief A class which manages all Modules.
+ *
+ *  This class handles the searching and retrieving of all modules.
+ */
 class ModuleManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit ModuleManager(QObject *parent = nullptr);
+    /*! \brief The constructor.
+     *
+     *  This constructor instantiates this class.
+     */
+    explicit ModuleManager(QObject *parent = nullptr /*!< [in] optional parameter, a QObject pointer to the parent of this class.*/);
+    /*! \brief This function returns a module based on the program currently running on the foreground.*/
     QDir getModule();
+    /*! \brief A getter function for the errorstring.*/
     QString errorString() const;
 
 private:
-    QString eString;
-    WindowInformation *windowInformation = new WindowInformation();
+    QString eString; /*!< A QString value holding the error string if an error is thrown. */
+    WindowInformation *windowInformation = new WindowInformation(); /*!< A WindowInformation pointer pointing to the windowInformation class. */
 
 signals:
 

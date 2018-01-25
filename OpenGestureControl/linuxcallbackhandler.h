@@ -39,8 +39,8 @@
 // TODO: This class is unclean, many things shouldn't be static, but Lua seems to need it. Find a better way.
 
 static Display *XDisplay;  /*!< A Display (An Xlib X server handle) pointer to the Xlib X server. */
-static Window WinRoot;     /*!< A Window (An Xlib window handle) reference to the root window of the application. */
-static Window LastProcess; /*!< A Window (An Xlib window handle) reference to the last foreground application. */
+static Window WinRoot;     /*!< A Window (An Xlib window handle) value to the root window of the application. */
+static Window LastProcess; /*!< A Window (An Xlib window handle) value to the last foreground application. */
 
 class LinuxCallbackHandler : public AbstractCallbackHandler
 {
@@ -74,7 +74,7 @@ private:
      */
     static int ModuleHelperSendKeyboardKey(lua_State* L /*!< An lua_State pointer to the active Lua instance (the module, the interpreter etc). */);
 
-    XClassHint *classProp = XAllocClassHint(); /*!<A variable to store the window information in */
+    XClassHint *classProp = XAllocClassHint(); /*!<A XClassHint pointer to store the window information in */
 
 protected:
     /*! \brief This function retrieves all info from the current active window.*/

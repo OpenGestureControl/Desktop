@@ -31,6 +31,7 @@
 #include <QObject>
 #include <QString>
 #include <QVariant>
+#include <math.h>
 
 /*! \brief A class which represents a found bluetooth device.*/
 
@@ -58,7 +59,7 @@ public:
     /*! \brief A getter function for the QBluetoothDeviceInfo.*/
     QBluetoothDeviceInfo deviceInfo() const { return m_deviceInfo; }
     /*! \brief A setter function for the QBluetoothDeviceInfo.*/
-    void setDeviceInfo(const QBluetoothDeviceInfo name);
+    void setDeviceInfo(const QBluetoothDeviceInfo name /*!< [in] parameter, a QBluetoothDeviceInfo value indicating the new deviceinfo.*/);
 
     /*! \brief A getter function for the QBluetoothDeviceInfo device name.*/
     QString name() const { return m_deviceInfo.name(); }
@@ -68,52 +69,78 @@ public:
     /*! \brief A getter function to check if the device is active.*/
     bool active() const { return m_active; }
     /*! \brief A setter function to set the device active.*/
-    void setActive(const bool value);
+    void setActive(const bool value /*!< [in] parameter, a boolean value indicating the active value.*/);
 
+    /*! \brief A getter function to check if this Bluetooth device is connected.*/
     bool isConnected() const { return this->lowEnergyController->state() == QLowEnergyController::ConnectedState; }
 
-    short shortFromLittleEndianBytes(const char bytes[]) const;
-    void lowPass(const float input[], float output[]) const;
+    /*! \brief A helper function to translate the byte data from the accelerometer to decimal numbers.*/
+    short shortFromLittleEndianBytes(const char bytes[] /*!< [in] parameter, a char array pointer with the raw accelerometer data.*/) const;
+
+    /*! \brief A filter function to help create a more stable movement detection.*/
+    void lowPass(const float input[] /*!< [in] parameter, a float array pointer with new accelerometer data to smooth.*/,
+                 float output[] /*!< [in] parameter, a float array pointer with the previously smoothed accelerometer data.*/) const;
 
 private:
-    QBluetoothDeviceInfo m_deviceInfo = QBluetoothDeviceInfo(); /*! \brief A QBluetoothDeviceInfo reference to the Qt bluetooth class.*/
-    QLowEnergyService *accelerometer, *button;
-    QLowEnergyController *lowEnergyController = nullptr;
-    bool m_active = false; /*! \brief A boolean reference to indicate whether or not this device is active.*/
-    int connectionProgress = 0;
+    QBluetoothDeviceInfo m_deviceInfo; /*! A QBluetoothDeviceInfo value to the Qt bluetooth class.*/
+    QLowEnergyService *accelerometer, *button; /*! A QLowEnergyService pointer which represents a Bluetooth LE Service.*/
+    QLowEnergyController *lowEnergyController = nullptr; /*! A QLowEnergyController pointer which handles the Bluetooth LE Services.*/
 
-    float accelInput[3];
-    float accelOutput[3];
-    const float ALPHA = 0.15f;
+    bool m_active = false; /*! A boolean value to indicate whether or not this device is active.*/
+    int connectionProgress = 0; /*! An integer value to indicate the connection status of this Bluetooth device.*/
+
+    float accelInput[3]; /*! A float array pointer to hold new accelerometer data from the lowPass filter.*/
+    float accelOutput[3]; /*! A float array pointer to hold previous accelerometer smoothing data from the lowPass filter.*/
+    const float ALPHA = 0.15f; /*! A float value which is used by the lowPass smoothing function to set how much smoothing is required.*/
 
 signals:
     /*! \brief This signal fires when a new QBluetoothDeviceInfo class is set.*/
     void deviceInfoChanged() const;
-    /*! \brief This signal fires when when this device changes it's active boolean.*/
+    /*! \brief This signal fires when this device changes it's active boolean.*/
     void activeChanged() const;
-    void discoveryFailed(const QString reason) const;
-    void characteristicBindingFailed(const QString reason) const;
+    /*! \brief This signal fires when this the program can't find the services of this Bluetooth LE device.*/
+    void discoveryFailed(const QString reason /*!< [in] parameter, a QString value holding the reason for the failure.*/) const;
+    /*! \brief This signal fires when this the program can't bind the characteristics of a Bluetooth LE service.*/
+    void characteristicBindingFailed(const QString reason /*!< [in] parameter, a QString value holding the reason for the failure.*/) const;
 
+    /*! \brief This signal fires when this device is connected.*/
     void connected() const;
+    /*! \brief This signal fires when this device is disconnected.*/
     void disconnected() const;
 
+    /*! \brief This signal fires when the 'A' button of the Micro:bit is pressed.*/
     void buttonAPressed() const;
+    /*! \brief This signal fires when the 'A' button of the Micro:bit is released.*/
     void buttonAReleased() const;
+    /*! \brief This signal fires when the 'A' button of the Micro:bit is held.*/
     void buttonAHeld() const;
+    /*! \brief This signal fires when the 'B' button of the Micro:bit is pressed.*/
     void buttonBPressed() const;
+    /*! \brief This signal fires when the 'B' button of the Micro:bit is released.*/
     void buttonBReleased() const;
+    /*! \brief This signal fires when the 'B' button of the Micro:bit is held.*/
     void buttonBHeld() const;
-    void degreesMoved(const int degrees) const;
+    /*! \brief This signal fires when the user tilts the Micro:bit.*/
+    void degreesMoved(const int degrees /*!< [in] parameter, an integer value holding the direction of the movement expressed in degrees (0-360 degress).*/) const;
 
-    void lowEnergyControllerError(const QLowEnergyController::Error error) const;
+    /*! \brief This signal fires when an error happens somewhere in this class.*/
+    void lowEnergyControllerError(const QLowEnergyController::Error error /*!< [in] parameter, an Error value holding the error that was thrown.*/) const;
 
 public slots:
+    /*! \brief This slot sets up a newly connected device.*/
     void lowEnergyControllerConnected() const;
+    /*! \brief This slot finishes up when the program has discovered all services of a Bluetooth LE device.*/
     void discoveryFinished();
-    void accelerometerServiceStateChanged(const QLowEnergyService::ServiceState state);
-    void accelerometerDataChanged(const QLowEnergyCharacteristic characteristic, QByteArray data);
-    void buttonServiceStateChanged(const QLowEnergyService::ServiceState state);
-    void buttonDataChanged(const QLowEnergyCharacteristic characteristic, const QByteArray data) const;
+    /*! \brief This slot changes the state of the accelerometer characteristics and if required calls the accelerometerDataChanged slot.*/
+    void accelerometerServiceStateChanged(const QLowEnergyService::ServiceState state /*!< [in] parameter, a ServiceState value holding the new state.*/);
+    /*! \brief This slot interprets the data recieved from the accelerometerservice.*/
+    void accelerometerDataChanged(const QLowEnergyCharacteristic characteristic /*!< [in] parameter, a QLowEnergyCharacteristic value holding the characteristic from which the new data came.*/,
+                                  QByteArray data /*!< [in] parameter, a QByteArray value holding the accelerometer data.*/);
+    /*! \brief This slot changes the state of the button characteristics and if required calls the buttonDataChanged slot.*/
+    void buttonServiceStateChanged(const QLowEnergyService::ServiceState state /*!< [in] parameter, a ServiceState value holding the new state.*/);
+    /*! \brief This slot interprets the data recieved from the buttonservice.*/
+    void buttonDataChanged(const QLowEnergyCharacteristic characteristic /*!< [in] parameter,  a QLowEnergyCharacteristic value holding the characteristic from which the new data came.*/,
+                           const QByteArray data /*!< [in] parameter, a QByteArray value holding the button data.*/) const;
 };
 
 #endif // BLUETOOTHDEVICE_H

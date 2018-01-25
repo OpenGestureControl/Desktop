@@ -67,9 +67,9 @@ public:
     void setIndex(const int index);
 
 private:
-    QString m_name; /*!< \brief A QString reference to the name of the option. */
-    QString m_icon; /*!< \brief A QString reference to the icon of the option. */
-    int m_index; /*!< \brief An integer reference to the index of the option. */
+    QString m_name; /*!< A QString value to the name of the option. */
+    QString m_icon; /*!< A QString value to the icon of the option. */
+    int m_index; /*!< An integer value to the index of the option. */
 
 signals:
     /*! \brief This signal fires when the m_name variable is changed via setName.*/

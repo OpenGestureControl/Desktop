@@ -72,21 +72,25 @@ public:
     /*! \brief This function removes all BluetoothDevice objects from the list.*/
     void clear();
 
-    void setActive(BluetoothDevice *device);
+    /*! \brief This function is called to set a device on active.*/
+    void setActive(BluetoothDevice *device /*!< [in] parameter, a BluetoothDevice pointer to the device to be set active.*/);
+    /*! \brief This function unsets the current active BluetoothDevice.*/
     void clearActive();
+    /*! \brief This function return the current active BluetoothDevice.*/
     BluetoothDevice* getActive();
-
-signals:
-    /*! \brief This signal fires when addDevice is finished.*/
-    void countChanged(int c /*!< [in] parameter, an integer reference to the new amount.*/);
 
 protected:
     /*! \brief This function creates and returns a hashmap with rolenames required by Qt to work.*/
     QHash<int, QByteArray> roleNames() const override;
-    BluetoothDevice *activeDevice = nullptr;
+
+    BluetoothDevice *activeDevice = nullptr; /*!< A BluetoothDevice pointer to the currently active device. */
 
 private:
-    QList<BluetoothDevice*> m_data; /*!< \brief An QList reference to the menu options pointers from the piemenu. */
+    QList<BluetoothDevice*> m_data; /*!< \brief A QList value to the menu options pointers from the piemenu. */
+
+signals:
+    /*! \brief This signal fires when addDevice is finished.*/
+    void countChanged(int c /*!< [in] parameter, an integer reference to the new amount.*/);
 };
 
 #endif // BLUETOOTHDEVICELISTMODEL_H
